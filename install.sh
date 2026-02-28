@@ -88,7 +88,7 @@ info "  LUKS UUID: $CRYPT_UUID"
 
 info "Fetching wallpaper SHA256 hash..."
 
-WALLPAPER_URL="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=3840&q=95"
+WALLPAPER_URL="https://github.com/kiperz/nixos-config/releases/download/1/wallpaper.jpeg"
 WALLPAPER_HASH=$(nix-prefetch-url "$WALLPAPER_URL" 2>/dev/null) || true
 
 if [[ -n "$WALLPAPER_HASH" ]]; then
