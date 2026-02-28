@@ -14,20 +14,20 @@ in
     ];
 
   # ThinkPad T480s — Intel i7-8550U (Kaby Lake Refresh)
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" "sr_mod" "rtsx_pci_sdmmc" ];
+  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.extraModulePackages = [ ];
 
   # CHANGEME: Replace UUID with value from `blkid /dev/nvme0n1p2` (the LUKS partition)
   boot.initrd.luks.devices."cryptbtrfs" = {
-    device = "/dev/disk/by-uuid/CHANGEME-LUKS-UUID";
+    device = "/dev/disk/by-uuid/c08cbccf-615d-4a63-8977-21f887d94786";
     allowDiscards = true; # SSD TRIM through LUKS
   };
 
   # CHANGEME: Replace UUID with value from `blkid /dev/nvme0n1p1`
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/CHANGEME-EFI-UUID";
+    device = "/dev/disk/by-uuid/6EA3-33AD";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };

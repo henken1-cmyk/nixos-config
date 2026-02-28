@@ -47,7 +47,7 @@ in
       };
       # CHANGEME: verify bus IDs with `lspci | grep -E 'VGA|3D'`
       intelBusId = "PCI:0:2:0";
-      nvidiaBusId = "PCI:2:0:0";
+      nvidiaBusId = "PCI:1:0:0";
     };
   };
 
@@ -75,9 +75,9 @@ in
   programs.light.enable = true;
 
   # Lid switch — hibernate on battery (swap + LUKS resume), lock on AC
-  services.logind = {
-    lidSwitch = "hibernate";
-    lidSwitchExternalPower = "lock";
+  services.logind.settings.Login = {
+    HandleLidSwitch = "hibernate";
+    HandleLidSwitchExternalPower = "lock";
   };
 
   # ── btrfs (laptop — no @devel) ──────────────────────────────────

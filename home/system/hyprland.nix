@@ -25,12 +25,6 @@
         };
       };
 
-      # Touchpad gestures
-      gestures = {
-        workspace_swipe = true;
-        workspace_swipe_fingers = 3;
-      };
-
       # ── General ───────────────────────────────────────────
       general = {
         gaps_in = 4;

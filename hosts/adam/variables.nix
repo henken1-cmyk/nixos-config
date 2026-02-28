@@ -2,8 +2,8 @@
   # User
   username = "adam";
   fullName = "Adam";
-  email = "henken1@gmail.com"; # CHANGEME: Set your email
-  gitUsername = "henken"; # CHANGEME: Set your git username
+  email = "henken1@gmail.com"; # Set your email
+  gitUsername = "henken1-cmyk"; # Set your git username
 
   # System
   hostname = "adam";
