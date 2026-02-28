@@ -5,8 +5,8 @@
     enable = true;
     autoEnable = true;
 
-    # Solarized Dark as base
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/solarized-dark.yaml";
+    # Catppuccin Mocha — dark purple/lavender theme
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
     polarity = "dark";
 
     # Wallpaper (required by Stylix even if swww manages it)
