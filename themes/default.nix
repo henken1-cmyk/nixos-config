@@ -1,12 +1,12 @@
-{ config, pkgs, ... }:
+{ config, pkgs, vars, ... }:
 
 {
   stylix = {
     enable = true;
     autoEnable = true;
 
-    # Catppuccin Mocha — dark purple/lavender theme
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/catppuccin-mocha.yaml";
+    # Per-host theme (set in hosts/<name>/variables.nix)
+    base16Scheme = "${pkgs.base16-schemes}/share/themes/${vars.base16Scheme}.yaml";
     polarity = "dark";
 
     # Wallpaper (required by Stylix even if swww manages it)

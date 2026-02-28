@@ -26,6 +26,12 @@ in
     ../../home/system/swww.nix
   ];
 
+  # Adam-specific packages
+  home.packages = with pkgs; [
+    google-chrome
+    parsec-bin
+  ];
+
   home = {
     username = vars.username;
     homeDirectory = "/home/${vars.username}";

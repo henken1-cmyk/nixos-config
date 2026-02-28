@@ -29,7 +29,8 @@
   ];
 
   # Theme
-  theme = "solarized-dark"; # or "solarized-light"
+  theme = "catppuccin-mocha";
+  base16Scheme = "catppuccin-mocha";
 
   # Hyprsunset (Warsaw coordinates for auto schedule)
   latitude = 52.23;

@@ -29,7 +29,8 @@
   ];
 
   # Theme
-  theme = "solarized-dark"; # or "solarized-light"
+  theme = "solarized-dark";
+  base16Scheme = "solarized-dark";
 
   # Hyprsunset (Warsaw coordinates for auto schedule)
   latitude = 52.23;
