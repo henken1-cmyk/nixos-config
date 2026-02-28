@@ -290,8 +290,7 @@
         tooltip = false;
         on-click = "$HOME/.config/nixos/home/scripts/power-menu.sh";
       };
-    } // lib.optionalAttrs (vars.waybarAutohide or false) {
-      "exclusive-zone" = -1; # Don't reserve space — windows use full screen (adam only)
+      "exclusive-zone" = lib.mkIf (vars.waybarAutohide or false) (-1);
     }];
 
     # ── Custom CSS — Floating Islands with Solarized accent colors ──
