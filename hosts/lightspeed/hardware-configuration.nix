@@ -78,8 +78,9 @@ in
   };
 
   # Swap file on the @swap subvolume
+  # Pre-create during install: btrfs filesystem mkswapfile --size 64g /mnt/swap/swapfile
   swapDevices = [
-    { device = "/swap/swapfile"; size = 64 * 1024; }
+    { device = "/swap/swapfile"; }
   ];
 
   # CPU

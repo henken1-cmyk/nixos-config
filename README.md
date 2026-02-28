@@ -54,40 +54,76 @@ nixos-generate-config --root /mnt
 ### 2. Clone and Configure
 
 ```bash
+# Install git in the live ISO environment
+nix-shell -p git
+
 # Clone this repo
 git clone <your-repo-url> /mnt/home/kiper/.config/nixos
-
-# Copy the generated hardware config
-cp /mnt/etc/nixos/hardware-configuration.nix /mnt/home/kiper/.config/nixos/hosts/lightspeed/
-
-# Edit variables.nix — set your email, git username
-nano /mnt/home/kiper/.config/nixos/hosts/lightspeed/variables.nix
+cd /mnt/home/kiper/.config/nixos
 ```
 
-### 3. Install
+**Option A — Automated (recommended):**
+```bash
+# The install script handles everything: merges hardware config, patches LUKS UUID,
+# fetches wallpaper hash, prompts for email/username, and runs nixos-install.
+bash install.sh /dev/nvme0n1p2   # ← your LUKS partition
+```
+
+**Option B — Manual:**
+<details>
+<summary>Click to expand manual steps</summary>
+
+```bash
+# ── Fix wallpaper hash (BUILD BLOCKER) ──
+nix-prefetch-url "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=3840&q=95"
+# Copy the output hash and replace the placeholder in themes/default.nix:
+nano themes/default.nix   # replace sha256 = "0000..." with the real hash
+
+# ── Merge hardware config ──
+# DO NOT just copy the generated file — it would overwrite btrfs subvolume mounts.
+# Instead, open both files side by side and copy ONLY these from the generated one:
+#   - boot.initrd.availableKernelModules (your actual hardware's modules)
+#   - boot.initrd.kernelModules (if any)
+#   - boot.kernelModules (if different)
+# Keep everything else from the repo version (btrfs mounts, LUKS, swap).
+diff /mnt/etc/nixos/hardware-configuration.nix hosts/lightspeed/hardware-configuration.nix
+nano hosts/lightspeed/hardware-configuration.nix
+
+# ── Update LUKS device path ──
+blkid /dev/nvme0n1p2
+# Update the device path in hardware-configuration.nix:
+#   device = "/dev/disk/by-uuid/YOUR-UUID-HERE";
+
+# ── Fill CHANGEME values ──
+nano hosts/lightspeed/variables.nix   # email, gitUsername
+```
+</details>
+
+### 3. Install (if you used manual steps above)
 
 ```bash
 nixos-install --flake /mnt/home/kiper/.config/nixos#lightspeed
+
+# Set user password (nixos-install prompts for root password automatically)
+nixos-enter --root /mnt -c 'passwd kiper'
+
 reboot
 ```
 
 ### 4. Post-Install
 
 ```bash
-# Set password
-passwd kiper
-
 # Fix monitor names
 hyprctl monitors
 # Update monitorLeft / monitorRight in variables.nix
 
-# Fix wallpaper
-# Download a space wallpaper to ~/wallpapers/space-solarized.png
-# Or: swww img ~/path/to/image.png
+# Fix Waybar temperature sensor
+ls /sys/class/hwmon/*/temp*_input
+# Update hwmon-path-abs in home/system/waybar.nix
 
-# Fix Stylix wallpaper hash
-# nix-prefetch-url <wallpaper-url>
-# Update sha256 in themes/default.nix
+# Download wallpaper for swww
+mkdir -p ~/wallpapers
+# Place your wallpaper at ~/wallpapers/space-solarized.png
 
 # Add Flathub
 flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.flatpakrepo
@@ -95,6 +131,15 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 # Install Flatpak apps
 flatpak install flathub md.obsidian.Obsidian
 flatpak install flathub dev.vencord.Vesktop
+
+# Verify btrfs setup
+sudo btrfs subvolume list /           # all 7 subvolumes
+findmnt -t btrfs                      # correct mount options
+swapon --show                         # swap active
+systemctl status btrbk-default.timer  # snapshots scheduled
+systemctl status btrfs-scrub@-.timer  # scrub scheduled
+ls -la /devel                         # 2775 root:devel
+nvidia-smi                            # GPU driver loaded
 
 # Rebuild
 nh os switch
@@ -104,13 +149,13 @@ nh os switch
 
 Search for `CHANGEME` across the config — these are values you must update:
 
-| File | What |
-|------|------|
-| `hosts/lightspeed/variables.nix` | email, gitUsername, monitorLeft, monitorRight |
-| `hosts/lightspeed/hardware-configuration.nix` | Replace with generated version (btrfs subvolumes auto-detected) |
-| `themes/default.nix` | Wallpaper sha256 hash |
-| `nixos/nix.nix` | Verify Hyprland cachix public key |
-| `home/system/waybar.nix` | temperature hwmon path |
+| File | What | When |
+|------|------|------|
+| `themes/default.nix` | Wallpaper sha256 hash | **Before install** (build blocker) |
+| `hosts/lightspeed/variables.nix` | email, gitUsername | **Before install** |
+| `hosts/lightspeed/hardware-configuration.nix` | Merge kernel modules + LUKS UUID | **Before install** (use `install.sh`) |
+| `hosts/lightspeed/variables.nix` | monitorLeft, monitorRight | After first boot |
+| `home/system/waybar.nix` | temperature hwmon path | After first boot |
 
 ## Key Bindings (Cheat Sheet)
 
@@ -146,6 +191,7 @@ Search for `CHANGEME` across the config — these are values you must update:
 ## Structure
 
 ```
+├── install.sh                   # Automated installer helper
 ├── flake.nix                    # Entry point
 ├── hosts/lightspeed/
 │   ├── configuration.nix        # System config
@@ -192,6 +238,85 @@ Search for `CHANGEME` across the config — these are values you must update:
 │       └── screen-record.sh
 └── themes/
     └── default.nix              # Stylix Solarized config
+```
+
+## Troubleshooting
+
+### Build fails on wallpaper hash
+**Symptom:** `hash mismatch` during `nixos-install`
+```bash
+nix-prefetch-url "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=3840&q=95"
+# Replace the hash in themes/default.nix, re-run nixos-install
+```
+
+### LUKS device not found on boot
+**Symptom:** Drops to emergency shell, "device not found"
+```bash
+# Boot live ISO, find the correct UUID:
+blkid /dev/nvme0n1p2
+# Mount and fix:
+cryptsetup open /dev/nvme0n1p2 cryptbtrfs
+mount -o subvol=@root,compress=zstd:1,noatime /dev/mapper/cryptbtrfs /mnt
+# Update hardware-configuration.nix with the correct by-uuid path
+nixos-enter --root /mnt -c 'nixos-rebuild boot'
+```
+
+### Swap file won't activate
+**Symptom:** `swapon: Invalid argument`
+```bash
+# Boot live ISO, recreate the swap file properly:
+cryptsetup open /dev/nvme0n1p2 cryptbtrfs
+mount -o subvol=@swap,noatime,ssd,discard=async,nodatacow /dev/mapper/cryptbtrfs /mnt
+rm /mnt/swapfile
+btrfs filesystem mkswapfile --size 64g /mnt/swapfile
+```
+
+### Black screen after boot (NVIDIA)
+**Symptom:** LUKS prompt works, but no display after login
+1. Try switching TTY: `Ctrl+Alt+F2`
+2. Check logs: `journalctl -b -u greetd`
+3. If open driver is the issue — select previous generation from systemd-boot menu, then:
+   ```bash
+   # In gpu.nix: change open = true → open = false
+   sudo nixos-rebuild switch
+   ```
+4. Nuclear option: add `nomodeset` to kernel params (press `e` on boot entry in systemd-boot)
+
+### greetd won't start (no login screen)
+**Symptom:** Boots to TTY instead of graphical login
+
+greetd depends on `config.stylix.image` which depends on the wallpaper hash. If the hash is wrong, the entire stylix config fails to evaluate.
+```bash
+journalctl -b -u greetd
+# Fix the wallpaper hash in themes/default.nix and rebuild
+```
+
+### btrbk snapshots not working
+```bash
+# Dry-run to see what's wrong:
+sudo btrbk -n run
+# Check timer:
+systemctl status btrbk-default.timer
+```
+
+### Recovery from live ISO
+General approach for any boot failure:
+```bash
+cryptsetup open /dev/nvme0n1p2 cryptbtrfs
+mount -o subvol=@root,compress=zstd:1,noatime /dev/mapper/cryptbtrfs /mnt
+mkdir -p /mnt/{home,nix,var/log,boot}
+mount -o subvol=@home,compress=zstd:1,noatime /dev/mapper/cryptbtrfs /mnt/home
+mount -o subvol=@nix,noatime,nodatacow /dev/mapper/cryptbtrfs /mnt/nix
+mount -o subvol=@log,compress=zstd:1,noatime /dev/mapper/cryptbtrfs /mnt/var/log
+mount /dev/nvme0n1p1 /mnt/boot
+
+# Chroot and fix:
+nixos-enter --root /mnt
+cd /home/kiper/.config/nixos
+nano <broken-file>
+nixos-rebuild boot
+exit
+reboot
 ```
 
 ## Future Additions
