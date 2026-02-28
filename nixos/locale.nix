@@ -1,8 +1,5 @@
-{ config, pkgs, ... }:
+{ config, pkgs, vars, ... }:
 
-let
-  vars = import ../hosts/lightspeed/variables.nix;
-in
 {
   time.timeZone = vars.timezone;
 

@@ -1,5 +1,5 @@
 {
-  description = "NixOS Bonkers Setup — lightspeed";
+  description = "NixOS Bonkers Setup — lightspeed & adam";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -33,9 +33,13 @@
   };
 
   outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, ... }@inputs:
+    let
+      lightspeedVars = import ./hosts/lightspeed/variables.nix;
+      adamVars = import ./hosts/adam/variables.nix;
+    in
     {
       nixosConfigurations.lightspeed = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; };
+        specialArgs = { inherit inputs; vars = lightspeedVars; };
         modules = [
           ./hosts/lightspeed/configuration.nix
           stylix.nixosModules.stylix
@@ -46,8 +50,27 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              extraSpecialArgs = { inherit inputs; };
-              users.kiper = import ./hosts/lightspeed/home.nix;
+              extraSpecialArgs = { inherit inputs; vars = lightspeedVars; };
+              users.${lightspeedVars.username} = import ./hosts/lightspeed/home.nix;
+            };
+          }
+        ];
+      };
+
+      nixosConfigurations.adam = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; vars = adamVars; };
+        modules = [
+          ./hosts/adam/configuration.nix
+          stylix.nixosModules.stylix
+          home-manager.nixosModules.home-manager
+          sops-nix.nixosModules.sops
+          { nixpkgs.config.allowUnfree = true; }
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = { inherit inputs; vars = adamVars; };
+              users.${adamVars.username} = import ./hosts/adam/home.nix;
             };
           }
         ];

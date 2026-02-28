@@ -1,12 +1,12 @@
 {
   # User
-  username = "kiper";
-  fullName = "Kacper";
-  email = "kiperz@gmail.com"; # Set your email
-  gitUsername = "kiperz"; # Set your git username
+  username = "adam";
+  fullName = "Adam";
+  email = "henken1@gmail.com"; # CHANGEME: Set your email
+  gitUsername = "henken"; # CHANGEME: Set your git username
 
   # System
-  hostname = "lightspeed";
+  hostname = "adam";
   timezone = "Europe/Warsaw";
   locale = "en_US.UTF-8";
   keyboardLayout = "pl";
@@ -20,12 +20,12 @@
   develPath = "/devel";
 
   # Monitors (from `hyprctl monitors`)
-  # Left: HP 727pk 27" 4K 60Hz, Right: Samsung Odyssey G80SD 32" 4K 240Hz (primary)
-  monitorLeft = "DP-2";
-  monitorRight = "DP-1";
+  # ThinkPad T480s built-in display 14" 1366x768
+  # CHANGEME: verify with `hyprctl monitors` after first boot
+  monitorLeft = "eDP-1";
+  monitorRight = "";
   monitors = [
-    "DP-2,3840x2160@60,0x0,1.5"
-    "DP-1,3840x2160@240,2560x0,1.25"
+    "eDP-1,1366x768@60,0x0,1"
   ];
 
   # Theme

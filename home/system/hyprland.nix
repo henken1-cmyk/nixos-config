@@ -1,8 +1,5 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, vars, ... }:
 
-let
-  vars = import ../../hosts/lightspeed/variables.nix;
-in
 {
   wayland.windowManager.hyprland = {
     enable = true;
@@ -10,13 +7,8 @@ in
 
     settings = {
       # ── Monitors ──────────────────────────────────────────
-      # Left: 27" 4K 60Hz (scale 1.5 → effective 2560x1440)
-      # Right: 32" 4K 240Hz (scale 1.25 → effective 3072x1728, primary)
-      # CHANGEME: update DP-? names after first boot with `hyprctl monitors`
-      monitor = [
-        "${vars.monitorLeft},3840x2160@60,0x0,1.5"
-        "${vars.monitorRight},3840x2160@240,2560x0,1.25"
-      ];
+      # CHANGEME: update monitor names after first boot with `hyprctl monitors`
+      monitor = vars.monitors;
 
       # ── Input ─────────────────────────────────────────────
       input = {
@@ -25,6 +17,18 @@ in
         follow_mouse = 1;
         sensitivity = 0;
         accel_profile = "flat";
+
+        touchpad = {
+          natural_scroll = true;
+          tap-to-click = true;
+          disable_while_typing = true;
+        };
+      };
+
+      # Touchpad gestures
+      gestures = {
+        workspace_swipe = true;
+        workspace_swipe_fingers = 3;
       };
 
       # ── General ───────────────────────────────────────────
@@ -262,6 +266,8 @@ in
       bindel = [
         ", XF86AudioRaiseVolume, exec, swayosd-client --output-volume raise"
         ", XF86AudioLowerVolume, exec, swayosd-client --output-volume lower"
+        ", XF86MonBrightnessUp, exec, swayosd-client --brightness raise"
+        ", XF86MonBrightnessDown, exec, swayosd-client --brightness lower"
       ];
 
       bindl = [
