@@ -32,6 +32,9 @@
   theme = "catppuccin-mocha";
   base16Scheme = "catppuccin-mocha";
 
+  # Waybar auto-hide (laptop only)
+  waybarAutohide = true;
+
   # Hyprsunset (Warsaw coordinates for auto schedule)
   latitude = 52.23;
   longitude = 21.01;

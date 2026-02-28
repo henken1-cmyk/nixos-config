@@ -274,13 +274,15 @@
       ];
 
       # ── Layer rules ───────────────────────────────────────
-      layerrule = [
+      layerrule = lib.optionals (vars.waybarAutohide or false) [
         "animation slide top, waybar"
       ];
 
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
-        "$HOME/.config/nixos/home/scripts/waybar-autohide.sh"
+        (if (vars.waybarAutohide or false)
+          then "$HOME/.config/nixos/home/scripts/waybar-autohide.sh"
+          else "waybar")
         "mako"
         "swww-daemon && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"

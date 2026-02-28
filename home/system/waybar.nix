@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, vars, ... }:
 
 {
   programs.waybar = {
@@ -14,7 +14,6 @@
       margin-right = 8;
 
       fixed-center = true;
-      "exclusive-zone" = -1; # Don't reserve space — windows always fill full screen
 
       # Layout: logo | media | submap | ··· workspaces ··· | hw-drawer | connectivity | idle | clock-group
       modules-left = [
@@ -291,6 +290,8 @@
         tooltip = false;
         on-click = "$HOME/.config/nixos/home/scripts/power-menu.sh";
       };
+    } // lib.optionalAttrs (vars.waybarAutohide or false) {
+      "exclusive-zone" = -1; # Don't reserve space — windows use full screen (adam only)
     }];
 
     # ── Custom CSS — Floating Islands with Solarized accent colors ──
