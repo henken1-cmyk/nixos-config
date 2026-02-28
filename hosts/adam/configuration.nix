@@ -29,7 +29,8 @@ in
     enable = true;
     enable32Bit = true;
     extraPackages = with pkgs; [
-      intel-media-driver # VA-API for Intel UHD 620 (Kaby Lake+)
+      intel-media-driver  # VA-API iHD (Kaby Lake+)
+      intel-vaapi-driver  # VA-API i965 (older, better Parsec compat)
     ];
   };
 
@@ -172,8 +173,8 @@ in
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
     ELECTRON_OZONE_PLATFORM_HINT = "wayland";
-    # VA-API — explicit driver path for apps in FHS envs (e.g. Parsec)
-    LIBVA_DRIVER_NAME = "iHD";
+    # VA-API — i965 driver works better with Parsec than iHD on 8th gen Intel
+    LIBVA_DRIVER_NAME = "i965";
     LIBVA_DRIVERS_PATH = "/run/opengl-driver/lib/dri";
   };
 
