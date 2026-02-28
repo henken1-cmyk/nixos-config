@@ -195,7 +195,7 @@
       # ── Connectivity pill ─────────────────────────────────
       "group/connectivity" = {
         orientation = "inherit";
-        modules = [ "pulseaudio" "network" "bluetooth" ];
+        modules = [ "pulseaudio" "network" "battery" "bluetooth" ];
       };
 
       pulseaudio = {
@@ -215,6 +215,16 @@
         tooltip-format-wifi = "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}";
         tooltip-format-ethernet = "{ifname}\n{ipaddr}/{cidr}";
         on-click = "nm-connection-editor";
+      };
+
+      battery = {
+        states = { warning = 30; critical = 15; };
+        format = "{icon} {capacity}%";
+        format-charging = "󰂄 {capacity}%";
+        format-plugged = "󰚥 {capacity}%";
+        format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
+        tooltip-format = "{timeTo}, {power:.1f}W";
+        interval = 30;
       };
 
       bluetooth = {
@@ -439,6 +449,25 @@
 
       #network.disconnected {
         opacity: 0.5;
+      }
+
+      #battery {
+        color: #859900;
+        padding: 0 8px;
+        border-right: 1px solid rgba(88, 110, 117, 0.4);
+      }
+
+      #battery.warning {
+        color: #e5c07b;
+      }
+
+      #battery.critical {
+        color: #dc322f;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      #battery.charging {
+        color: #859900;
       }
 
       #bluetooth {
