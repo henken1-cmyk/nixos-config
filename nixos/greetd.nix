@@ -1,9 +1,32 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, vars, ... }:
 
+let
+  # Minimal Hyprland config for the greeter — just monitors + regreet launch
+  greeterHyprlandConfig = pkgs.writeText "greetd-hyprland.conf" ''
+    ${lib.concatMapStringsSep "\n" (m: "monitor = ${m}") vars.monitors}
+
+    misc {
+      disable_hyprland_logo = true
+      disable_splash_rendering = true
+      force_default_wallpaper = 0
+    }
+
+    cursor {
+      no_hardware_cursors = true
+    }
+
+    exec-once = ${lib.getExe config.programs.regreet.package}; hyprctl dispatch exit
+  '';
+in
 {
-  services.greetd.enable = true;
+  services.greetd = {
+    enable = true;
+    settings.default_session = {
+      command = "Hyprland --config ${greeterHyprlandConfig}";
+      user = "greeter";
+    };
+  };
 
-  # regreet config
   programs.regreet = {
     enable = true;
     settings = {

@@ -46,7 +46,7 @@ flake.nix
 
 ### Key patterns
 
-**Variables pattern:** `hosts/lightspeed/variables.nix` exports an attrset of machine-specific values. Modules import it with `let vars = import ../../hosts/lightspeed/variables.nix;` (or relative path). This is used instead of NixOS module options for simplicity.
+**Variables pattern:** Each host has a `variables.nix` exporting machine-specific values. The flake imports these and passes them as `vars` via `specialArgs` (system modules) and `extraSpecialArgs` (Home Manager). Modules receive `vars` in their function arguments: `{ config, pkgs, vars, ... }:`. Do NOT use `let vars = import ...;` — that pattern is deprecated.
 
 **`inputs` propagation:** The flake passes `inputs` via `specialArgs` (system modules) and `extraSpecialArgs` (Home Manager) so any module can access flake inputs like `nixvim`.
 

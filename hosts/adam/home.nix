@@ -90,6 +90,7 @@ in
 
   # Stylix: tell it which Firefox profile to theme
   stylix.targets.firefox.profileNames = [ "default" ];
+  stylix.targets.waybar.enable = false; # Custom CSS in waybar.nix
 
   # bat (theme set by Stylix)
   programs.bat.enable = true;
