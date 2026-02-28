@@ -195,7 +195,7 @@
       # ── Connectivity pill ─────────────────────────────────
       "group/connectivity" = {
         orientation = "inherit";
-        modules = [ "pulseaudio" "network" "battery" "bluetooth" ];
+        modules = [ "pulseaudio" "battery" "network" "bluetooth" ];
       };
 
       pulseaudio = {
