@@ -95,5 +95,11 @@
 
     # Archive support
     p7zip
+
+    # Browsers
+    google-chrome
+
+    # Remote desktop
+    parsec-bin
   ];
 }

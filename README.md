@@ -1,26 +1,34 @@
-# NixOS Bonkers Setup — `lightspeed`
+# NixOS Bonkers Setup
 
-> NixOS + Hyprland + Solarized · dual 4K · NVIDIA RTX 3090 Ti · btrfs on LUKS
+> NixOS + Hyprland + Solarized · multi-host flake
+
+| Host | Machine | CPU | GPU | Display |
+|------|---------|-----|-----|---------|
+| `lightspeed` | Desktop | AMD | NVIDIA RTX 3090 Ti | Dual 4K (60+240Hz) |
+| `adam` | Lenovo ThinkPad T480s | Intel i7-8550U | Intel UHD 620 + NVIDIA MX150 | 1366x768 |
 
 ## Quick Start
 
-### 1. Install NixOS (minimal ISO)
+### 1. Partition & Encrypt (from minimal ISO)
+
+Both hosts use LUKS + btrfs. Choose your host below.
+
+<details>
+<summary><b>lightspeed</b> (desktop) — 7 subvolumes, 64 GB swap, @devel</summary>
 
 ```bash
-# Partition (Drive 1: NixOS)
+# Partition
 gdisk /dev/nvme0n1
 # p1: 512M EFI (ef00), label: BOOT
 # p2: remaining, Linux filesystem (8300), label: CRYPTBTRFS
 
-# Encrypt
+# Encrypt + format
 cryptsetup luksFormat --type luks2 /dev/disk/by-partlabel/CRYPTBTRFS
 cryptsetup open /dev/disk/by-partlabel/CRYPTBTRFS cryptbtrfs
-
-# Create btrfs filesystem
 mkfs.fat -F32 -n BOOT /dev/nvme0n1p1
 mkfs.btrfs -L nixos /dev/mapper/cryptbtrfs
 
-# Create subvolumes
+# Create subvolumes (7: root, home, nix, devel, log, snapshots, swap)
 mount /dev/mapper/cryptbtrfs /mnt
 btrfs subvolume create /mnt/@root
 btrfs subvolume create /mnt/@home
@@ -31,7 +39,7 @@ btrfs subvolume create /mnt/@snapshots
 btrfs subvolume create /mnt/@swap
 umount /mnt
 
-# Mount subvolumes
+# Mount
 mount -o subvol=@root,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt
 mkdir -p /mnt/{boot,home,nix,devel,var/log,.snapshots,swap}
 
@@ -43,13 +51,57 @@ mount -o subvol=@log,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /d
 mount -o subvol=@snapshots,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt/.snapshots
 mount -o subvol=@swap,noatime,ssd,discard=async,nodatacow /dev/mapper/cryptbtrfs /mnt/swap
 
-# Swap file (match your RAM for hibernation)
+# 64 GB swap (match RAM for hibernation)
 btrfs filesystem mkswapfile --size 64g /mnt/swap/swapfile
 swapon /mnt/swap/swapfile
 
-# Generate hardware config
 nixos-generate-config --root /mnt
 ```
+</details>
+
+<details>
+<summary><b>adam</b> (ThinkPad T480s) — 6 subvolumes, 16 GB swap + hibernation, no @devel</summary>
+
+```bash
+# Partition (256 GB NVMe)
+gdisk /dev/nvme0n1
+# p1: 512M EFI (ef00), label: BOOT
+# p2: remaining, Linux filesystem (8300), label: CRYPTBTRFS
+
+# Encrypt + format
+cryptsetup luksFormat --type luks2 /dev/disk/by-partlabel/CRYPTBTRFS
+cryptsetup open /dev/disk/by-partlabel/CRYPTBTRFS cryptbtrfs
+mkfs.fat -F32 -n BOOT /dev/nvme0n1p1
+mkfs.btrfs -L nixos /dev/mapper/cryptbtrfs
+
+# Create subvolumes (6: root, home, nix, log, snapshots, swap — no @devel)
+mount /dev/mapper/cryptbtrfs /mnt
+btrfs subvolume create /mnt/@root
+btrfs subvolume create /mnt/@home
+btrfs subvolume create /mnt/@nix
+btrfs subvolume create /mnt/@log
+btrfs subvolume create /mnt/@snapshots
+btrfs subvolume create /mnt/@swap
+umount /mnt
+
+# Mount
+mount -o subvol=@root,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt
+mkdir -p /mnt/{boot,home,nix,var/log,.snapshots,swap}
+
+mount /dev/nvme0n1p1 /mnt/boot
+mount -o subvol=@home,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt/home
+mount -o subvol=@nix,noatime,ssd,discard=async,nodatacow /dev/mapper/cryptbtrfs /mnt/nix
+mount -o subvol=@log,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt/var/log
+mount -o subvol=@snapshots,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt/.snapshots
+mount -o subvol=@swap,noatime,ssd,discard=async,nodatacow /dev/mapper/cryptbtrfs /mnt/swap
+
+# 16 GB swap (matches RAM for hibernation)
+btrfs filesystem mkswapfile --size 16g /mnt/swap/swapfile
+swapon /mnt/swap/swapfile
+
+nixos-generate-config --root /mnt
+```
+</details>
 
 ### 2. Clone and Configure
 
@@ -57,16 +109,17 @@ nixos-generate-config --root /mnt
 # Install git in the live ISO environment
 nix-shell -p git
 
-# Clone this repo
-git clone <your-repo-url> /mnt/home/kiper/.config/nixos
-cd /mnt/home/kiper/.config/nixos
+# Clone this repo (replace <user> with your username: kiper for lightspeed, adam for adam)
+git clone <your-repo-url> /mnt/home/<user>/.config/nixos
+cd /mnt/home/<user>/.config/nixos
 ```
 
 **Option A — Automated (recommended):**
 ```bash
-# The install script handles everything: merges hardware config, patches LUKS UUID,
-# fetches wallpaper hash, prompts for email/username, and runs nixos-install.
-bash install.sh /dev/nvme0n1p2   # ← your LUKS partition
+# install.sh handles: kernel modules merge, LUKS+EFI UUID patching,
+# GPU bus ID detection (PRIME hosts), wallpaper hash, email/username prompt.
+bash install.sh lightspeed /dev/nvme0n1p2   # ← host name + LUKS partition
+bash install.sh adam       /dev/nvme0n1p2
 ```
 
 **Option B — Manual:**
@@ -102,10 +155,13 @@ nano hosts/lightspeed/variables.nix   # email, gitUsername
 ### 3. Install (if you used manual steps above)
 
 ```bash
+# For lightspeed (desktop):
 nixos-install --flake /mnt/home/kiper/.config/nixos#lightspeed
-
-# Set user password (nixos-install prompts for root password automatically)
 nixos-enter --root /mnt -c 'passwd kiper'
+
+# For adam (ThinkPad T480s):
+nixos-install --flake /mnt/home/adam/.config/nixos#adam
+nixos-enter --root /mnt -c 'passwd adam'
 
 reboot
 ```
@@ -115,7 +171,7 @@ reboot
 ```bash
 # Fix monitor names
 hyprctl monitors
-# Update monitorLeft / monitorRight in variables.nix
+# Update monitors list in hosts/<hostname>/variables.nix
 
 # Fix Waybar temperature sensor
 ls /sys/class/hwmon/*/temp*_input
@@ -132,17 +188,28 @@ flatpak remote-add --if-not-exists flathub https://dl.flathub.org/repo/flathub.f
 flatpak install flathub md.obsidian.Obsidian
 flatpak install flathub dev.vencord.Vesktop
 
-# Verify btrfs setup
+# Verify setup
+nvidia-smi                            # GPU driver loaded
+nh os switch                          # rebuild
+
+# (lightspeed only) Verify btrfs
 sudo btrfs subvolume list /           # all 7 subvolumes
 findmnt -t btrfs                      # correct mount options
 swapon --show                         # swap active
 systemctl status btrbk-default.timer  # snapshots scheduled
-systemctl status btrfs-scrub@-.timer  # scrub scheduled
-ls -la /devel                         # 2775 root:devel
-nvidia-smi                            # GPU driver loaded
 
-# Rebuild
-nh os switch
+# (adam only) Verify laptop features
+nvidia-offload glxinfo | head         # PRIME offload works
+systemctl status tlp.service          # TLP active
+systemctl status thermald.service     # thermal management
+cat /sys/class/power_supply/BAT0/charge_control_start_threshold  # 75
+cat /sys/class/power_supply/BAT0/charge_control_end_threshold    # 80
+
+# (adam only) Enable hibernation — calculate swap offset
+sudo btrfs inspect-internal map-swapfile -r /swap/swapfile
+# Copy the offset number and set it in hosts/adam/hardware-configuration.nix:
+#   boot.kernelParams = [ "resume_offset=<number>" ];
+# Then rebuild: nh os switch
 ```
 
 ## CHANGEME Markers
@@ -152,9 +219,11 @@ Search for `CHANGEME` across the config — these are values you must update:
 | File | What | When |
 |------|------|------|
 | `themes/default.nix` | Wallpaper sha256 hash | **Before install** (build blocker) |
-| `hosts/lightspeed/variables.nix` | email, gitUsername | **Before install** |
-| `hosts/lightspeed/hardware-configuration.nix` | Merge kernel modules + LUKS UUID | **Before install** (use `install.sh`) |
-| `hosts/lightspeed/variables.nix` | monitorLeft, monitorRight | After first boot |
+| `hosts/*/variables.nix` | email, gitUsername | **Before install** |
+| `hosts/*/hardware-configuration.nix` | Kernel modules + disk UUIDs | **Before install** |
+| `hosts/*/variables.nix` | monitors list | After first boot (`hyprctl monitors`) |
+| `hosts/adam/configuration.nix` | GPU bus IDs (intelBusId, nvidiaBusId) | **Before install** (`lspci \| grep -E 'VGA\|3D'`) |
+| `hosts/adam/hardware-configuration.nix` | resume_offset for hibernation | After first boot (`btrfs inspect-internal map-swapfile`) |
 | `home/system/waybar.nix` | temperature hwmon path | After first boot |
 
 ## Key Bindings (Cheat Sheet)
@@ -192,27 +261,33 @@ Search for `CHANGEME` across the config — these are values you must update:
 
 ```
 ├── install.sh                   # Automated installer helper
-├── flake.nix                    # Entry point
-├── hosts/lightspeed/
-│   ├── configuration.nix        # System config
-│   ├── hardware-configuration.nix # Generated
-│   ├── home.nix                 # Home Manager entry
-│   └── variables.nix            # Per-machine values
-├── nixos/                       # System modules
+├── flake.nix                    # Entry point (both hosts)
+├── hosts/
+│   ├── lightspeed/              # Desktop (AMD + RTX 3090 Ti, dual 4K)
+│   │   ├── configuration.nix    # System config + desktop GPU
+│   │   ├── hardware-configuration.nix # btrfs-on-LUKS, 7 subvols, NVMe
+│   │   ├── home.nix             # Home Manager entry
+│   │   └── variables.nix        # Per-machine values
+│   └── adam/                    # Laptop (ThinkPad T480s, i7-8550U)
+│       ├── configuration.nix    # System config + PRIME offload + TLP
+│       ├── hardware-configuration.nix # btrfs-on-LUKS, 6 subvols, hibernation
+│       ├── home.nix             # Home Manager entry
+│       └── variables.nix        # Per-machine values
+├── nixos/                       # Shared system modules
 │   ├── audio.nix                # PipeWire
 │   ├── bluetooth.nix            # Bluez + Blueman
-│   ├── boot.nix                 # LUKS + btrfs + systemd-boot
+│   ├── boot.nix                 # systemd-boot + latest kernel
 │   ├── btrfs.nix                # btrfs scrub + btrbk snapshots
 │   ├── docker.nix               # Docker daemon
 │   ├── flatpak.nix              # Flatpak + Flathub
-│   ├── gpu.nix                  # NVIDIA 3090 Ti
+│   ├── gpu.nix                  # NVIDIA desktop (lightspeed only)
 │   ├── greetd.nix               # GUI login
 │   ├── locale.nix               # Warsaw, PL layout
 │   ├── networking.nix           # NetworkManager
 │   ├── nix.nix                  # Flakes, GC, caches
 │   ├── printing.nix             # CUPS + PDF printer
 │   ├── sysctl.nix               # inotify limits, fast shutdown
-│   └── users.nix                # kiper account
+│   └── users.nix                # User account (from vars)
 ├── home/
 │   ├── packages.nix             # All user packages
 │   ├── programs/                # App configs
@@ -225,7 +300,7 @@ Search for `CHANGEME` across the config — these are values you must update:
 │   │   ├── yazi.nix             # TUI file manager
 │   │   └── zellij.nix           # Multiplexer
 │   ├── system/                  # Desktop environment
-│   │   ├── hyprland.nix         # WM + keybinds + rules
+│   │   ├── hyprland.nix         # WM + keybinds + rules + touchpad
 │   │   ├── waybar.nix           # Status bar
 │   │   ├── fuzzel.nix           # Launcher
 │   │   ├── mako.nix             # Notifications
@@ -239,6 +314,10 @@ Search for `CHANGEME` across the config — these are values you must update:
 └── themes/
     └── default.nix              # Stylix Solarized config
 ```
+
+### Variables pattern
+
+Each host has a `variables.nix` with machine-specific values. Shared modules receive `vars` via `specialArgs` (system) and `extraSpecialArgs` (Home Manager), set in `flake.nix`. This allows the same modules to work across all hosts without hardcoded paths.
 
 ## Troubleshooting
 
@@ -275,12 +354,9 @@ btrfs filesystem mkswapfile --size 64g /mnt/swapfile
 **Symptom:** LUKS prompt works, but no display after login
 1. Try switching TTY: `Ctrl+Alt+F2`
 2. Check logs: `journalctl -b -u greetd`
-3. If open driver is the issue — select previous generation from systemd-boot menu, then:
-   ```bash
-   # In gpu.nix: change open = true → open = false
-   sudo nixos-rebuild switch
-   ```
-4. Nuclear option: add `nomodeset` to kernel params (press `e` on boot entry in systemd-boot)
+3. **lightspeed**: If open driver is the issue — select previous generation from systemd-boot menu, then change `open = true` to `open = false` in `nixos/gpu.nix`
+4. **adam**: If PRIME offload causes issues, verify bus IDs: `lspci | grep -E 'VGA|3D'` and update `intelBusId`/`nvidiaBusId` in `hosts/adam/configuration.nix`
+5. Nuclear option: add `nomodeset` to kernel params (press `e` on boot entry in systemd-boot)
 
 ### greetd won't start (no login screen)
 **Symptom:** Boots to TTY instead of graphical login
@@ -312,12 +388,31 @@ mount /dev/nvme0n1p1 /mnt/boot
 
 # Chroot and fix:
 nixos-enter --root /mnt
-cd /home/kiper/.config/nixos
+cd /home/<user>/.config/nixos   # kiper for lightspeed, adam for adam
 nano <broken-file>
 nixos-rebuild boot
 exit
 reboot
 ```
+
+## Host-specific notes
+
+### `lightspeed` (Desktop)
+- NVIDIA RTX 3090 Ti with open kernel modules (`nixos/gpu.nix`)
+- Dual 4K monitors: HP 727pk 27" 60Hz + Samsung Odyssey G80SD 32" 240Hz
+- btrfs on LUKS — 7 subvolumes (@root, @home, @nix, @devel, @log, @snapshots, @swap)
+- btrbk snapshots (hourly, 48h/14d/4w/3m retention) for @root, @home, @devel
+- 64 GB swap file
+
+### `adam` (ThinkPad T480s)
+- Intel UHD 620 (primary) + NVIDIA MX150 in **PRIME offload** mode
+  - Run GPU-intensive apps with: `nvidia-offload <command>`
+- btrfs on LUKS — 6 subvolumes (@root, @home, @nix, @log, @snapshots, @swap — no @devel)
+- 16 GB swap file with **hibernation** (lid close on battery = hibernate)
+- TLP power management with ThinkPad battery thresholds (75-80%)
+- thermald for Intel thermal management
+- Lid switch: hibernate on battery, lock on AC
+- `hardware-configuration.nix` is a **template** — merge UUIDs from `nixos-generate-config`
 
 ## Future Additions
 
