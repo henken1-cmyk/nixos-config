@@ -273,9 +273,14 @@
         ", XF86AudioStop, exec, playerctl stop"
       ];
 
+      # ── Layer rules ───────────────────────────────────────
+      layerrule = [
+        "animation slide top, waybar"
+      ];
+
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
-        "waybar"
+        "$HOME/.config/nixos/home/scripts/waybar-autohide.sh"
         "mako"
         "swww-daemon && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"

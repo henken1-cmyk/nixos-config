@@ -14,6 +14,7 @@
       margin-right = 8;
 
       fixed-center = true;
+      "exclusive-zone" = -1; # Don't reserve space — windows always fill full screen
 
       # Layout: logo | media | submap | ··· workspaces ··· | hw-drawer | connectivity | idle | clock-group
       modules-left = [
