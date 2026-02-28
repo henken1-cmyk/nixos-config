@@ -143,6 +143,9 @@ in
     memoryPercent = 50;
   };
 
+  # Tailscale VPN
+  services.tailscale.enable = true;
+
   # SSH
   services.openssh.enable = true;
   programs.ssh.startAgent = false;
