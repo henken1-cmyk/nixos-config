@@ -45,6 +45,10 @@
     # Emoji picker
     bemoji
 
+    # Communication
+    discord
+    spotify
+
     # Media
     mpv
     imv
