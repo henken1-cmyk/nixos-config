@@ -238,7 +238,7 @@
       # ── Connectivity pill ─────────────────────────────────
       "group/connectivity" = {
         orientation = "inherit";
-        modules = [ "pulseaudio" "battery" "network" "bluetooth" ];
+        modules = [ "pulseaudio" "battery" "network" ];
       };
 
       pulseaudio = {
@@ -268,14 +268,6 @@
         format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
         tooltip-format = "{timeTo}, {power:.1f}W";
         interval = 30;
-      };
-
-      bluetooth = {
-        format = "󰂯";
-        format-connected = "󰂱 {device_alias}";
-        format-disabled = "󰂲";
-        on-click = "blueman-manager";
-        tooltip-format-connected = "{device_enumerate}";
       };
 
       # ── Idle inhibitor ────────────────────────────────────
@@ -515,11 +507,6 @@
 
       #battery.charging {
         color: #859900;
-      }
-
-      #bluetooth {
-        color: #b58900;
-        padding: 0 8px;
       }
 
       /* ── Idle inhibitor ─────────────────────────────────── */
