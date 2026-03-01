@@ -28,7 +28,7 @@
       # ── General ───────────────────────────────────────────
       general = {
         gaps_in = 4;
-        gaps_out = 8;
+        gaps_out = if (vars.waybarAutohide or false) then 0 else 8;
         border_size = 2;
         layout = "dwindle";
         allow_tearing = false;

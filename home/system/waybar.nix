@@ -10,8 +10,8 @@
       height = 38;
       spacing = 4;
       margin-top = if (vars.waybarAutohide or false) then 0 else 6;
-      margin-left = 8;
-      margin-right = 8;
+      margin-left = if (vars.waybarAutohide or false) then 0 else 8;
+      margin-right = if (vars.waybarAutohide or false) then 0 else 8;
 
       fixed-center = true;
 
@@ -314,7 +314,7 @@
         background-color: rgba(7, 54, 66, 0.85);
         border-radius: 20px;
         padding: 2px 4px;
-        margin: 4px 3px;
+        margin: ${if (vars.waybarAutohide or false) then "0px" else "4px"} 3px;
         color: #93a1a1;
       }
 
