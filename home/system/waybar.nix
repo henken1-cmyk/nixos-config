@@ -510,6 +510,8 @@
         color: #93a1a1;
         font-weight: bold;
         padding: 0 10px;
+        min-width: 70px;
+        text-align: center;
         border-right: 1px solid rgba(88, 110, 117, 0.4);
       }
 
