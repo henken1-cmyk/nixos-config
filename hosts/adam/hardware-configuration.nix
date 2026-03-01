@@ -83,11 +83,8 @@ in
   ];
 
   # Hibernation: resume from LUKS mapper
-  # CHANGEME: After first boot, calculate swap offset:
-  #   sudo btrfs inspect-internal map-swapfile -r /swap/swapfile
-  # Then set the offset below and rebuild.
   boot.resumeDevice = "/dev/mapper/cryptbtrfs";
-  boot.kernelParams = [ "resume_offset=CHANGEME-SWAP-OFFSET" ];
+  boot.kernelParams = [ "resume_offset=533760" ];
 
   networking.useDHCP = lib.mkDefault true;
 
