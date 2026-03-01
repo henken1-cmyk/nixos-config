@@ -30,6 +30,9 @@ in
   home.packages = with pkgs; [
     google-chrome
     parsec-bin
+    remmina    # RDP/VNC client (GUI)
+    freerdp    # RDP library used by Remmina
+    v4l-utils  # Camera/video device tools (laptop only)
   ];
 
   home = {

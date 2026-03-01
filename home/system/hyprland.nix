@@ -28,7 +28,7 @@
       # ── General ───────────────────────────────────────────
       general = {
         gaps_in = 4;
-        gaps_out = 8;
+        gaps_out = if (vars.waybarAutohide or false) then 0 else 8;
         border_size = 2;
         layout = "dwindle";
         allow_tearing = false;
@@ -275,7 +275,9 @@
 
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
-        "waybar"
+        (if (vars.waybarAutohide or false)
+          then "$HOME/.config/nixos/home/scripts/waybar-autohide.sh"
+          else "waybar")
         "mako"
         "swww-daemon && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, vars, ... }:
 
 {
   programs.waybar = {
@@ -9,9 +9,9 @@
       position = "top";
       height = 38;
       spacing = 4;
-      margin-top = 6;
-      margin-left = 8;
-      margin-right = 8;
+      margin-top = if (vars.waybarAutohide or false) then 0 else 6;
+      margin-left = if (vars.waybarAutohide or false) then 0 else 8;
+      margin-right = if (vars.waybarAutohide or false) then 0 else 8;
 
       fixed-center = true;
 
@@ -195,7 +195,7 @@
       # ── Connectivity pill ─────────────────────────────────
       "group/connectivity" = {
         orientation = "inherit";
-        modules = [ "pulseaudio" "network" "bluetooth" ];
+        modules = [ "pulseaudio" "battery" "network" "bluetooth" ];
       };
 
       pulseaudio = {
@@ -215,6 +215,16 @@
         tooltip-format-wifi = "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}";
         tooltip-format-ethernet = "{ifname}\n{ipaddr}/{cidr}";
         on-click = "nm-connection-editor";
+      };
+
+      battery = {
+        states = { warning = 30; critical = 15; };
+        format = "{icon} {capacity}%";
+        format-charging = "󰂄 {capacity}%";
+        format-plugged = "󰚥 {capacity}%";
+        format-icons = [ "󰁺" "󰁻" "󰁼" "󰁽" "󰁾" "󰁿" "󰂀" "󰂁" "󰂂" "󰁹" ];
+        tooltip-format = "{timeTo}, {power:.1f}W";
+        interval = 30;
       };
 
       bluetooth = {
@@ -280,6 +290,7 @@
         tooltip = false;
         on-click = "$HOME/.config/nixos/home/scripts/power-menu.sh";
       };
+      "exclusive-zone" = lib.mkIf (vars.waybarAutohide or false) (-1);
     }];
 
     # ── Custom CSS — Floating Islands with Solarized accent colors ──
@@ -303,7 +314,7 @@
         background-color: rgba(7, 54, 66, 0.85);
         border-radius: 20px;
         padding: 2px 4px;
-        margin: 4px 3px;
+        margin: ${if (vars.waybarAutohide or false) then "0px" else "4px"} 3px;
         color: #93a1a1;
       }
 
@@ -439,6 +450,25 @@
 
       #network.disconnected {
         opacity: 0.5;
+      }
+
+      #battery {
+        color: #859900;
+        padding: 0 8px;
+        border-right: 1px solid rgba(88, 110, 117, 0.4);
+      }
+
+      #battery.warning {
+        color: #e5c07b;
+      }
+
+      #battery.critical {
+        color: #dc322f;
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      #battery.charging {
+        color: #859900;
       }
 
       #bluetooth {

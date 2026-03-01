@@ -7,7 +7,7 @@
         enable = true;
         consoleMode = "max";
         editor = false; # Security: prevent kernel param editing
-        configurationLimit = 5;
+        configurationLimit = 1; # Show only the latest generation
       };
       efi.canTouchEfiVariables = true;
       timeout = 3;
