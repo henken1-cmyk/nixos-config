@@ -1,16 +1,15 @@
 #!/usr/bin/env bash
-# Start waybar hidden, show on top-edge hover, hide when cursor moves away
+# Start waybar visible, hide when cursor moves away, show on top-edge hover
 
 SHOW_THRESHOLD=2  # px from top to show bar
 HIDE_THRESHOLD=50 # px from top — moving below this hides bar
 
-# Kill any existing waybar and start fresh
 pkill waybar 2>/dev/null
 sleep 0.5
 waybar &
-sleep 2.0  # Wait for waybar to fully initialize before hiding
-pkill -SIGUSR1 waybar
-visible=false
+sleep 2.0  # wait for waybar to fully initialize
+
+visible=true  # waybar starts visible; loop will hide it when cursor moves away
 
 while true; do
     y=$(hyprctl cursorpos -j 2>/dev/null | jq -r '.y' 2>/dev/null | cut -d. -f1)
