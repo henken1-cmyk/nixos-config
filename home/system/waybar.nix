@@ -15,9 +15,12 @@
 
       fixed-center = true;
 
-      # Layout: logo | media | submap | ··· workspaces ··· | hw-drawer | connectivity | idle | clock-group
+      # Layout: Fibonacci-balanced (3:3 at rest, 5:3 when media+submap active)
+      # Left 3 permanent + 2 contextual | ··· workspaces ··· | 3 right
       modules-left = [
         "custom/logo"
+        "tray"
+        "group/hardware"
         "custom/media"
         "hyprland/submap"
       ];
@@ -27,8 +30,6 @@
       ];
 
       modules-right = [
-        "tray"
-        "group/hardware"
         "group/connectivity"
         "idle_inhibitor"
         "group/clock-group"
@@ -193,6 +194,7 @@
         modules = [ "custom/hw-icon" "cpu" "memory" "temperature" "disk" "custom/gpu" ];
       };
 
+
       "custom/hw-icon" = {
         format = "󰒓";
         tooltip = false;
@@ -338,7 +340,7 @@
     style = ''
       * {
         font-family: "SauceCodePro Nerd Font", "Noto Sans", monospace;
-        font-size: 13px;
+        font-size: 14px;
         min-height: 0;
         border: none;
         border-radius: 0;
@@ -348,22 +350,22 @@
         background: transparent;
       }
 
-      /* ── Island / Pill base ─────────────────────────────── */
+      /* ── Island / Pill base (Fibonacci spacing: 3, 5, 8, 13) ── */
       .modules-left > widget > *,
       .modules-center > widget > *,
       .modules-right > widget > * {
         background-color: rgba(7, 54, 66, 0.85);
-        border-radius: 20px;
-        padding: 2px 4px;
-        margin: ${if (vars.waybarAutohide or false) then "0px" else "4px"} 3px;
+        border-radius: 21px;
+        padding: 3px 8px;
+        margin: ${if (vars.waybarAutohide or false) then "0px" else "5px"} 3px;
         color: #93a1a1;
       }
 
       /* ── Logo ───────────────────────────────────────────── */
       #custom-logo {
         color: #268bd2;
-        font-size: 18px;
-        padding: 0 14px;
+        font-size: 21px;
+        padding: 0 13px;
         transition: all 0.3s ease;
       }
 
@@ -373,14 +375,14 @@
 
       /* ── Workspaces (centered dock) ──────────────────────── */
       #workspaces {
-        padding: 2px 6px;
+        padding: 3px 8px;
       }
 
       #workspaces button {
         color: #93a1a1;
-        padding: 4px 10px;
+        padding: 3px 8px;
         margin: 2px 3px;
-        border-radius: 12px;
+        border-radius: 13px;
         background: transparent;
         min-width: 20px;
         transition: all 0.4s cubic-bezier(.55, -0.68, .48, 1.682);
@@ -388,14 +390,14 @@
 
       #workspaces button label {
         font-family: "SauceCodePro Nerd Font", monospace;
-        font-size: 13px;
+        font-size: 14px;
       }
 
       #workspaces button.active {
         background-color: rgba(38, 139, 210, 0.3);
         color: #fdf6e3;
-        padding-left: 12px;
-        padding-right: 12px;
+        padding-left: 13px;
+        padding-right: 13px;
       }
 
       #workspaces button.empty {
@@ -411,13 +413,13 @@
       #submap {
         color: #cb4b16;
         font-weight: bold;
-        padding: 0 10px;
+        padding: 0 8px;
       }
 
       /* ── Media ──────────────────────────────────────────── */
       #custom-media {
         color: #2aa198;
-        padding: 0 12px;
+        padding: 0 8px;
         font-style: italic;
       }
 
@@ -437,8 +439,8 @@
       /* ── Hardware drawer ────────────────────────────────── */
       #custom-hw-icon {
         color: #93a1a1;
-        padding: 0 10px;
-        font-size: 15px;
+        padding: 0 8px;
+        font-size: 16px;
       }
 
       #cpu {
@@ -522,7 +524,7 @@
 
       /* ── Idle inhibitor ─────────────────────────────────── */
       #idle_inhibitor {
-        padding: 0 10px;
+        padding: 0 8px;
         color: #586e75;
         transition: all 0.3s ease;
       }
@@ -541,7 +543,7 @@
       #custom-theme-toggle {
         color: #cb4b16;
         padding: 0 8px;
-        font-size: 15px;
+        font-size: 16px;
         border-right: 1px solid rgba(88, 110, 117, 0.4);
         transition: all 0.3s ease;
       }
@@ -553,15 +555,14 @@
       #clock {
         color: #93a1a1;
         font-weight: bold;
-        padding: 0 10px;
-        min-width: 70px;
+        padding: 0 8px;
         border-right: 1px solid rgba(88, 110, 117, 0.4);
       }
 
       #custom-power {
         color: #dc322f;
-        padding: 0 10px;
-        font-size: 15px;
+        padding: 0 8px;
+        font-size: 16px;
         transition: all 0.3s ease;
       }
 
@@ -586,7 +587,7 @@
       tooltip {
         background-color: rgba(0, 43, 54, 0.95);
         border: 1px solid #268bd2;
-        border-radius: 8px;
+        border-radius: 13px;
         color: #93a1a1;
       }
 

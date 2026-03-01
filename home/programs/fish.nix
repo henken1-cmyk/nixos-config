@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, vars, ... }:
 
 {
   programs.fish = {
@@ -25,12 +25,12 @@
       set -g theme_display_date no
       set -g theme_display_cmd_duration yes
       set -g theme_powerline_fonts yes
-
+    '' + (if vars.zellijAutostart or false then ''
       # Zellij auto-attach (if not already inside zellij)
       if not set -q ZELLIJ
         zellij attach --create default
       end
-    '';
+    '' else "");
 
     shellAbbrs = {
       # Nix

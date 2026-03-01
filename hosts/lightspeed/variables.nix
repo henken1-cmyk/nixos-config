@@ -36,6 +36,9 @@
   theme = "solarized-dark";
   base16Scheme = "solarized-dark";
 
+  # Zellij
+  zellijAutostart = false;
+
   # Hyprsunset (Warsaw coordinates for auto schedule)
   latitude = 52.23;
   longitude = 21.01;
