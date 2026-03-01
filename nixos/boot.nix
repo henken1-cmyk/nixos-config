@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, vars, ... }:
 
 {
   boot = {
@@ -7,7 +7,12 @@
         enable = true;
         consoleMode = "max";
         editor = false; # Security: prevent kernel param editing
-        configurationLimit = 1; # Show only the latest generation
+        configurationLimit = vars.bootGenerations or 10;
+        sortKey = "nixos"; # NixOS entries sort before auto-detected Windows
+        # "Reboot to firmware" entry controlled via loader.conf
+        extraInstallCommands = lib.mkIf (!(vars.showFirmwareEntry or true)) ''
+          echo "auto-firmware no" >> /boot/loader/loader.conf
+        '';
       };
       efi.canTouchEfiVariables = true;
       timeout = 3;

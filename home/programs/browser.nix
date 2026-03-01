@@ -12,6 +12,7 @@ in
       isDefault = true;
 
       # Extensions
+      extensions.force = true;
       extensions.packages = with addons; [
         ublock-origin
         darkreader
@@ -40,6 +41,9 @@ in
         "browser.tabs.inTitlebar" = 0;
         "browser.uidensity" = 1;
         "browser.toolbars.bookmarks.visibility" = "newtab";
+
+        # Enable Stylix userChrome/userContent CSS
+        "toolkit.legacyUserProfileCustomizations.stylesheets" = true;
 
         # Disable telemetry
         "toolkit.telemetry.enabled" = false;

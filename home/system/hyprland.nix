@@ -205,9 +205,9 @@
         "$mod, 9, workspace, 9"
 
         # ─ Workspace cycling ─
-        "$mod, Tab, workspace, previous"
-        "ALT, Tab, cyclenext"
-        "ALT SHIFT, Tab, cyclenext, prev"
+        "$mod, Tab, workspace, e+1"
+        "$mod SHIFT, Tab, workspace, e-1"
+        "ALT, Tab, workspace, previous"
 
         # ─ Layout ─
         "$mod, F, fullscreen, 0"

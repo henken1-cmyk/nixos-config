@@ -28,6 +28,10 @@
     "eDP-1,1366x768@60,0x0,1"
   ];
 
+  # Boot
+  bootGenerations = 1;
+  showFirmwareEntry = false;
+
   # Theme
   theme = "catppuccin-mocha";
   base16Scheme = "catppuccin-mocha";

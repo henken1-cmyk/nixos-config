@@ -39,6 +39,10 @@ in
 
     # Ensure common directories exist
     file.".local/share/wallpapers/.keep".text = "";
+
+    # Stylix Solarized theme for Flatpak Vesktop
+    file.".var/app/dev.vencord.Vesktop/config/vesktop/themes/stylix.theme.css".text =
+      config.stylix.targets.vesktop.themeBody;
   };
 
   # Let Home Manager manage itself
@@ -98,6 +102,7 @@ in
 
   # Stylix: tell it which Firefox profile to theme
   stylix.targets.firefox.profileNames = [ "default" ];
+  stylix.targets.firefox.colorTheme.enable = true;
   stylix.targets.waybar.enable = false; # Custom CSS in waybar.nix
 
   # bat (theme set by Stylix)

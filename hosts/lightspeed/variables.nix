@@ -28,6 +28,10 @@
     "DP-1,3840x2160@240,2560x0,1.25"
   ];
 
+  # Boot
+  bootGenerations = 10;
+  showFirmwareEntry = true;
+
   # Theme
   theme = "solarized-dark";
   base16Scheme = "solarized-dark";
