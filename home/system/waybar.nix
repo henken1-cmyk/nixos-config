@@ -24,6 +24,7 @@
 
       modules-center = [
         "hyprland/workspaces"
+        "clock"
       ];
 
       modules-right = [
@@ -249,7 +250,7 @@
       # ── Clock group ───────────────────────────────────────
       "group/clock-group" = {
         orientation = "inherit";
-        modules = [ "custom/weather" "custom/theme-toggle" "clock" "custom/power" ];
+        modules = [ "custom/weather" "custom/theme-toggle" "custom/power" ];
       };
 
       "custom/weather" = {
