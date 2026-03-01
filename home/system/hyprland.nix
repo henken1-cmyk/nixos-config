@@ -273,11 +273,6 @@
         ", XF86AudioStop, exec, playerctl stop"
       ];
 
-      # ── Layer rules ───────────────────────────────────────
-      layerrule = lib.optionals (vars.waybarAutohide or false) [
-        "animation slide top, waybar"
-      ];
-
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
         (if (vars.waybarAutohide or false)
