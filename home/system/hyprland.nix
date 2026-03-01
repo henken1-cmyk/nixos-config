@@ -32,8 +32,7 @@
         border_size = 2;
         layout = "dwindle";
         allow_tearing = false;
-        "col.active_border" = "rgb(b4befe)";   # lavender
-        "col.inactive_border" = "rgb(45475a)"; # surface1 (muted)
+        # Colors handled by Stylix
       };
 
       # ── Decoration ────────────────────────────────────────
