@@ -9,7 +9,7 @@
       position = "top";
       height = 38;
       spacing = 4;
-      margin-top = 0;
+      margin-top = if (vars.waybarAutohide or false) then 0 else 6;
       margin-left = 8;
       margin-right = 8;
 
