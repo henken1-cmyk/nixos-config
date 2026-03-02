@@ -35,9 +35,6 @@
     satty
     gpu-screen-recorder
 
-    # Notifications
-    SwayNotificationCenter
-
     # Clipboard
     wl-clipboard
     cliphist
