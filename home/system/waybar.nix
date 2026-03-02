@@ -7,7 +7,7 @@
     settings = [{
       layer = "top";
       position = "top";
-      height = 38;
+      height = 44;
       spacing = 4;
       margin-top = if (vars.waybarAutohide or false) then 0 else 6;
       margin-left = if (vars.waybarAutohide or false) then 0 else 8;
@@ -165,7 +165,7 @@
 
       # ── Media (MPRIS) ────────────────────────────────────
       "custom/media" = {
-        format = "{icon} {}";
+        format = "{icon} {text}";
         return-type = "json";
         max-length = 40;
         format-icons = {
@@ -297,7 +297,7 @@
 
       "custom/weather" = {
         format = "{}";
-        exec = "${pkgs.wttrbar}/bin/wttrbar --location Warsaw --fahrenheit false";
+        exec = "${pkgs.wttrbar}/bin/wttrbar --location Warsaw";
         return-type = "json";
         interval = 3600;
         tooltip = true;

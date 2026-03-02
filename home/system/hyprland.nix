@@ -241,6 +241,9 @@
         # ─ Screen recording toggle ─
         "$mod SHIFT, R, exec, $HOME/.config/nixos/home/scripts/screen-record.sh"
 
+        # ─ Waybar restart ─
+        "$mod SHIFT, W, exec, pkill waybar; waybar &"
+
         # ─ Monitor focus ─
         "$mod, comma, focusmonitor, l"
         "$mod SHIFT, comma, movewindow, mon:l"

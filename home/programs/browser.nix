@@ -25,6 +25,7 @@ in
         # Wayland
         "widget.use-xdg-desktop-portal.file-picker" = 1;
         "widget.use-xdg-desktop-portal.mime-handler" = 1;
+        "widget.use-xdg-desktop-portal.notifications" = 1;
 
         # Privacy
         "privacy.trackingprotection.enabled" = true;
