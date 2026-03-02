@@ -74,6 +74,7 @@
           "class<Warp|warp|dev.warp.Warp|warp-terminal>" = "󰰭 ";
           "class<[Tt]hunderbird|[Tt]hunderbird-esr>" = " ";
           "class<eu.betterbird.Betterbird>" = " ";
+          "class<gmail>" = "\uE20B ";
           "title<.*gmail.*>" = "󰊫 ";
           "class<[Tt]elegram-desktop|org.telegram.desktop|io.github.tdesktop_x64.TDesktop>" = " ";
           "class<discord|discord-canary|[Ww]ebcord|[Vv]esktop|com.discordapp.Discord|dev.vencord.Vesktop>" = " ";
@@ -81,9 +82,11 @@
           "title<.*Signal.*>" = "󰍩 ";
           "title<.*whatsapp.*>" = " ";
           "title<.*zapzap.*>" = " ";
+          "class<messenger>" = "\uF11F ";
           "title<.*messenger.*>" = " ";
           "title<.*facebook.*>" = " ";
           "title<.*Discord.*>" = " ";
+          "class<claude>" = "\uE6A9 ";
           "title<.*ChatGPT.*>" = "󰚩 ";
           "title<.*deepseek.*>" = "󰚩 ";
           "title<.*qwen.*>" = "󰚩 ";
@@ -109,6 +112,7 @@
           "class<VSCode|code|code-url-handler|code-oss|codium|codium-url-handler|VSCodium>" = "󰨞 ";
           "class<dev.zed.Zed>" = "󰵁";
           "class<codeblocks>" = "󰅩 ";
+          "class<github>" = "\uF113 ";
           "title<.*github.*>" = " ";
           "class<mousepad>" = " ";
           "class<libreoffice-writer>" = " ";
