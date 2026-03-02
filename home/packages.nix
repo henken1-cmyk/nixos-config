@@ -36,7 +36,7 @@
     gpu-screen-recorder
 
     # Notifications
-    sway-notification-center
+    SwayNotificationCenter
 
     # Clipboard
     wl-clipboard
