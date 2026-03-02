@@ -84,6 +84,13 @@
         force_split = 2; # Always split to the right/bottom
       };
 
+      scrolling = {
+        column_width = 0.382;
+        explicit_column_widths = "0.236, 0.382, 0.5, 0.618, 0.764, 1.0";
+        focus_fit_method = 1; # 0 = center, 1 = fit
+        follow_focus = true;
+      };
+
       misc = {
         disable_hyprland_logo = true;
         disable_splash_rendering = true;
@@ -213,6 +220,7 @@
         "$mod, F, fullscreen, 0"
         "$mod SHIFT, F, fullscreen, 1" # Fake fullscreen / monocle
         "$mod, P, pseudo" # Pseudo-tile
+        ''$mod SHIFT, L, exec, hyprctl keyword general:layout "$(hyprctl getoption general:layout -j | grep -q scrolling && echo dwindle || echo scrolling)"''
 
         # ─ Resize mode ─
         "$mod, R, submap, resize"
@@ -245,6 +253,10 @@
         # ─ Special workspace (scratchpad) ─
         "$mod, grave, togglespecialworkspace, magic"
         "$mod SHIFT, grave, movetoworkspace, special:magic"
+
+        # ─ Super + scroll wheel to scroll viewport (scrolling layout) ─
+        "$mod, mouse_down, layoutmsg, move +col"
+        "$mod, mouse_up, layoutmsg, move -col"
       ];
 
       # ─ Resize submap ─
@@ -255,6 +267,7 @@
         "$mod, mouse:272, movewindow" # Super + left click drag
         "$mod, mouse:273, resizewindow" # Super + right click drag
       ];
+
 
       # ─ Volume (repeat on hold) ─
       bindel = [

@@ -13,6 +13,8 @@ in
     ../../nixos/docker.nix
     ../../nixos/flatpak.nix
     ../../nixos/gpu.nix
+    ../../nixos/jellyfin.nix
+    ../../nixos/libvirt.nix
     ../../nixos/greetd.nix
     ../../nixos/locale.nix
     ../../nixos/networking.nix
@@ -29,7 +31,6 @@ in
   xdg.portal = {
     enable = true;
     extraPortals = with pkgs; [
-      xdg-desktop-portal-hyprland
       xdg-desktop-portal-gtk
     ];
     config.common.default = [ "hyprland" "gtk" ];

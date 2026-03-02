@@ -37,9 +37,14 @@
       url = "github:Gerg-L/spicetify-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, ... }@inputs:
     let
       lightspeedVars = import ./hosts/lightspeed/variables.nix;
       adamVars = import ./hosts/adam/variables.nix;
@@ -49,6 +54,7 @@
         specialArgs = { inherit inputs; vars = lightspeedVars; };
         modules = [
           ./hosts/lightspeed/configuration.nix
+          hyprland.nixosModules.default
           stylix.nixosModules.stylix
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
@@ -69,6 +75,7 @@
         specialArgs = { inherit inputs; vars = adamVars; };
         modules = [
           ./hosts/adam/configuration.nix
+          hyprland.nixosModules.default
           stylix.nixosModules.stylix
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops

@@ -15,6 +15,7 @@
       "audio"
       "input"
       "render"
+      "libvirtd"
       "devel" # /devel shared workspace
     ];
     shell = pkgs.fish;

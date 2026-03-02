@@ -66,6 +66,12 @@ in
     options = [ "subvol=@snapshots" ] ++ btrfsOpts;
   };
 
+  fileSystems."/var/lib/jellyfin" = {
+    device = "/dev/mapper/cryptbtrfs";
+    fsType = "btrfs";
+    options = [ "subvol=@jellyfin" ] ++ btrfsOpts;
+  };
+
   # Top-level btrfs mount for btrbk snapshot access
   fileSystems."/mnt/btrfs-root" = {
     device = "/dev/mapper/cryptbtrfs";

@@ -48,6 +48,7 @@
     # Media
     mpv
     imv
+    ffmpeg-full
     playerctl # Media key control (play/pause/next/prev)
 
     # File management
@@ -88,6 +89,9 @@
 
     # Network discovery
     wsdd # Windows Service Discovery for Thunar network browsing
+
+    # Remote desktop / streaming
+    parsec-bin
 
     # Virtualization / disk images
     libguestfs-with-appliance # guestmount for VHDX/VHD/qcow2

@@ -5,6 +5,7 @@ let
 in
 {
   imports = [
+    inputs.hyprland.homeManagerModules.default
     inputs.nixvim.homeModules.nixvim
     ../../home/packages.nix
     # Programs
@@ -31,6 +32,8 @@ in
   home.packages = with pkgs; [
     headsetcontrol # Logitech headset sidetone/battery control
     easyeffects    # PipeWire EQ/compression for mic & output
+    qbittorrent
+    obs-studio
   ];
 
   home = {

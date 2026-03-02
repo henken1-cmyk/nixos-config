@@ -12,8 +12,16 @@
       # Emacs-style keybinds (default, explicit)
       fish_default_key_bindings
 
-      # No greeting
-      set -g fish_greeting
+      # Claude-generated tech tip greeting
+      function fish_greeting
+        set -l tips_file "$HOME/.local/share/greeting/tips.json"
+        if test -f $tips_file
+          set -l tip (jq -r '.[(now | floor) % length]' $tips_file)
+          set_color brblue
+          echo "  $tip"
+          set_color normal
+        end
+      end
 
       # bobthefish powerline theme config
       set -g theme_color_scheme solarized-dark
@@ -104,4 +112,22 @@
     };
   };
 
+  # Daily Claude-generated tech tips for fish greeting
+  systemd.user.services.greeting-generate = {
+    Unit.Description = "Generate fish greeting tips via Claude";
+    Service = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash %h/.config/nixos/home/scripts/greeting-generate.sh";
+      Environment = "PATH=${pkgs.jq}/bin:/run/current-system/sw/bin:%h/.nix-profile/bin";
+    };
+  };
+
+  systemd.user.timers.greeting-generate = {
+    Unit.Description = "Daily fish greeting tips generation";
+    Timer = {
+      OnCalendar = "daily";
+      Persistent = true;
+    };
+    Install.WantedBy = [ "timers.target" ];
+  };
 }

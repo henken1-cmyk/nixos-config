@@ -5,6 +5,7 @@ let
 in
 {
   imports = [
+    inputs.hyprland.homeManagerModules.default
     inputs.nixvim.homeModules.nixvim
     ../../home/packages.nix
     # Programs
