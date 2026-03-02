@@ -20,7 +20,7 @@ let
     };
     desktopEntry = {
       inherit name icon;
-      exec = "env MOZ_APP_NAME=\"${class}\" firefox -P \"${class}\" --no-remote \"${url}\"";
+      exec = "firefox --name \"${class}\" -P \"${class}\" --no-remote \"${url}\"";
       terminal = false;
       categories = [ "Network" ];
       startupNotify = true;
