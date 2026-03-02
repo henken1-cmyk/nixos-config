@@ -85,8 +85,12 @@
           "title<.*facebook.*>" = " ";
           "title<.*Discord.*>" = " ";
           "title<.*ChatGPT.*>" = "󰚩 ";
+          "class<claude>" = "󰚩 ";
           "title<.*deepseek.*>" = "󰚩 ";
           "title<.*qwen.*>" = "󰚩 ";
+          "class<messenger>" = " ";
+          "class<gmail>" = "󰊫 ";
+          "class<github>" = " ";
           "class<subl>" = "󰅳 ";
           "class<slack>" = " ";
           "class<mpv>" = " ";
