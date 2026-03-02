@@ -11,6 +11,7 @@ in
     ../../nixos/boot.nix
     # No btrfs.nix — laptop has no @devel subvolume, btrfs config is below
     ../../nixos/docker.nix
+    ../../nixos/monitoring.nix
     ../../nixos/flatpak.nix
     ../../nixos/greetd.nix
     ../../nixos/locale.nix
