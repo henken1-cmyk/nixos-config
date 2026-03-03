@@ -31,11 +31,10 @@
   boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
   boot.kernelParams = [ "nvidia-drm.modeset=1" "nvidia-drm.fbdev=1" ];
 
-  # NVENC for gpu-screen-recorder and OBS
+  # NVENC for gpu-screen-recorder
   environment.systemPackages = with pkgs; [
     nvidia-vaapi-driver
     libva
     libva-utils
-    cudatoolkit # NVIDIA CUDA for hardware encoding
   ];
 }

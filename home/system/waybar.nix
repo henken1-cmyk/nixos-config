@@ -45,11 +45,19 @@
 
       # ── Notifications (swaync indicator) ────────────────────
       "custom/notifications" = {
-        format = "●";
-        exec = "swaync-client -c";
+        format = "{icon}";
+        format-icons = {
+          none = "";
+          notification = "●";
+          dnd-none = "";
+          dnd-notification = "●";
+        };
+        return-type = "json";
+        exec = "swaync-client -swb";
         on-click = "swaync-client -t -sw";
-        return-type = "text";
-        interval = 1;
+        on-click-right = "swaync-client -d -sw";
+        escape = true;
+        tooltip = true;
       };
 
       # ── Workspaces (centered, with app icons) ─────────────
@@ -267,7 +275,7 @@
 
       network = {
         format-wifi = "󰖩 {signalStrength}%";
-        format-ethernet = "󰈁 {ipaddr}";
+        format-ethernet = "󰈁";
         format-disconnected = "󰖪 off";
         tooltip-format-wifi = "{essid} ({signalStrength}%)\n{ipaddr}/{cidr}";
         tooltip-format-ethernet = "{ifname}\n{ipaddr}/{cidr}";
@@ -394,8 +402,17 @@
         padding: 0 6px;
       }
 
+      #custom-notifications.none {
+        opacity: 0.3;
+      }
+
       #custom-notifications:hover {
         color: #fdf6e3;
+      }
+
+      #custom-notifications.dnd-notification,
+      #custom-notifications.dnd-none {
+        color: #586e75;
       }
 
       /* ── Workspaces (centered dock) ──────────────────────── */
@@ -549,7 +566,10 @@
 
       /* ── Idle inhibitor ─────────────────────────────────── */
       #idle_inhibitor {
-        padding: 0 8px;
+        padding: 0;
+        min-width: 34px;
+        min-height: 34px;
+        border-radius: 50%;
         color: #586e75;
         transition: all 0.3s ease;
       }
