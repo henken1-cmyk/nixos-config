@@ -22,7 +22,7 @@ in
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "Hyprland --config ${greeterHyprlandConfig}";
+      command = lib.mkForce "Hyprland --config ${greeterHyprlandConfig}";
       user = "greeter";
     };
   };

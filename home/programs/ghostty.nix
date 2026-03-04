@@ -41,6 +41,12 @@
 
       # Confirm close
       confirm-close-surface = false;
+
+      # Pass Ctrl+Tab / Ctrl+Shift+Tab to terminal (Zellij tab switching)
+      keybind = [
+        "ctrl+tab=unbind"
+        "ctrl+shift+tab=unbind"
+      ];
     };
   };
 }

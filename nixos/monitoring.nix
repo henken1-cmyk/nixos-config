@@ -8,7 +8,7 @@ let
     scrape_configs:
       - job_name: 'node'
         static_configs:
-          - targets: ['host.docker.internal:9100']
+          - targets: ['localhost:9100']
   '';
 
   grafanaDatasource = pkgs.writeText "datasource.yml" ''
@@ -17,7 +17,7 @@ let
       - name: Prometheus
         type: prometheus
         access: proxy
-        url: http://prometheus:9090
+        url: http://localhost:9090
         isDefault: true
         uid: prometheus
   '';
@@ -51,27 +51,11 @@ in
     ];
   };
 
-  # ── Docker network for monitoring stack ─────────────────────────
-  systemd.services.docker-network-monitoring = {
-    description = "Create Docker network for monitoring";
-    after = [ "docker.service" ];
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "oneshot";
-      RemainAfterExit = true;
-    };
-    script = ''
-      ${pkgs.docker}/bin/docker network inspect monitoring >/dev/null 2>&1 || \
-        ${pkgs.docker}/bin/docker network create monitoring
-    '';
-  };
-
   # ── Prometheus container ────────────────────────────────────────
   virtualisation.oci-containers.backend = "docker";
 
   virtualisation.oci-containers.containers.prometheus = {
     image = "prom/prometheus:latest";
-    ports = [ "127.0.0.1:9090:9090" ];
     volumes = [
       "${prometheusConfig}:/etc/prometheus/prometheus.yml:ro"
       "prometheus-data:/prometheus"
@@ -80,16 +64,12 @@ in
       "--config.file=/etc/prometheus/prometheus.yml"
       "--storage.tsdb.path=/prometheus"
     ];
-    extraOptions = [
-      "--add-host=host.docker.internal:host-gateway"
-      "--network=monitoring"
-    ];
+    extraOptions = [ "--network=host" ];
   };
 
   # ── Grafana container ──────────────────────────────────────────
   virtualisation.oci-containers.containers.grafana = {
     image = "grafana/grafana:latest";
-    ports = [ "127.0.0.1:3000:3000" ];
     environment = {
       GF_SECURITY_ADMIN_PASSWORD = "qweqwe";
     };
@@ -100,14 +80,6 @@ in
       "${grafanaDashboard}:/var/lib/grafana/dashboards/hw-monitor.json:ro"
     ];
     dependsOn = [ "prometheus" ];
-    extraOptions = [
-      "--network=monitoring"
-    ];
+    extraOptions = [ "--network=host" ];
   };
-
-  # ── Ensure containers start after network is created ───────────
-  systemd.services.docker-prometheus.after = [ "docker-network-monitoring.service" ];
-  systemd.services.docker-prometheus.requires = [ "docker-network-monitoring.service" ];
-  systemd.services.docker-grafana.after = [ "docker-network-monitoring.service" ];
-  systemd.services.docker-grafana.requires = [ "docker-network-monitoring.service" ];
 }

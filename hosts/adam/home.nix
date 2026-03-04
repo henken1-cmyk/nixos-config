@@ -24,6 +24,7 @@ in
     ../../home/system/hypridle.nix
     ../../home/system/hyprlock.nix
     ../../home/system/swww.nix
+    ../../home/system/ags.nix
   ];
 
   # Adam-specific packages

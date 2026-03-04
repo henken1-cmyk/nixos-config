@@ -110,6 +110,13 @@
       # 1-9 across both monitors, Hyprland decides placement
       # No explicit workspace-to-monitor binding
 
+      # ── Layer Rules ────────────────────────────────────────
+      layerrule = [
+        "match:namespace = monitor-widgets, blur 1"
+        "match:namespace = monitor-widgets, ignorealpha 0.2"
+        "match:namespace = monitor-widgets, noanim"
+      ];
+
       # ── Window Rules (v3 syntax, Hyprland 0.53+) ─────────
       windowrule = [
         # Float utility windows
@@ -242,6 +249,9 @@
         "$mod SHIFT, semicolon, movewindow, mon:r"
         "$mod CTRL, semicolon, movecurrentworkspacetomonitor, r"
 
+        # ─ Monitor widgets ─
+        "$mod, W, exec, ags toggle monitor-widgets"
+
         # ─ Special workspace (scratchpad) ─
         "$mod, grave, togglespecialworkspace, magic"
         "$mod SHIFT, grave, movetoworkspace, special:magic"
@@ -290,6 +300,7 @@
         "hyprsunset"
         "swayosd-server"
         "gnome-keyring-daemon --start --components=secrets,ssh"
+        "ags run"
       ];
     };
 
