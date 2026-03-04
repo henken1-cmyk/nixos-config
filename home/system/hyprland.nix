@@ -113,8 +113,9 @@
       # ── Layer Rules ────────────────────────────────────────
       layerrule = [
         "match:namespace = monitor-widgets, blur 1"
-        "match:namespace = monitor-widgets, ignorealpha 0.2"
-        "match:namespace = monitor-widgets, noanim"
+        "match:namespace = monitor-widgets, ignore_alpha 0.2"
+        "match:namespace = monitor-widgets, no_anim on"
+        "match:namespace = monitor-widgets, order 1"
       ];
 
       # ── Window Rules (v3 syntax, Hyprland 0.53+) ─────────

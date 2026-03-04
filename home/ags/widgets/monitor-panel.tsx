@@ -1,7 +1,9 @@
-import { createState } from "ags"
+import { createState, createComputed } from "ags"
 import { interval } from "ags/time"
 import app from "ags/gtk4/app"
+import Gtk from "gi://Gtk?version=4.0"
 import Astal from "gi://Astal?version=4.0"
+import Gtk4LayerShell from "gi://Gtk4LayerShell?version=1.0"
 import { queryInstant } from "../lib/prometheus"
 import { icons, thresholdClass } from "../lib/theme"
 import MonitorCard from "./monitor-card"
@@ -45,7 +47,7 @@ export default function MonitorPanel() {
     }
 
     const gpuTempVal = await queryInstant(
-      'node_hwmon_temp_celsius{chip=~".*nvidia.*"}'
+      'node_hwmon_temp_celsius{chip="platform_thinkpad_hwmon",sensor="temp2"}'
     )
     if (gpuTempVal) {
       const v = Math.round(parseFloat(gpuTempVal))
@@ -82,57 +84,59 @@ export default function MonitorPanel() {
 
   return (
     <window
-      visible
       namespace="monitor-widgets"
       name="monitor-widgets"
-      layer={Astal.Layer.TOP}
       exclusivity={Astal.Exclusivity.IGNORE}
       anchor={Astal.WindowAnchor.RIGHT | Astal.WindowAnchor.BOTTOM}
       marginRight={16}
       marginBottom={16}
       application={app}
+      $={(self) => {
+        Gtk4LayerShell.set_layer(self, Gtk4LayerShell.Layer.BOTTOM)
+        self.visible = true
+      }}
     >
-      <box cssClasses={["monitor-panel"]} vertical>
+      <box cssClasses={["monitor-panel"]} orientation={Gtk.Orientation.VERTICAL}>
         <box cssClasses={["monitor-row"]}>
           <MonitorCard
             icon={icons.thermometer}
             title="CPU Temp"
-            value={() => cpuTemp().display}
-            statusClass={() => thresholdClass(cpuTemp().value, 70, 90)}
+            value={createComputed(() => cpuTemp().display)}
+            statusClass={createComputed(() => thresholdClass(cpuTemp().value, 70, 90))}
           />
           <MonitorCard
             icon={icons.cpu}
             title="CPU Load"
-            value={() => cpuLoad().display}
-            statusClass={() => thresholdClass(cpuLoad().value, 70, 90)}
+            value={createComputed(() => cpuLoad().display)}
+            statusClass={createComputed(() => thresholdClass(cpuLoad().value, 70, 90))}
           />
         </box>
         <box cssClasses={["monitor-row"]}>
           <MonitorCard
             icon={icons.gpu}
             title="GPU Temp"
-            value={() => gpuTemp().display}
-            statusClass={() => thresholdClass(gpuTemp().value, 75, 95)}
+            value={createComputed(() => gpuTemp().display)}
+            statusClass={createComputed(() => thresholdClass(gpuTemp().value, 75, 95))}
           />
           <MonitorCard
             icon={icons.memory}
             title="RAM"
-            value={() => ram().display}
-            statusClass={() => thresholdClass(ram().value, 70, 90)}
+            value={createComputed(() => ram().display)}
+            statusClass={createComputed(() => thresholdClass(ram().value, 70, 90))}
           />
         </box>
         <box cssClasses={["monitor-row"]}>
           <MonitorCard
             icon={icons.disk}
             title="NVMe"
-            value={() => nvme().display}
-            statusClass={() => thresholdClass(nvme().value, 55, 70)}
+            value={createComputed(() => nvme().display)}
+            statusClass={createComputed(() => thresholdClass(nvme().value, 55, 70))}
           />
           <MonitorCard
             icon={icons.network}
             title="Network"
-            value={() => net().display}
-            statusClass={() => "normal"}
+            value={createComputed(() => net().display)}
+            statusClass={createComputed(() => "normal")}
           />
         </box>
       </box>
