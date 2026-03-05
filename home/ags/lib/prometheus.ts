@@ -2,9 +2,9 @@ import { fetch } from "ags/fetch"
 
 const PROMETHEUS_URL = "http://localhost:9090"
 
-export async function queryInstant(expr: string): Promise<string | null> {
+export async function queryInstant(expr: string, url: string = PROMETHEUS_URL): Promise<string | null> {
   try {
-    const resp = await fetch(`${PROMETHEUS_URL}/api/v1/query`, {
+    const resp = await fetch(`${url}/api/v1/query`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: `query=${encodeURIComponent(expr)}`,

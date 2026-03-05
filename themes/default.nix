@@ -6,7 +6,7 @@
     autoEnable = true;
 
     # Per-host theme (set in hosts/<name>/variables.nix)
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/${vars.base16Scheme}.yaml";
+    base16Scheme = ./biskupi-fiolet.yaml;
     polarity = "dark";
 
     # Wallpaper (required by Stylix even if swww manages it)
