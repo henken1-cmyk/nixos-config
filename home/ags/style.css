@@ -65,3 +65,37 @@ window {
   color: #9070d0;
   margin-bottom: 6px;
 }
+
+/* History Panel */
+
+.history-panel-box {
+  padding: 16px;
+}
+
+.history-section {
+  margin: 0 8px;
+}
+
+.history-row {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.sparkline-card {
+  background-color: rgba(45, 20, 56, 0.6);
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin: 4px;
+  min-width: 230px;
+}
+
+.sparkline-label {
+  font-size: 11px;
+  color: #80c8a0;
+  margin-bottom: 4px;
+}
+
+.sparkline-canvas {
+  border-radius: 8px;
+  background-color: rgba(18, 8, 24, 0.4);
+}
