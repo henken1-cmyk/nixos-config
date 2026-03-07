@@ -11,7 +11,7 @@
 
   hardware.nvidia = {
     modesetting.enable = true;
-    powerManagement.enable = false; # Desktop, not laptop
+    powerManagement.enable = true; # Required for hibernate/resume GPU state
     powerManagement.finegrained = false;
     open = true; # RTX 3090 Ti (Ampere) — open kernel modules
     nvidiaSettings = true;

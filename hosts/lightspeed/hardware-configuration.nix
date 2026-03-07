@@ -97,6 +97,10 @@ in
     { device = "/swap/swapfile"; }
   ];
 
+  # Hibernation: resume from LUKS-encrypted btrfs swap file
+  boot.resumeDevice = "/dev/mapper/cryptbtrfs";
+  boot.kernelParams = [ "resume_offset=533760" ];
+
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }
