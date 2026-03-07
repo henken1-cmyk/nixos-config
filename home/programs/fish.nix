@@ -33,6 +33,27 @@
       set -g theme_display_date no
       set -g theme_display_cmd_duration yes
       set -g theme_powerline_fonts yes
+
+      # Override bobthefish nix prompt to show primary tool + version
+      function __bobthefish_prompt_nix -S -d 'Display current nix environment'
+        test -z "$IN_NIX_SHELL"; and return
+
+        __bobthefish_start_segment $color_nix
+        set -l nix_info "$IN_NIX_SHELL"
+
+        if set -q nativeBuildInputs[1]
+          # Extract first package name and version from nix store path
+          set -l first_pkg (string split ' ' $nativeBuildInputs)[1]
+          set -l pkg_base (basename $first_pkg)
+          # Parse name-version from store path basename (strip hash prefix)
+          if string match -rq '^[a-z0-9]+-(?<pkg_name>.+)-(?<pkg_ver>[0-9]+\\..+)$' $pkg_base
+            set nix_info "$pkg_name $pkg_ver"
+          end
+        end
+
+        echo -ns $nix_glyph $nix_info ' '
+        set_color normal
+      end
     '' + (if vars.zellijAutostart or false then ''
       # Zellij auto-attach (if not already inside zellij)
       if not set -q ZELLIJ
