@@ -31,7 +31,7 @@
   # Boot
   bootGenerations = 10;
   showFirmwareEntry = true;
-  windowsBootEntry = "osprober-efi-E229-9838"; # from grub.cfg, null on NixOS-only hosts
+  windowsBootEntry = "Windows Boot Manager (on /dev/nvme1n1p1)"; # from grub.cfg, null on NixOS-only hosts
 
   # Theme
   theme = "solarized-dark";

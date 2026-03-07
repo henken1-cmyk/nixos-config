@@ -46,6 +46,15 @@ in
         # Stylix handles Solarized Dark colors + wallpaper background
         font = lib.mkForce "${grubFont}/SauceCodePro48.pf2";
         fontSize = 48;
+        extraConfig = ''
+          terminal_input console
+        '';
+      } // lib.optionalAttrs (vars.showFirmwareEntry or false) {
+        extraEntries = ''
+          menuentry "UEFI Firmware Settings" --class efi {
+            fwsetup
+          }
+        '';
       };
       efi.canTouchEfiVariables = true;
       timeout = 3;
