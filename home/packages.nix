@@ -83,6 +83,7 @@
 
     # System info
     fastfetch
+    nvtopPackages.full # GPU monitor TUI (NVIDIA + Intel + AMD)
 
     # Wayland utilities
     wtype # Keyboard input simulation (for emoji picker)
