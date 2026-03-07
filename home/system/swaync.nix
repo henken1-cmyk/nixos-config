@@ -2,8 +2,22 @@
 
 let
   focus-window = pkgs.writeShellScript "swaync-focus-window" ''
-    # Focus the Hyprland window that sent the notification
+    # Focus the Hyprland window that sent the notification.
+    # For apps with multiple windows (e.g. Ghostty), match by title from
+    # the notification summary; fall back to class match.
     window_class="''${SWAYNC_DESKTOP_ENTRY:-$SWAYNC_APP_NAME}"
+    summary="$SWAYNC_SUMMARY"
+
+    if [ -n "$summary" ]; then
+      # Try title match first (handles multi-window apps like Ghostty)
+      addr=$(hyprctl clients -j | ${pkgs.jq}/bin/jq -r \
+        --arg title "$summary" \
+        '[.[] | select(.title | test($title; "i"))] | first | .address // empty' 2>/dev/null)
+      if [ -n "$addr" ]; then
+        hyprctl dispatch focuswindow "address:$addr" 2>/dev/null
+        exit 0
+      fi
+    fi
     [ -n "$window_class" ] && hyprctl dispatch focuswindow "class:(?i)$window_class" 2>/dev/null
   '';
 in
