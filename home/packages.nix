@@ -45,6 +45,9 @@
     # Emoji picker
     bemoji
 
+    # Audio
+    sox # Audio recording/playback (used by Claude Code voice mode)
+
     # Media
     mpv
     imv
