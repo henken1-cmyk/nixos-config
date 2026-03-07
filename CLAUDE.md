@@ -50,7 +50,9 @@ flake.nix
 
 **`inputs` propagation:** The flake passes `inputs` via `specialArgs` (system modules) and `extraSpecialArgs` (Home Manager) so any module can access flake inputs like `nixvim`.
 
-**Stylix theming:** Global base16 Solarized Dark theme applied via Stylix. Most apps inherit colors automatically; some (hyprlock, waybar) reference Solarized hex values directly.
+**Stylix theming:** Global base16 theme applied via Stylix. Most apps inherit colors automatically. Modules that need explicit color values must use `config.lib.stylix.colors` (e.g. `colors = config.lib.stylix.colors;` then `#${colors.base0D}`). Never hardcode hex color values — always reference Stylix base16 tokens so themes remain portable.
+
+**Waybar workspace icons:** App icons in the workspace bar are defined via `window-rewrite` rules in `home/system/waybar.nix`. Each rule maps a window class (from `hyprctl clients`) to a Nerd Font icon. When adding a new app, add a `"class<window-class>" = "<nerd-font-icon> ";` entry (trailing space required). Find icons by codepoint at https://www.nerdfonts.com/cheat-sheet and insert the Unicode character (e.g. U+EA78 → `printf '\uea78'`).
 
 **Home Manager integration:** Configured as a NixOS module (`useGlobalPkgs = true`, `useUserPackages = true`), not standalone.
 
@@ -66,6 +68,11 @@ flake.nix
 - System service → create `nixos/<name>.nix`, import it in `hosts/lightspeed/configuration.nix`
 - User program → create `home/programs/<name>.nix`, import it in `hosts/lightspeed/home.nix`
 - Desktop component → create `home/system/<name>.nix`, import it in `hosts/lightspeed/home.nix`
+
+## Git
+
+- Prefer `git reset` over `git rm --cached` for unstaging files
+- Explain destructive-sounding git operations before running them
 
 ## CHANGEME markers
 
