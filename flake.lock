@@ -333,11 +333,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1772868956,
-        "narHash": "sha256-SQHrJmcnMKh8dd8zRd9AKTj+i3tilTOxWhWPdc2n+DY=",
+        "lastModified": 1772916316,
+        "narHash": "sha256-HffclHzA8zYHeSYakvkPNxW/d2vISmDs2Qswx4cSJhU=",
         "owner": "henken1-cmyk",
         "repo": "HyprPanel",
-        "rev": "9778392c14ba074393083836c57a6f6a83010c74",
+        "rev": "2eb9a2c45756d4c75efacfe3c304ce0061fe6cf2",
         "type": "github"
       },
       "original": {

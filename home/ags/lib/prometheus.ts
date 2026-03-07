@@ -13,13 +13,12 @@ export async function queryRange(
   try {
     const end = Math.floor(Date.now() / 1000)
     const start = end - rangeMinutes * 60
-    const params = new URLSearchParams({
-      query: expr,
-      start: start.toString(),
-      end: end.toString(),
-      step: stepSeconds.toString(),
+    const body = `query=${encodeURIComponent(expr)}&start=${start}&end=${end}&step=${stepSeconds}`
+    const resp = await fetch(`${url}/api/v1/query_range`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
     })
-    const resp = await fetch(`${url}/api/v1/query_range?${params}`)
     const data = await resp.json()
     if (data.status === "success" && data.data.result.length > 0) {
       return data.data.result[0].values.map(([t, v]: [number, string]) => [t, parseFloat(v)])
@@ -28,6 +27,15 @@ export async function queryRange(
   } catch (e) {
     console.log(`[prom] range error for: ${expr}`, e)
     return []
+  }
+}
+
+export async function checkConnection(url: string): Promise<boolean> {
+  try {
+    const resp = await fetch(`${url}/-/ready`)
+    return resp.ok
+  } catch {
+    return false
   }
 }
 

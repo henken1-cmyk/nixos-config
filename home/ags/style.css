@@ -66,10 +66,37 @@ window {
   margin-bottom: 6px;
 }
 
+/* Section header with status dot */
+
+.section-header {
+  margin-bottom: 6px;
+}
+
+.status-dot {
+  font-size: 10px;
+  margin-left: 6px;
+}
+
+.status-dot.online {
+  color: #50c878;
+}
+
+.status-dot.offline {
+  color: #e03050;
+}
+
+/* Panel divider */
+
+.panel-divider {
+  min-height: 1px;
+  background-color: rgba(63, 30, 80, 0.5);
+  margin: 8px 8px;
+}
+
 /* History Panel */
 
 .history-panel-box {
-  padding: 16px;
+  padding: 0 0 4px 0;
 }
 
 .history-section {

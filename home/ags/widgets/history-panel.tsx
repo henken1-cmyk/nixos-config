@@ -1,9 +1,6 @@
 import { createState } from "ags"
 import { interval } from "ags/time"
-import app from "ags/gtk4/app"
 import Gtk from "gi://Gtk?version=4.0"
-import Astal from "gi://Astal?version=4.0"
-import Gtk4LayerShell from "gi://Gtk4LayerShell?version=1.0"
 import { queryRange, TimeSeries } from "../lib/prometheus"
 import Sparkline from "./sparkline"
 
@@ -55,7 +52,6 @@ function ChartSection({ title, charts }: { title: string; charts: ChartDef[] }) 
     <box cssClasses={["history-section"]} orientation={Gtk.Orientation.VERTICAL}>
       <label cssClasses={["panel-title"]} label={title} />
       <box cssClasses={["history-grid"]} orientation={Gtk.Orientation.VERTICAL}>
-        {/* 2 charts per row */}
         {Array.from({ length: Math.ceil(charts.length / 2) }, (_, row) => (
           <box cssClasses={["history-row"]}>
             <Sparkline
@@ -77,25 +73,11 @@ function ChartSection({ title, charts }: { title: string; charts: ChartDef[] }) 
   )
 }
 
-export default function HistoryPanel() {
+export default function HistoryContent() {
   return (
-    <window
-      namespace="history-panel"
-      name="history-panel"
-      exclusivity={Astal.Exclusivity.IGNORE}
-      anchor={Astal.WindowAnchor.RIGHT | Astal.WindowAnchor.TOP}
-      marginRight={16}
-      marginTop={16}
-      application={app}
-      $={(self) => {
-        Gtk4LayerShell.set_layer(self, Gtk4LayerShell.Layer.BOTTOM)
-        self.visible = true
-      }}
-    >
-      <box cssClasses={["monitor-panel", "history-panel-box"]} orientation={Gtk.Orientation.HORIZONTAL}>
-        <ChartSection title="Laptop — 30 min" charts={localCharts} />
-        <ChartSection title="Desktop — 30 min" charts={remoteCharts} />
-      </box>
-    </window>
+    <box cssClasses={["history-panel-box"]} orientation={Gtk.Orientation.HORIZONTAL}>
+      <ChartSection title="Laptop — 30 min" charts={localCharts} />
+      <ChartSection title="Desktop — 30 min" charts={remoteCharts} />
+    </box>
   )
 }

@@ -4,9 +4,10 @@ import app from "ags/gtk4/app"
 import Gtk from "gi://Gtk?version=4.0"
 import Astal from "gi://Astal?version=4.0"
 import Gtk4LayerShell from "gi://Gtk4LayerShell?version=1.0"
-import { queryInstant } from "../lib/prometheus"
+import { queryInstant, checkConnection } from "../lib/prometheus"
 import { icons, thresholdClass } from "../lib/theme"
 import MonitorCard from "./monitor-card"
+import HistoryContent from "./history-panel"
 
 interface Metric {
   display: string
@@ -133,8 +134,13 @@ function RemoteMetrics() {
   const [gpuLoad, setGpuLoad] = createState<Metric>(INITIAL)
   const [ram, setRam] = createState<Metric>(INITIAL)
   const [nvme, setNvme] = createState<Metric>(INITIAL)
+  const [online, setOnline] = createState(false)
 
   async function poll() {
+    const connected = await checkConnection(REMOTE_PROM)
+    setOnline(connected)
+    if (!connected) return
+
     const cpuTempVal = await queryInstant(
       'hw_cpu_temperature_celsius{sensor=~".*Tctl.*"}', REMOTE_PROM
     )
@@ -185,7 +191,13 @@ function RemoteMetrics() {
 
   return (
     <box cssClasses={["monitor-section"]} orientation={Gtk.Orientation.VERTICAL}>
-      <label cssClasses={["panel-title"]} label="Desktop" />
+      <box cssClasses={["section-header"]}>
+        <label cssClasses={["panel-title"]} label="Desktop" />
+        <label
+          cssClasses={createComputed(() => ["status-dot", online() ? "online" : "offline"])}
+          label={createComputed(() => online() ? "\u25CF" : "\u25CF")}
+        />
+      </box>
       <box cssClasses={["monitor-row"]}>
         <MonitorCard
           icon={icons.thermometer} title="CPU Temp"
@@ -241,9 +253,13 @@ export default function MonitorPanel() {
         self.visible = true
       }}
     >
-      <box cssClasses={["monitor-panel"]} orientation={Gtk.Orientation.HORIZONTAL}>
-        <LocalMetrics />
-        <RemoteMetrics />
+      <box cssClasses={["monitor-panel"]} orientation={Gtk.Orientation.VERTICAL}>
+        <HistoryContent />
+        <box cssClasses={["panel-divider"]} />
+        <box orientation={Gtk.Orientation.HORIZONTAL}>
+          <LocalMetrics />
+          <RemoteMetrics />
+        </box>
       </box>
     </window>
   )
