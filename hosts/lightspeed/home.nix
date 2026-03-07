@@ -112,6 +112,26 @@ in
   stylix.targets.firefox.colorTheme.enable = true;
   stylix.targets.waybar.enable = false; # Custom CSS in waybar.nix
 
+  # Daemon services (managed by Home Manager systemd units)
+  services.cliphist.enable = true;
+  services.udiskie = { enable = true; tray = "always"; };
+  services.network-manager-applet.enable = true;
+  services.swayosd.enable = true;
+  # Prevent swayosd crash loop — tighten restart limits
+  systemd.user.services.swayosd = {
+    Unit.StartLimitBurst = lib.mkForce 3;
+    Unit.StartLimitIntervalSec = lib.mkForce 60;
+    Service.RestartSec = lib.mkForce "5s";
+  };
+  services.gnome-keyring = { enable = true; components = [ "secrets" "ssh" ]; };
+
+  # Hyprsunset (no built-in HM service)
+  systemd.user.services.hyprsunset = {
+    Unit.Description = "Hyprsunset blue light filter";
+    Service = { ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset"; Restart = "on-failure"; };
+    Install.WantedBy = [ "graphical-session.target" ];
+  };
+
   # bat (theme set by Stylix)
   programs.bat.enable = true;
 
