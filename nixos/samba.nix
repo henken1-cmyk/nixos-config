@@ -10,22 +10,29 @@
         workgroup = "WORKGROUP";
         "server string" = vars.hostname;
         security = "user";
-        "map to guest" = "Bad User";
-        "guest account" = "nobody";
       };
 
       shared = {
         path = "/shared";
         browseable = "yes";
         "read only" = "no";
-        "guest ok" = "yes";
-        "force user" = "nobody";
-        "force group" = "nogroup";
+        "valid users" = "samba";
+        "force user" = "samba";
+        "force group" = "samba";
         "create mask" = "0664";
         "directory mask" = "0775";
       };
     };
   };
+
+  # Samba user (system account for SMB auth, no shell login)
+  users.users.samba = {
+    isSystemUser = true;
+    group = "samba";
+    home = "/shared";
+    shell = "/run/current-system/sw/bin/nologin";
+  };
+  users.groups.samba = {};
 
   # Samba discovery (so it shows up in file managers)
   services.samba-wsdd = {
