@@ -1,5 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, scale, ... }:
 
+let
+  colors = config.lib.stylix.colors;
+in
 {
   programs.hyprlock = {
     enable = true;
@@ -25,38 +28,37 @@
         # Clock
         {
           text = "cmd[update:1000] echo $(date +%H:%M)";
-          font_size = 96;
+          font_size = scale.font.hero;
           font_family = "SauceCodePro Nerd Font";
           position = "0, 150";
           halign = "center";
           valign = "center";
-          # Solarized base1
-          color = "rgb(93a1a1)";
+          color = "rgb(${colors.base05})";
         }
         # Date
         {
           text = "cmd[update:60000] echo $(date '+%A, %B %d')";
-          font_size = 20;
+          font_size = scale.font.lg;
           font_family = "Noto Sans";
           position = "0, 70";
           halign = "center";
           valign = "center";
-          color = "rgb(839496)";
+          color = "rgb(${colors.base04})";
         }
         # Username
         {
           text = "Hi, $USER";
-          font_size = 14;
+          font_size = scale.font.md;
           font_family = "Noto Sans";
           position = "0, -30";
           halign = "center";
           valign = "center";
-          color = "rgb(586e75)";
+          color = "rgb(${colors.base02})";
         }
       ];
 
       input-field = lib.mkForce [{
-        size = "300, 50";
+        size = "${toString scale.container.notification}, ${toString scale.size.input}";
         outline_thickness = 2;
         dots_size = 0.25;
         dots_spacing = 0.3;
@@ -68,13 +70,12 @@
         position = "0, -100";
         halign = "center";
         valign = "center";
-        # Solarized colors
-        outer_color = "rgb(073642)";
-        inner_color = "rgb(002b36)";
-        font_color = "rgb(93a1a1)";
-        check_color = "rgb(b58900)";
-        fail_color = "rgb(dc322f)";
-        capslock_color = "rgb(cb4b16)";
+        outer_color = "rgb(${colors.base01})";
+        inner_color = "rgb(${colors.base00})";
+        font_color = "rgb(${colors.base05})";
+        check_color = "rgb(${colors.base0A})";
+        fail_color = "rgb(${colors.base08})";
+        capslock_color = "rgb(${colors.base09})";
       }];
     };
   };

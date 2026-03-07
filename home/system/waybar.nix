@@ -1,17 +1,21 @@
-{ config, pkgs, lib, vars, ... }:
+{ config, pkgs, lib, vars, scale, ... }:
 
+let
+  colors = config.lib.stylix.colors;
+in
 {
   programs.waybar = {
     enable = true;
+    systemd.enable = true;
 
     settings = [{
       layer = "top";
       position = "top";
-      height = 44;
-      spacing = 4;
-      margin-top = if (vars.waybarAutohide or false) then 0 else 6;
-      margin-left = if (vars.waybarAutohide or false) then 0 else 8;
-      margin-right = if (vars.waybarAutohide or false) then 0 else 8;
+      height = scale.size.bar;
+      spacing = scale.gap.sm;
+      margin-top = if (vars.waybarAutohide or false) then 0 else scale.gap.md;
+      margin-left = if (vars.waybarAutohide or false) then 0 else scale.gap.md;
+      margin-right = if (vars.waybarAutohide or false) then 0 else scale.gap.md;
 
       fixed-center = true;
 
@@ -19,7 +23,6 @@
       # Left 3 permanent + 2 contextual | ··· workspaces ··· | 3 right
       modules-left = [
         "custom/logo"
-        "custom/notifications"
         "tray"
         "group/hardware"
         "custom/media"
@@ -40,24 +43,8 @@
       "custom/logo" = {
         format = "󱄅";
         on-click = "fuzzel";
+        on-click-right = "swaync-client -t -sw";
         tooltip = false;
-      };
-
-      # ── Notifications (swaync indicator) ────────────────────
-      "custom/notifications" = {
-        format = "{icon}";
-        format-icons = {
-          none = "";
-          notification = "●";
-          dnd-none = "";
-          dnd-notification = "●";
-        };
-        return-type = "json";
-        exec = "swaync-client -swb";
-        on-click = "swaync-client -t -sw";
-        on-click-right = "swaync-client -d -sw";
-        escape = true;
-        tooltip = true;
       };
 
       # ── Workspaces (centered, with app icons) ─────────────
@@ -69,7 +56,7 @@
         on-scroll-up = "hyprctl dispatch workspace e+1";
         on-scroll-down = "hyprctl dispatch workspace e-1";
         sort-by-number = true;
-        all-outputs = true;
+        all-outputs = false;
         show-special = false;
         persistent-workspaces = {
           "*" = 5;
@@ -87,8 +74,8 @@
           "class<firefox-developer-edition>" = "🦊 ";
           "class<kitty|konsole|[Aa]lacritty>" = " ";
           "class<kitty-dropterm>" = " ";
-          "class<com.mitchellh.ghostty>" = " ";
-          "class<org.wezfurlong.wezterm>" = " ";
+          "class<com.mitchellh.ghostty>" = " ";
+          "class<org.wezfurlong.wezterm>" = " ";
           "class<Warp|warp|dev.warp.Warp|warp-terminal>" = "󰰭 ";
           "class<[Tt]hunderbird|[Tt]hunderbird-esr>" = " ";
           "class<eu.betterbird.Betterbird>" = " ";
@@ -145,24 +132,25 @@
           "class<obs|com.obsproject.Studio>" = " ";
           "class<polkit-gnome-authentication-agent-1>" = "󰒃 ";
           "class<nwg-look>" = " ";
-          "class<nwg-displays>" = " ";
+          "class<nwg-displays>" = "  ";
           "class<[Pp]avucontrol|org.pulseaudio.pavucontrol>" = "󱡫 ";
           "class<steam>" = " ";
+          "class<qbittorrent|org.qbittorrent.qBittorrent>" = " ";
           "class<thunar|nemo>" = "󰝰 ";
-          "class<Gparted>" = "";
+          "class<Gparted>" = " ";
           "class<gimp>" = " ";
-          "class<emulator>" = "📱 ";
+          "class<emulator>" = "📱";
           "class<android-studio>" = " ";
-          "class<org.pipewire.Helvum>" = "󰓃";
-          "class<localsend>" = "";
-          "class<PrusaSlicer|UltiMaker-Cura|OrcaSlicer>" = "󰹛";
+          "class<org.pipewire.Helvum>" = "󰓃 ";
+          "class<localsend>" = " ";
+          "class<PrusaSlicer|UltiMaker-Cura|OrcaSlicer>" = "󰹛 ";
           "class<io.github.kolunmi.Bazaar>" = " ";
           "title<^Bazaar$>" = " ";
           "class<com.gabm.satty>" = " ";
           "title<^satty$>" = " ";
           "class<[Bb]ox[Bb]uddy|io.github.dvlv.boxbuddy|io.github.dvlv.BoxBuddy>" = " ";
           "title<.*BoxBuddy.*>" = " ";
-          "title<Hyprland Keybinds>" = " ";
+          "title<Hyprland Keybinds>" = "  ";
           "title<Niri Keybinds>" = " ";
           "title<BSPWM Keybinds>" = " ";
           "title<DWM Keybinds>" = " ";
@@ -174,7 +162,7 @@
           "title<Documentation Viewer>" = " ";
           "title<^Wallpapers$>" = " ";
           "title<^Video Wallpapers$>" = " ";
-          "title<^qs-wlogout$>" = " ";
+          "title<^qs-wlogout$>" = "  ";
         };
       };
 
@@ -193,6 +181,7 @@
         format-icons = {
           Playing = "󰏤";
           Paused = "󰐊";
+          
         };
         exec = ''${pkgs.playerctl}/bin/playerctl -a metadata --format '{"text": "{{artist}} - {{title}}", "tooltip": "{{playerName}}: {{artist}} - {{title}}", "alt": "{{status}}", "class": "{{status}}"}' -F'';
         on-click = "${pkgs.playerctl}/bin/playerctl play-pause";
@@ -203,7 +192,7 @@
       # ── Tray ──────────────────────────────────────────────
       tray = {
         spacing = 8;
-        icon-size = 16;
+        icon-size = scale.icon.md;
       };
 
       # ── Hardware drawer ───────────────────────────────────
@@ -341,11 +330,11 @@
           weeks-pos = "right";
           on-scroll = 1;
           format = {
-            months = "<span color='#93a1a1'><b>{}</b></span>";
-            days = "<span color='#839496'>{}</span>";
-            weeks = "<span color='#586e75'>W{}</span>";
-            weekdays = "<span color='#b58900'><b>{}</b></span>";
-            today = "<span color='#cb4b16'><b><u>{}</u></b></span>";
+            months = "<span color='#${colors.base05}'><b>{}</b></span>";
+            days = "<span color='#${colors.base04}'>{}</span>";
+            weeks = "<span color='#${colors.base02}'>W{}</span>";
+            weekdays = "<span color='#${colors.base0A}'><b>{}</b></span>";
+            today = "<span color='#${colors.base09}'><b><u>{}</u></b></span>";
           };
         };
       };
@@ -359,10 +348,10 @@
     }];
 
     # ── Custom CSS — Floating Islands with Solarized accent colors ──
-    style = ''
+    style = let s = scale; p = s.px; c = colors; in ''
       * {
         font-family: "SauceCodePro Nerd Font", "Noto Sans", monospace;
-        font-size: 14px;
+        font-size: ${p s.font.md};
         min-height: 0;
         border: none;
         border-radius: 0;
@@ -372,106 +361,101 @@
         background: transparent;
       }
 
-      /* ── Island / Pill base (Fibonacci spacing: 3, 5, 8, 13) ── */
+      /* ── Island / Pill base (Fibonacci spacing) ── */
       .modules-left > widget > *,
       .modules-center > widget > *,
       .modules-right > widget > * {
-        background-color: rgba(7, 54, 66, 0.85);
-        border-radius: 21px;
-        padding: 3px 8px;
-        margin: ${if (vars.waybarAutohide or false) then "0px" else "5px"} 3px;
-        color: #93a1a1;
+        background-color: alpha(#${c.base01}, 0.85);
+        border-radius: ${p s.radius.pill};
+        padding: ${p s.gap.xs} ${p s.gap.md};
+        margin: ${if (vars.waybarAutohide or false) then "0px" else "${p s.gap.sm}"} ${p s.gap.xs};
+        color: #${c.base05};
       }
 
       /* ── Logo ───────────────────────────────────────────── */
       #custom-logo {
-        color: #268bd2;
-        font-size: 21px;
-        padding: 0 13px;
+        color: #${c.base0D};
+        font-size: ${p s.font.md};
+        padding: 0;
         transition: all 0.3s ease;
       }
 
       #custom-logo:hover {
-        color: #fdf6e3;
-      }
-
-      /* ── Notifications ─────────────────────────────────────── */
-      #custom-notifications {
-        color: #dc322f;
-        font-size: 10px;
-        padding: 0 6px;
-      }
-
-      #custom-notifications.none {
-        opacity: 0.3;
-      }
-
-      #custom-notifications:hover {
-        color: #fdf6e3;
-      }
-
-      #custom-notifications.dnd-notification,
-      #custom-notifications.dnd-none {
-        color: #586e75;
+        color: #${c.base07};
       }
 
       /* ── Workspaces (centered dock) ──────────────────────── */
       #workspaces {
-        padding: 3px 8px;
+        padding: ${p s.gap.sm} ${p s.gap.md};
       }
 
       #workspaces button {
-        color: #93a1a1;
-        padding: 3px 8px;
-        margin: 2px 3px;
-        border-radius: 13px;
+        color: #${c.base05};
+        padding: ${p s.gap.sm} ${p s.gap.md};
+        margin: ${p s.gap.xs} ${p s.gap.sm};
+        border-radius: ${p s.radius.xl};
         background: transparent;
-        min-width: 20px;
+        min-width: ${p s.size.toggle};
         transition: all 0.4s cubic-bezier(.55, -0.68, .48, 1.682);
       }
 
       #workspaces button label {
         font-family: "SauceCodePro Nerd Font", monospace;
-        font-size: 14px;
+        font-size: ${p s.font.md};
       }
 
       #workspaces button.active {
-        background-color: rgba(38, 139, 210, 0.3);
-        color: #fdf6e3;
-        padding-left: 13px;
-        padding-right: 13px;
+        background-color: alpha(#${c.base0D}, 0.3);
+        color: #${c.base07};
+        padding-left: ${p s.gap.xl};
+        padding-right: ${p s.gap.xl};
       }
 
       #workspaces button.empty {
-        color: #586e75;
+        color: #${c.base02};
+      }
+
+      #workspaces button.urgent {
+        background-color: alpha(#${c.base08}, 0.3);
+        color: #${c.base08};
+        animation: pulse 2s ease-in-out infinite;
+      }
+
+      #workspaces button.visible {
+        background-color: alpha(#${c.base02}, 0.2);
+        color: #${c.base05};
+      }
+
+      #workspaces button.hosting-monitor {
+        border-bottom: ${p s.border.normal} solid #${c.base0A};
       }
 
       #workspaces button:hover {
-        background-color: rgba(88, 110, 117, 0.3);
-        color: #93a1a1;
+        background-color: alpha(#${c.base02}, 0.3);
+        color: #${c.base05};
       }
 
       /* ── Submap ─────────────────────────────────────────── */
       #submap {
-        color: #cb4b16;
+        color: #${c.base09};
         font-weight: bold;
-        padding: 0 8px;
+        padding: 0 ${p s.gap.lg};
       }
 
       /* ── Media ──────────────────────────────────────────── */
       #custom-media {
-        color: #2aa198;
-        padding: 0 8px;
+        color: #${c.base0C};
+        padding: 0 ${p s.gap.lg};
         font-style: italic;
       }
 
       #custom-media.Paused {
-        color: #586e75;
+        color: #${c.base02};
       }
 
       /* ── Tray ───────────────────────────────────────────── */
       #tray {
-        padding: 0 8px;
+        padding: 0 ${p s.gap.lg};
       }
 
       #tray > .passive {
@@ -480,50 +464,50 @@
 
       /* ── Hardware drawer ────────────────────────────────── */
       #custom-hw-icon {
-        color: #93a1a1;
-        padding: 0 8px;
-        font-size: 16px;
+        color: #${c.base05};
+        padding: 0 ${p s.gap.lg};
+        font-size: ${p s.font.md};
       }
 
       #cpu {
-        color: #859900;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base0B};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #memory {
-        color: #268bd2;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base0D};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #temperature {
-        color: #cb4b16;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base09};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #temperature.critical {
-        color: #dc322f;
+        color: #${c.base08};
         animation: pulse 2s ease-in-out infinite;
       }
 
       #disk {
-        color: #6c71c4;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base0E};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #custom-gpu {
-        color: #2aa198;
-        padding: 0 8px;
+        color: #${c.base0C};
+        padding: 0 ${p s.gap.lg};
       }
 
       /* ── Connectivity pill ──────────────────────────────── */
       #pulseaudio {
-        color: #d33682;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base0F};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #pulseaudio.muted {
@@ -531,9 +515,9 @@
       }
 
       #network {
-        color: #2aa198;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base0C};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #network.disconnected {
@@ -541,78 +525,78 @@
       }
 
       #battery {
-        color: #859900;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base0B};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #battery.warning {
-        color: #e5c07b;
+        color: #${c.base0A};
       }
 
       #battery.critical {
-        color: #dc322f;
+        color: #${c.base08};
         animation: pulse 2s ease-in-out infinite;
       }
 
       #battery.charging {
-        color: #859900;
+        color: #${c.base0B};
       }
 
       #bluetooth {
-        color: #b58900;
-        padding: 0 8px;
+        color: #${c.base0A};
+        padding: 0 ${p s.gap.lg};
       }
 
       /* ── Idle inhibitor ─────────────────────────────────── */
       #idle_inhibitor {
         padding: 0;
-        min-width: 34px;
-        min-height: 34px;
+        min-width: ${p s.size.toggle};
+        min-height: ${p s.size.toggle};
         border-radius: 50%;
-        color: #586e75;
+        color: #${c.base02};
         transition: all 0.3s ease;
       }
 
       #idle_inhibitor.activated {
-        color: #b58900;
+        color: #${c.base0A};
       }
 
       /* ── Clock group ────────────────────────────────────── */
       #custom-weather {
-        color: #b58900;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base0A};
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #custom-theme-toggle {
-        color: #cb4b16;
-        padding: 0 8px;
-        font-size: 16px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        color: #${c.base09};
+        padding: 0 ${p s.gap.lg};
+        font-size: ${p s.font.md};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
         transition: all 0.3s ease;
       }
 
       #custom-theme-toggle:hover {
-        color: #fdf6e3;
+        color: #${c.base07};
       }
 
       #clock {
-        color: #93a1a1;
+        color: #${c.base05};
         font-weight: bold;
-        padding: 0 8px;
-        border-right: 1px solid rgba(88, 110, 117, 0.4);
+        padding: 0 ${p s.gap.lg};
+        border-right: 1px solid alpha(#${c.base02}, 0.4);
       }
 
       #custom-power {
-        color: #dc322f;
-        padding: 0 8px;
-        font-size: 16px;
+        color: #${c.base08};
+        padding: 0 ${p s.gap.lg};
+        font-size: ${p s.font.md};
         transition: all 0.3s ease;
       }
 
       #custom-power:hover {
-        color: #fdf6e3;
+        color: #${c.base07};
       }
 
       /* ── Animations ─────────────────────────────────────── */
@@ -630,15 +614,15 @@
 
       /* ── Tooltip styling ────────────────────────────────── */
       tooltip {
-        background-color: rgba(0, 43, 54, 0.95);
-        border: 1px solid #268bd2;
-        border-radius: 13px;
-        color: #93a1a1;
+        background-color: alpha(#${c.base00}, 0.95);
+        border: 1px solid #${c.base0D};
+        border-radius: ${p s.radius.lg};
+        color: #${c.base05};
       }
 
       tooltip label {
-        color: #93a1a1;
-        padding: 4px;
+        color: #${c.base05};
+        padding: ${p s.gap.sm};
       }
     '';
   };

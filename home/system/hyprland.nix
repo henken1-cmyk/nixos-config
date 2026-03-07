@@ -1,8 +1,9 @@
-{ config, pkgs, lib, vars, ... }:
+{ config, pkgs, lib, vars, scale, ... }:
 
 {
   wayland.windowManager.hyprland = {
     enable = true;
+    systemd.enable = true;
     xwayland.enable = true;
 
     settings = {
@@ -32,9 +33,9 @@
 
       # ── General ───────────────────────────────────────────
       general = {
-        gaps_in = 4;
-        gaps_out = if (vars.waybarAutohide or false) then 0 else 8;
-        border_size = 2;
+        gaps_in = scale.gap.sm;
+        gaps_out = if (vars.waybarAutohide or false) then 0 else scale.gap.md;
+        border_size = scale.border.thick;
         layout = "dwindle";
         allow_tearing = false;
         # Colors handled by Stylix
@@ -42,7 +43,7 @@
 
       # ── Decoration ────────────────────────────────────────
       decoration = {
-        rounding = 5;
+        rounding = scale.radius.md;
 
         blur = {
           enabled = true;
@@ -119,18 +120,28 @@
       };
 
       # ── Workspaces ────────────────────────────────────────
-      # 1-9 across both monitors, Hyprland decides placement
-      # No explicit workspace-to-monitor binding
+      # 1-5 on primary (right), 6-9 on secondary (left)
+      workspace = [
+        "1, monitor:${vars.monitorRight}"
+        "2, monitor:${vars.monitorRight}"
+        "3, monitor:${vars.monitorRight}"
+        "4, monitor:${vars.monitorRight}"
+        "5, monitor:${vars.monitorRight}"
+        "6, monitor:${vars.monitorLeft}"
+        "7, monitor:${vars.monitorLeft}"
+        "8, monitor:${vars.monitorLeft}"
+        "9, monitor:${vars.monitorLeft}"
+      ];
 
       # ── Window Rules (v3 syntax, Hyprland 0.53+) ─────────
       windowrule = [
         # Float utility windows
         "match:class ^(thunar)$, float on"
-        "match:class ^(thunar)$, size 1000 700"
+        "match:class ^(thunar)$, size ${toString scale.container.window} ${toString scale.container.panel}"
         "match:class ^(pavucontrol)$, float on"
-        "match:class ^(pavucontrol)$, size 800 600"
+        "match:class ^(pavucontrol)$, size ${toString scale.container.panel} ${toString scale.container.notification}"
         "match:class ^(blueman-manager)$, float on"
-        "match:class ^(blueman-manager)$, size 700 500"
+        "match:class ^(blueman-manager)$, size ${toString scale.container.panel} ${toString scale.container.notification}"
         "match:class ^(nm-connection-editor)$, float on"
         "match:class ^(.blueman-manager-wrapped)$, float on"
         "match:class ^(system-config-printer)$, float on"
@@ -147,12 +158,12 @@
 
         # Float KeePassXC
         "match:class ^(org.keepassxc.KeePassXC)$, float on"
-        "match:class ^(org.keepassxc.KeePassXC)$, size 1000 700"
+        "match:class ^(org.keepassxc.KeePassXC)$, size ${toString scale.container.window} ${toString scale.container.panel}"
 
         # Picture-in-picture
         "match:title ^(Picture-in-Picture)$, float on"
         "match:title ^(Picture-in-Picture)$, pin on"
-        "match:title ^(Picture-in-Picture)$, size 480 270"
+        "match:title ^(Picture-in-Picture)$, size ${toString scale.container.panel} ${toString scale.container.notification}"
 
         # Satty screenshot editor
         "match:class ^(satty)$, float on"
@@ -247,7 +258,7 @@
         "$mod SHIFT, R, exec, $HOME/.config/nixos/home/scripts/screen-record.sh"
 
         # ─ Waybar restart ─
-        "$mod SHIFT, W, exec, pkill waybar; waybar &"
+        "$mod SHIFT, W, exec, systemctl --user restart waybar"
 
         # ─ Monitor focus ─
         "$mod, comma, focusmonitor, l"
@@ -296,20 +307,11 @@
 
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
-        (if (vars.waybarAutohide or false)
-          then "$HOME/.config/nixos/home/scripts/waybar-autohide.sh"
-          else "waybar")
+        (lib.optionalString (vars.waybarAutohide or false)
+          "$HOME/.config/nixos/home/scripts/waybar-autohide.sh")
         "swww-daemon && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
-        "wl-paste --type text --watch cliphist store"
-        "wl-paste --type image --watch cliphist store"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
-        "udiskie --tray"
         "blueman-applet"
-        "nm-applet --indicator"
-        "hypridle"
-        "hyprsunset"
-        "swayosd-server"
-        "gnome-keyring-daemon --start --components=secrets,ssh"
         "firefox --name \"messenger\" -P \"messenger\" --no-remote \"https://messenger.com\""
         "flatpak run dev.vencord.Vesktop"
       ];
@@ -318,10 +320,10 @@
     # Resize submap (can't be expressed in settings attrset easily)
     extraConfig = ''
       submap = resize
-      binde = , Right, resizeactive, 30 0
-      binde = , Left, resizeactive, -30 0
-      binde = , Up, resizeactive, 0 -30
-      binde = , Down, resizeactive, 0 30
+      binde = , Right, resizeactive, ${toString scale.gap.xxl} 0
+      binde = , Left, resizeactive, -${toString scale.gap.xxl} 0
+      binde = , Up, resizeactive, 0 -${toString scale.gap.xxl}
+      binde = , Down, resizeactive, 0 ${toString scale.gap.xxl}
       bind = , Escape, submap, reset
       bind = , Return, submap, reset
       submap = reset

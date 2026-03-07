@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, scale, ... }:
 
 {
   programs.fuzzel = {
@@ -12,19 +12,19 @@
         layer = "overlay";
         width = 45;
         lines = 10;
-        horizontal-pad = 24;
-        vertical-pad = 16;
-        inner-pad = 12;
+        horizontal-pad = scale.gap.xxl;
+        vertical-pad = scale.gap.xl;
+        inner-pad = scale.gap.lg;
         icon-theme = "Papirus";
         image-size-ratio = 0.7;
         match-counter = true;
-        line-height = 26;
+        line-height = scale.size.toggle;
         letter-spacing = 1;
         use-bold = true;
       };
       border = {
-        width = 3;
-        radius = 12;
+        width = scale.border.thick;
+        radius = scale.radius.lg;
       };
       dmenu = {
         exit-immediately-if-empty = true;

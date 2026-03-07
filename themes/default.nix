@@ -1,4 +1,4 @@
-{ config, pkgs, vars, ... }:
+{ config, pkgs, vars, scale, ... }:
 
 {
   stylix = {
@@ -35,10 +35,10 @@
         name = "Noto Color Emoji";
       };
       sizes = {
-        applications = 11;
-        desktop = 11;
-        popups = 11;
-        terminal = 13;
+        applications = scale.font.sm;
+        desktop = scale.font.sm;
+        popups = scale.font.sm;
+        terminal = scale.font.sm;
       };
     };
 
@@ -46,7 +46,7 @@
     cursor = {
       package = pkgs.bibata-cursors;
       name = "Bibata-Modern-Classic";
-      size = 24;
+      size = scale.size.cursor;
     };
 
     # Opacity

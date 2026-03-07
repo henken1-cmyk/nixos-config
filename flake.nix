@@ -51,12 +51,13 @@
 
   outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ... }@inputs:
     let
+      scale = import ./themes/scale.nix;
       lightspeedVars = import ./hosts/lightspeed/variables.nix;
       adamVars = import ./hosts/adam/variables.nix;
     in
     {
       nixosConfigurations.lightspeed = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; vars = lightspeedVars; };
+        specialArgs = { inherit inputs scale; vars = lightspeedVars; };
         modules = [
           ./hosts/lightspeed/configuration.nix
           hyprland.nixosModules.default
@@ -69,7 +70,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              extraSpecialArgs = { inherit inputs; vars = lightspeedVars; };
+              extraSpecialArgs = { inherit inputs scale; vars = lightspeedVars; };
               users.${lightspeedVars.username} = import ./hosts/lightspeed/home.nix;
             };
           }
@@ -77,7 +78,7 @@
       };
 
       nixosConfigurations.adam = nixpkgs.lib.nixosSystem {
-        specialArgs = { inherit inputs; vars = adamVars; };
+        specialArgs = { inherit inputs scale; vars = adamVars; };
         modules = [
           ./hosts/adam/configuration.nix
           hyprland.nixosModules.default
@@ -90,7 +91,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
-              extraSpecialArgs = { inherit inputs; vars = adamVars; };
+              extraSpecialArgs = { inherit inputs scale; vars = adamVars; };
               users.${adamVars.username} = import ./hosts/adam/home.nix;
             };
           }

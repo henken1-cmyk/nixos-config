@@ -1,6 +1,7 @@
-{ config, pkgs, lib, vars, ... }:
+{ config, pkgs, lib, vars, scale, ... }:
 
 let
+  colors = config.lib.stylix.colors;
   # Hyprland config for the greeter — monitors, blur, animations, regreet launch
   greeterHyprlandConfig = pkgs.writeText "greetd-hyprland.conf" ''
     ${lib.concatMapStringsSep "\n" (m: "monitor = ${m}") vars.monitors}
@@ -17,11 +18,11 @@ let
     }
 
     decoration {
-      rounding = 10
+      rounding = ${toString scale.radius.lg}
 
       blur {
         enabled = true
-        size = 8
+        size = ${toString scale.gap.md}
         passes = 3
         new_optimizations = true
         noise = 0.02
@@ -46,7 +47,7 @@ let
     }
 
     windowrule = match:class ^(regreet)$, float on
-    windowrule = match:class ^(regreet)$, size 500 400
+    windowrule = match:class ^(regreet)$, size ${toString scale.container.window} ${toString scale.container.panel}
     windowrule = match:class ^(regreet)$, center on
 
     exec-once = ${lib.getExe config.programs.regreet.package}; hyprctl dispatch exit
@@ -67,43 +68,43 @@ in
   programs.regreet = {
     enable = true;
     extraCss = lib.mkForce ''
-      /* Solarized Dark color definitions */
-      @define-color window_bg_color #002b36;
-      @define-color window_fg_color #839496;
-      @define-color view_bg_color #073642;
-      @define-color view_fg_color #93a1a1;
-      @define-color headerbar_bg_color #073642;
-      @define-color headerbar_fg_color #93a1a1;
-      @define-color headerbar_border_color #586e75;
-      @define-color accent_bg_color #268bd2;
-      @define-color accent_fg_color #fdf6e3;
-      @define-color accent_color #268bd2;
-      @define-color destructive_bg_color #dc322f;
-      @define-color destructive_fg_color #fdf6e3;
-      @define-color success_bg_color #859900;
-      @define-color success_fg_color #fdf6e3;
-      @define-color warning_bg_color #b58900;
-      @define-color warning_fg_color #fdf6e3;
-      @define-color error_bg_color #dc322f;
-      @define-color error_fg_color #fdf6e3;
-      @define-color card_bg_color #073642;
-      @define-color card_fg_color #93a1a1;
-      @define-color borders alpha(#586e75, 0.5);
+      /* Base16 color definitions (from Stylix) */
+      @define-color window_bg_color #${colors.base00};
+      @define-color window_fg_color #${colors.base04};
+      @define-color view_bg_color #${colors.base01};
+      @define-color view_fg_color #${colors.base05};
+      @define-color headerbar_bg_color #${colors.base01};
+      @define-color headerbar_fg_color #${colors.base05};
+      @define-color headerbar_border_color #${colors.base02};
+      @define-color accent_bg_color #${colors.base0D};
+      @define-color accent_fg_color #${colors.base07};
+      @define-color accent_color #${colors.base0D};
+      @define-color destructive_bg_color #${colors.base08};
+      @define-color destructive_fg_color #${colors.base07};
+      @define-color success_bg_color #${colors.base0B};
+      @define-color success_fg_color #${colors.base07};
+      @define-color warning_bg_color #${colors.base0A};
+      @define-color warning_fg_color #${colors.base07};
+      @define-color error_bg_color #${colors.base08};
+      @define-color error_fg_color #${colors.base07};
+      @define-color card_bg_color #${colors.base01};
+      @define-color card_fg_color #${colors.base05};
+      @define-color borders alpha(#${colors.base02}, 0.5);
 
       /* Semi-transparent login card over wallpaper */
       frame.background {
-        border-radius: 16px;
-        padding: 28px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        border-radius: ${scale.px scale.radius.xl};
+        padding: ${scale.px scale.gap.xxl};
+        box-shadow: 0 ${scale.px scale.gap.md} ${scale.px scale.gap.xxl} rgba(0, 0, 0, 0.5);
         background-color: alpha(@window_bg_color, 0.82);
         border: 1px solid alpha(@headerbar_border_color, 0.15);
       }
 
       /* Refined input fields */
       entry, passwordentry {
-        border-radius: 8px;
-        padding: 6px 12px;
-        min-height: 36px;
+        border-radius: ${scale.px scale.radius.md};
+        padding: ${scale.px scale.gap.md} ${scale.px scale.gap.lg};
+        min-height: ${scale.px scale.size.input};
         background-color: @view_bg_color;
         color: @view_fg_color;
         border: 1px solid alpha(@borders, 0.5);
@@ -111,14 +112,14 @@ in
       }
       entry:focus, passwordentry:focus {
         border-color: @accent_bg_color;
-        box-shadow: 0 0 0 2px alpha(@accent_bg_color, 0.25);
+        box-shadow: 0 0 0 ${scale.px scale.border.normal} alpha(@accent_bg_color, 0.25);
       }
 
       /* Polished login button */
       button.suggested-action {
-        border-radius: 8px;
-        padding: 8px 28px;
-        min-height: 36px;
+        border-radius: ${scale.px scale.radius.md};
+        padding: ${scale.px scale.gap.md} ${scale.px scale.gap.xxl};
+        min-height: ${scale.px scale.size.input};
         font-weight: bold;
         background-color: @accent_bg_color;
         color: @accent_fg_color;
@@ -126,7 +127,7 @@ in
 
       /* Subtle power buttons */
       button.destructive-action {
-        border-radius: 8px;
+        border-radius: ${scale.px scale.radius.md};
         opacity: 0.7;
         transition: opacity 150ms ease;
       }
@@ -136,9 +137,9 @@ in
 
       /* Welcome text */
       #message_label {
-        font-size: 22px;
+        font-size: ${scale.px scale.font.lg};
         font-weight: bold;
-        margin-bottom: 12px;
+        margin-bottom: ${scale.px scale.gap.lg};
         color: @headerbar_fg_color;
       }
 

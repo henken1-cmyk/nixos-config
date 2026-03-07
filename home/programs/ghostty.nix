@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, scale, ... }:
 
 {
   programs.ghostty = {
@@ -6,11 +6,11 @@
     settings = {
       # Font (Stylix handles colors)
       font-family = "SauceCodePro Nerd Font";
-      font-size = 13;
+      font-size = scale.font.sm;
 
       # Window
-      window-padding-x = 8;
-      window-padding-y = 8;
+      window-padding-x = scale.gap.md;
+      window-padding-y = scale.gap.md;
       window-decoration = false; # Wayland — no CSD
       gtk-titlebar = false;
 
@@ -19,7 +19,7 @@
       cursor-style-blink = true;
 
       # Scrollback
-      scrollback-limit = 10000;
+      scrollback-limit = 100000;
 
       # Mouse
       mouse-hide-while-typing = true;

@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, scale, ... }:
 
 let
   colors = config.lib.stylix.colors;
@@ -12,19 +12,19 @@ in
       anchor = "bottom-left";
       sort = "-time";
       layer = "overlay";
-      width = 350;
-      height = 120;
+      width = scale.container.notification;
+      height = scale.container.notificationH;
 
-      # Spacing between notifications
-      margin = "10,10,10,10"; # top, right, bottom, left
-      padding = "15,12,15,12"; # top, right, bottom, left
+      # Spacing between notifications (Fibonacci: lg=13, xl=21, xxl=34)
+      margin = "${toString scale.gap.lg},${toString scale.gap.lg},${toString scale.gap.lg},${toString scale.gap.lg}";
+      padding = "${toString scale.gap.xl},${toString scale.gap.lg},${toString scale.gap.xl},${toString scale.gap.lg}";
 
       # Distance from screen edges
-      outer-margin = "20,15,25,15"; # top, right, bottom, left
+      outer-margin = "${toString scale.gap.xl},${toString scale.gap.lg},${toString scale.gap.xxl},${toString scale.gap.lg}";
 
       # Border styling
-      border-size = 2;
-      border-radius = 10;
+      border-size = scale.border.normal;
+      border-radius = scale.radius.lg;
       border-color = lib.mkForce "#${colors.base0A}"; # Stylix yellow accent
 
       # Transparency & visual polish

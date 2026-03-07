@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, scale, ... }:
 
 let
   focus-window = pkgs.writeShellScript "swaync-focus-window" ''
@@ -12,21 +12,21 @@ in
     enable = true;
     settings = {
       positionX = "left";
-      positionY = "top";
+      positionY = "bottom";
       layer = "overlay";
       control-center-layer = "overlay";
-      control-center-margin-top = 10;
-      control-center-margin-bottom = 10;
-      control-center-margin-left = 10;
-      control-center-margin-right = 10;
-      notification-window-width = 360;
-      timeout = 3;
+      control-center-margin-top = scale.gap.lg;
+      control-center-margin-bottom = scale.gap.lg;
+      control-center-margin-left = scale.gap.lg;
+      control-center-margin-right = scale.gap.lg;
+      notification-window-width = scale.container.notification;
+      timeout = 10;
       timeout-critical = 0;
       transition-time = 200;
       max-notifications = 3;
       image-visibility = "when-available";
-      control-center-width = 500;
-      control-center-height = 600;
+      control-center-width = scale.container.panel;
+      control-center-height = scale.container.panelHeight;
       scripts = {
         focus-window = {
           exec = "${focus-window}";
@@ -36,6 +36,11 @@ in
     };
   };
 
-  # Enable Stylix theming for swaync
+  # Enable Stylix theming for swaync (override double border)
   stylix.targets.swaync.enable = true;
+  services.swaync.style = ''
+    .notification-content {
+      border: none;
+    }
+  '';
 }
