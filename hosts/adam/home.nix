@@ -18,13 +18,13 @@ in
     ../../home/programs/zellij.nix
     # Desktop environment
     ../../home/system/hyprland.nix
-    ../../home/system/waybar.nix
+    ../../home/system/hyprpanel.nix
     ../../home/system/fuzzel.nix
-    ../../home/system/mako.nix
+    # ../../home/system/mako.nix  # HyprPanel handles notifications
     ../../home/system/hypridle.nix
     ../../home/system/hyprlock.nix
     ../../home/system/swww.nix
-    ../../home/system/ags.nix
+    # waybar.nix and ags.nix kept as backup — replaced by hyprpanel
   ];
 
   # Adam-specific packages
@@ -100,7 +100,7 @@ in
 
   # Stylix: tell it which Firefox profile to theme
   stylix.targets.firefox.profileNames = [ "default" ];
-  stylix.targets.waybar.enable = false; # Custom CSS in waybar.nix
+  # stylix.targets.waybar.enable = false; # Waybar replaced by HyprPanel
 
   # bat (theme set by Stylix)
   programs.bat.enable = true;

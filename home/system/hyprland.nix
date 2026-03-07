@@ -112,10 +112,9 @@
 
       # ── Layer Rules ────────────────────────────────────────
       layerrule = [
-        "match:namespace = monitor-widgets, blur 1"
-        "match:namespace = monitor-widgets, ignore_alpha 0.2"
-        "match:namespace = monitor-widgets, no_anim on"
-        "match:namespace = monitor-widgets, order 1"
+        # HyprPanel blur rules
+        "match:namespace = bar-0, blur 1"
+        "match:namespace = bar-0, ignore_alpha 0.6"
       ];
 
       # ── Window Rules (v3 syntax, Hyprland 0.53+) ─────────
@@ -250,9 +249,6 @@
         "$mod SHIFT, semicolon, movewindow, mon:r"
         "$mod CTRL, semicolon, movecurrentworkspacetomonitor, r"
 
-        # ─ Monitor widgets ─
-        "$mod, W, exec, ags toggle monitor-widgets"
-
         # ─ Special workspace (scratchpad) ─
         "$mod, grave, togglespecialworkspace, magic"
         "$mod SHIFT, grave, movetoworkspace, special:magic"
@@ -286,10 +282,7 @@
 
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
-        (if (vars.waybarAutohide or false)
-          then "$HOME/.config/nixos/home/scripts/waybar-autohide.sh"
-          else "waybar")
-        "mako"
+        "hyprpanel"
         "swww-daemon && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
@@ -301,7 +294,6 @@
         "hyprsunset"
         "swayosd-server"
         "gnome-keyring-daemon --start --components=secrets,ssh"
-        "ags run"
       ];
     };
 
