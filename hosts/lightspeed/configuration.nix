@@ -95,6 +95,15 @@ in
   services.flatpak.packages = [
   ];
 
+  # nix-ld: CUDA + native deps for dynamically linked binaries (PyTorch, pip wheels)
+  programs.nix-ld.libraries = with pkgs; [
+    cudaPackages.cudatoolkit
+    cudaPackages.cudnn
+    cudaPackages.nccl
+    stdenv.cc.cc.lib  # libstdc++
+    zlib
+  ];
+
   # System packages (minimal — most go in home-manager)
   environment.systemPackages = with pkgs; [
     vim

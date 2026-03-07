@@ -202,7 +202,8 @@ in
           transition-duration = 500;
           transition-left-to-right = true;
         };
-        modules = [ "custom/hw-icon" "cpu" "memory" "temperature" "disk" "custom/gpu" ];
+        modules = [ "custom/hw-icon" "cpu" "memory" "temperature" "disk" ]
+          ++ lib.optionals (vars.nvidiaMonitoring or false) [ "custom/gpu" ];
       };
 
 
@@ -224,7 +225,7 @@ in
       };
 
       temperature = {
-        hwmon-path-abs = "/sys/devices/pci0000:00/0000:00:18.3/hwmon";
+        hwmon-path-abs = vars.hwmonPath;
         input-filename = "temp1_input";
         critical-threshold = 80;
         format = " {temperatureC}°C";
@@ -239,7 +240,7 @@ in
         tooltip-format = "{path}: {used} / {total}";
       };
 
-      "custom/gpu" = {
+      "custom/gpu" = lib.mkIf (vars.nvidiaMonitoring or false) {
         format = "󰢮 {}";
         exec = ''nvidia-smi --query-gpu=utilization.gpu,temperature.gpu --format=csv,noheader,nounits 2>/dev/null | awk -F", " "{printf \"%s%% %s°C\", \$1, \$2}"'';
         interval = 5;
@@ -308,7 +309,7 @@ in
 
       "custom/weather" = {
         format = "{}";
-        exec = "${pkgs.wttrbar}/bin/wttrbar --location Warsaw";
+        exec = "${pkgs.wttrbar}/bin/wttrbar --location ${vars.city or "Warsaw"}";
         return-type = "json";
         interval = 3600;
         tooltip = true;

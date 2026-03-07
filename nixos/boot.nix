@@ -1,26 +1,29 @@
 { config, pkgs, lib, vars, ... }:
 
 let
+  fontSize = toString (vars.grubFontSize or 16);
+  consoleFontSz = toString (vars.consoleFontSize or 16);
+
   sauceCodePro = pkgs.nerd-fonts.sauce-code-pro;
   sauceCodeProTtf = "${sauceCodePro}/share/fonts/truetype/NerdFonts/SauceCodePro/SauceCodeProNerdFontMono-Regular.ttf";
 
-  # Generate a large PF2 font for GRUB from SauceCodePro (readable at native 4K)
-  grubFont = pkgs.runCommand "saucecodeprp-grub-font" {
+  # Generate PF2 font for GRUB from SauceCodePro (size from vars)
+  grubFont = pkgs.runCommand "saucecodeprp-grub-font-${fontSize}" {
     nativeBuildInputs = [ pkgs.grub2 ];
   } ''
     mkdir -p $out
-    grub-mkfont --size=48 -o $out/SauceCodePro48.pf2 ${sauceCodeProTtf}
+    grub-mkfont --size=${fontSize} -o $out/SauceCodePro.pf2 ${sauceCodeProTtf}
   '';
 
-  # Generate a large PSF console font from SauceCodePro for LUKS prompt + TTY at 4K
-  # Pipeline: TTF → BDF (rasterize at 48px) → fix metadata → PSF (console format)
+  # Generate PSF console font from SauceCodePro for LUKS prompt + TTY
+  # Pipeline: TTF → BDF (rasterize) → fix metadata → PSF (console format)
   # Lat2.256 charset covers Polish and Central European characters
-  consoleFont = pkgs.runCommand "saucecodeprp-console-font" {
+  consoleFont = pkgs.runCommand "saucecodeprp-console-font-${consoleFontSz}" {
     nativeBuildInputs = [ pkgs.otf2bdf pkgs.bdf2psf ];
   } ''
     mkdir -p $out/share/consolefonts
     # otf2bdf returns non-zero on glyph warnings but still produces valid output
-    otf2bdf -p 48 ${sauceCodeProTtf} -o raw.bdf || true
+    otf2bdf -p ${consoleFontSz} ${sauceCodeProTtf} -o raw.bdf || true
     # Fix BDF metadata: mark as monospace (C) and correct average width
     sed -e 's/AVERAGE_WIDTH [0-9]*/AVERAGE_WIDTH 400/' \
         -e 's/-P-[0-9]*-/-C-400-/' \
@@ -30,8 +33,8 @@ let
       ${pkgs.bdf2psf}/share/bdf2psf/standard.equivalents \
       ${pkgs.bdf2psf}/share/bdf2psf/fontsets/Lat2.256 \
       512 \
-      $out/share/consolefonts/SauceCodePro48.psf
-    gzip $out/share/consolefonts/SauceCodePro48.psf
+      $out/share/consolefonts/SauceCodePro.psf
+    gzip $out/share/consolefonts/SauceCodePro.psf
   '';
 in
 {
@@ -44,8 +47,8 @@ in
         useOSProber = true; # Auto-detect Windows on separate drive (nvme1n1)
         configurationLimit = vars.bootGenerations or 10;
         # Stylix handles Solarized Dark colors + wallpaper background
-        font = lib.mkForce "${grubFont}/SauceCodePro48.pf2";
-        fontSize = 48;
+        font = lib.mkForce "${grubFont}/SauceCodePro.pf2";
+        fontSize = vars.grubFontSize or 16;
         extraConfig = ''
           terminal_input console
         '';
@@ -86,28 +89,10 @@ in
   # Expose grub-reboot for "Reboot to Windows" power menu
   environment.systemPackages = [ pkgs.grub2 ];
 
-  # Solarized Dark TTY — beautiful LUKS prompt + kernel logs
+  # TTY — Stylix handles console.colors, we just set font + early setup
   console = {
     earlySetup = true;
-    font = "${consoleFont}/share/consolefonts/SauceCodePro48.psf.gz";
+    font = "${consoleFont}/share/consolefonts/SauceCodePro.psf.gz";
     packages = [ consoleFont ];
-    colors = [
-      "002b36" # color0  base03 (background)
-      "dc322f" # color1  red
-      "859900" # color2  green
-      "b58900" # color3  yellow
-      "268bd2" # color4  blue
-      "d33682" # color5  magenta
-      "2aa198" # color6  cyan
-      "eee8d5" # color7  base2 (foreground)
-      "073642" # color8  base02
-      "cb4b16" # color9  orange
-      "586e75" # color10 base01
-      "657b83" # color11 base00
-      "839496" # color12 base0
-      "6c71c4" # color13 violet
-      "93a1a1" # color14 base1
-      "fdf6e3" # color15 base3
-    ];
   };
 }

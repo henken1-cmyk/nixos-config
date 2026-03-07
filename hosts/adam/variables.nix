@@ -36,13 +36,22 @@
   theme = "catppuccin-mocha";
   base16Scheme = "catppuccin-mocha";
 
+  # Hardware monitoring (waybar)
+  hwmonPath = "/sys/devices/platform/coretemp.0/hwmon"; # Intel coretemp
+  nvidiaMonitoring = false;
+
+  # Boot fonts (768p display)
+  grubFontSize = 16;
+  consoleFontSize = 16;
+
   # Waybar auto-hide (laptop only)
   waybarAutohide = true;
 
   # Zellij
   zellijAutostart = true;
 
-  # Hyprsunset (Warsaw coordinates for auto schedule)
+  # Location
+  city = "Warsaw";
   latitude = 52.23;
   longitude = 21.01;
 }

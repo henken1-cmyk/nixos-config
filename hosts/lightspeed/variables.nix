@@ -37,10 +37,22 @@
   theme = "solarized-dark";
   base16Scheme = "solarized-dark";
 
+  # Hardware monitoring (waybar)
+  hwmonPath = "/sys/devices/pci0000:00/0000:00:18.3/hwmon"; # AMD Ryzen k10temp
+  nvidiaMonitoring = true;
+
+  # Audio
+  spdifNodeName = "alsa_output.pci-0000_0d_00.4.iec958-stereo"; # ALC1220 S/PDIF
+
+  # Boot fonts (4K displays)
+  grubFontSize = 48;
+  consoleFontSize = 48;
+
   # Zellij
   zellijAutostart = false;
 
-  # Hyprsunset (Warsaw coordinates for auto schedule)
+  # Location
+  city = "Warsaw";
   latitude = 52.23;
   longitude = 21.01;
 }
