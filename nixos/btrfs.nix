@@ -29,6 +29,7 @@
         };
         # @nix: not snapshotted — reproducible from flake
         # @log: not snapshotted — preserved across rollbacks but not worth snapshot space
+        # @shared: not snapshotted — ephemeral collaboration area
         # @swap: not snapshotted
       };
     };

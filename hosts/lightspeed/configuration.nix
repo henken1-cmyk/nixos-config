@@ -20,6 +20,7 @@ in
     ../../nixos/networking.nix
     ../../nixos/nix.nix
     ../../nixos/printing.nix
+    ../../nixos/samba.nix
     ../../nixos/sysctl.nix
     ../../nixos/users.nix
     ../../themes
