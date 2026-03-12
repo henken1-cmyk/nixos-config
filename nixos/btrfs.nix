@@ -27,6 +27,11 @@
         subvolume."@devel" = {
           snapshot_name = "devel";
         };
+        subvolume."@data" = {
+          snapshot_name = "data";
+          snapshot_preserve_min = "1d";
+          snapshot_preserve = "1d";
+        };
         # @nix: not snapshotted — reproducible from flake
         # @log: not snapshotted — preserved across rollbacks but not worth snapshot space
         # @shared: not snapshotted — ephemeral collaboration area
@@ -34,6 +39,15 @@
       };
     };
   };
+
+  # ── /data directories for Docker services ──────────────────────────
+  systemd.tmpfiles.rules = [
+    "d /data/postgres 0755 root docker -"
+    "d /data/forgejo 0755 root docker -"
+    "d /data/victoriametrics 0755 root docker -"
+    "d /data/loki 0755 root docker -"
+    "d /data/grafana 0755 root docker -"
+  ];
 
   # ── Btrfs tools ────────────────────────────────────────────────────
   environment.systemPackages = with pkgs; [

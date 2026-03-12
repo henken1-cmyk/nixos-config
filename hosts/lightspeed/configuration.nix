@@ -21,8 +21,10 @@ in
     ../../nixos/nix.nix
     ../../nixos/printing.nix
     ../../nixos/samba.nix
+
     ../../nixos/sysctl.nix
     ../../nixos/users.nix
+    ../../nixos/devel-worker.nix
     ../../themes
   ];
 
@@ -41,6 +43,9 @@ in
     enable = true;
     xwayland.enable = true;
   };
+
+  # FUSE — allow unprivileged users to use FUSE mounts
+  programs.fuse.userAllowOther = true;
 
   # Polkit
   security.polkit.enable = true;
@@ -111,6 +116,7 @@ in
     wget
     curl
     git
+
     pciutils
     usbutils
     lshw

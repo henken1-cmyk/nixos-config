@@ -143,6 +143,23 @@
         "type": "github"
       }
     },
+    "devel-agent": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1773356058,
+        "narHash": "sha256-k9hjwOyNMBV4/feJriyOFNTW6uGCwNwfifuLH7vcI+g=",
+        "path": "/devel/devel-agent",
+        "type": "path"
+      },
+      "original": {
+        "path": "/devel/devel-agent",
+        "type": "path"
+      }
+    },
     "firefox-addons": {
       "inputs": {
         "nixpkgs": [
@@ -810,6 +827,7 @@
       "inputs": {
         "claude-code": "claude-code",
         "claude-desktop": "claude-desktop",
+        "devel-agent": "devel-agent",
         "firefox-addons": "firefox-addons",
         "home-manager": "home-manager",
         "hyprland": "hyprland",
