@@ -1,29 +1,31 @@
 #!/usr/bin/env bash
-# Toggle between Solarized Dark and Light
-# This script swaps the Stylix scheme and rebuilds
-# For now, it's a placeholder — full Stylix rebuild is slow
-# A faster approach: toggle only runtime-switchable components
+# Toggle between dark and light Stylix theme (NixOS specialisation)
+# Both themes are pre-built at `nh os switch` time — switching is instant
 
-THEME_FILE="$HOME/.config/nixos/.current-theme"
+PROFILE="/nix/var/nix/profiles/system"
 
-if [ ! -f "$THEME_FILE" ]; then
-  echo "dark" > "$THEME_FILE"
-fi
+# Detect current state by comparing system closures
+CURRENT_SYSTEM=$(readlink -f /run/current-system)
+LIGHT_SYSTEM=$(readlink -f "$PROFILE/specialisation/light" 2>/dev/null || echo "")
 
-CURRENT=$(cat "$THEME_FILE")
-
-if [ "$CURRENT" = "dark" ]; then
-  echo "light" > "$THEME_FILE"
-  notify-send "Theme" "Switching to Solarized Light..." --icon=weather-clear
-  # For instant effect on GTK apps:
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-light' 2>/dev/null
-  # Full rebuild for permanent change:
-  # nh os switch -- --override-input stylix-scheme solarized-light
+if [ "$CURRENT_SYSTEM" = "$LIGHT_SYSTEM" ]; then
+  TARGET="dark"
 else
-  echo "dark" > "$THEME_FILE"
-  notify-send "Theme" "Switching to Solarized Dark..." --icon=weather-clear-night
-  gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null
+  TARGET="light"
 fi
 
-# Reload Waybar
-pkill waybar && hyprctl dispatch exec waybar &
+if sudo /run/current-system/sw/bin/theme-switch "$TARGET"; then
+  # Help GTK apps adapt immediately
+  if [ "$TARGET" = "light" ]; then
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-light' 2>/dev/null
+  else
+    gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' 2>/dev/null
+  fi
+
+  # Reload Hyprland to pick up new border colors
+  hyprctl reload 2>/dev/null
+
+  notify-send "Theme" "Switched to $TARGET" --icon=preferences-desktop-theme
+else
+  notify-send "Theme" "Failed to switch theme" --icon=dialog-error
+fi

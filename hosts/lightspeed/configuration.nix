@@ -21,6 +21,7 @@ in
     ../../nixos/nix.nix
     ../../nixos/printing.nix
     ../../nixos/samba.nix
+    ../../nixos/monitoring.nix
 
     ../../nixos/sysctl.nix
     ../../nixos/users.nix

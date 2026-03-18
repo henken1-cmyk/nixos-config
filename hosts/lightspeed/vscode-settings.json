@@ -31,7 +31,7 @@
   "terminal.integrated.defaultProfile.linux": "fish",
   "terminal.integrated.fontSize": 13,
   "window.titleBarStyle": "custom",
-  "workbench.colorTheme": "Stylix",
   "workbench.iconTheme": "vs-solarized",
-  "claudeCode.preferredLocation": "panel"
+  "claudeCode.preferredLocation": "panel",
+  "claudeCode.selectedModel": "default"
 }

@@ -15,7 +15,7 @@ CHOICE=$(echo -e "$OPTIONS" | fuzzel --dmenu --prompt="Power ❯ " --width=20 --
 
 case "$CHOICE" in
   "🔒 Lock")
-    hyprlock
+    grim /tmp/hyprlock-screenshot.png && hyprlock
     ;;
   "🚪 Logout")
     hyprctl dispatch exit

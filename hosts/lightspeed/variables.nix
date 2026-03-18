@@ -36,6 +36,7 @@
   # Theme
   theme = "solarized-dark";
   base16Scheme = "solarized-dark";
+  base16SchemeLight = "solarized-light";
 
   # Hardware monitoring (waybar)
   hwmonPath = "/sys/devices/pci0000:00/0000:00:18.3/hwmon"; # AMD Ryzen k10temp

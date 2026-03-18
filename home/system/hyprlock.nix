@@ -8,14 +8,11 @@ in
     enable = true;
     settings = {
       general = {
-        disable_loading_bar = false;
-        grace = 3;
         hide_cursor = true;
-        no_fade_in = false;
       };
 
       background = lib.mkForce [{
-        path = "screenshot";
+        path = "/tmp/hyprlock-screenshot.png";
         blur_passes = 3;
         blur_size = 8;
         noise = 0.02;

@@ -14,6 +14,9 @@
       network = "hub_hub-network";
       registry = "philip.nazareth.dev/kiper";
       tag = "latest";
+      orchestrator_host = "orchestrator";
+      mcp_vm_url = "http://mcp-victoriametrics:8080";
+      mcp_loki_url = "http://mcp-loki:8080";
     };
 
     paths = {

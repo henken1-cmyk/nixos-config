@@ -35,6 +35,7 @@
   # Theme
   theme = "catppuccin-mocha";
   base16Scheme = "catppuccin-mocha";
+  base16SchemeLight = "catppuccin-latte";
 
   # Hardware monitoring (waybar)
   hwmonPath = "/sys/devices/platform/coretemp.0/hwmon"; # Intel coretemp

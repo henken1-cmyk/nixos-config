@@ -47,6 +47,7 @@
     "d /data/victoriametrics 0755 root docker -"
     "d /data/loki 0755 root docker -"
     "d /data/grafana 0755 root docker -"
+    "d /data/tempo 0755 root docker -"
   ];
 
   # ── Btrfs tools ────────────────────────────────────────────────────

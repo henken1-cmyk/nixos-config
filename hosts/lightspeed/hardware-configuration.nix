@@ -94,7 +94,13 @@ in
   fileSystems."/data" = {
     device = "/dev/mapper/cryptbtrfs";
     fsType = "btrfs";
-    options = [ "subvol=@data" ] ++ btrfsOpts;
+    options = [ "subvol=@data" ] ++ btrfsNoCow;
+  };
+
+  fileSystems."/var/lib/docker" = {
+    device = "/dev/mapper/cryptbtrfs";
+    fsType = "btrfs";
+    options = [ "subvol=@docker" ] ++ btrfsNoCow;
   };
 
   # Archive drive (NTFS, sda2)

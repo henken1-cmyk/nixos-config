@@ -1,0 +1,25 @@
+--- a/kernel-open/nvidia/nv.c	2026-03-18 17:45:02.305407229 +0100
++++ b/kernel-open/nvidia/nv.c	2026-03-18 17:45:16.994885828 +0100
+@@ -4901,6 +4901,22 @@
+ )
+ {
+     NV_STATUS status;
++    struct pci_dev *pci_dev = to_pci_dev(dev);
++    nv_linux_state_t *nvl = pci_get_drvdata(pci_dev);
++    nv_state_t *nv = NV_STATE_PTR(nvl);
++
++    /*
++     * During hibernate resume, the fresh kernel calls freeze to quiesce
++     * devices before restoring the snapshot. The procfs suspend interface
++     * was not used in this boot, so nv_system_power_state is still RUNNING.
++     * The GPU state is ephemeral (fbdev only) — the snapshot will overwrite
++     * it. Allow freeze as a no-op, matching nv_pmops_thaw/nv_pmops_poweroff.
++     */
++    if (nv->preserve_vidmem_allocations &&
++        nv_system_power_state == NV_POWER_STATE_RUNNING)
++    {
++        return 0;
++    }
+ 
+     status = nvidia_suspend(dev, NV_PM_ACTION_HIBERNATE, NV_FALSE);
+ 

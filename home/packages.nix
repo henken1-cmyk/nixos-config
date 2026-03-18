@@ -90,6 +90,7 @@
 
     # Nix tools
     nil # Nix LSP (for VSCode and other editors)
+    nix-tree # Interactive nix store dependency browser
 
     # Network discovery
     wsdd # Windows Service Discovery for Thunar network browsing

@@ -1,16 +1,24 @@
-# Vesktop — Discord client with Vencord, NVIDIA-compatible encoding flags
+# Vesktop — Discord client with Vencord, GPU-accelerated on NVIDIA Wayland
 { config, pkgs, lib, ... }:
 
 let
-  vesktop-nvidia = pkgs.vesktop.overrideAttrs (old: {
+  electronFeatures = lib.concatStringsSep "," [
+    "VaapiVideoDecodeLinuxGL"
+    "AcceleratedVideoDecoder"
+    "AcceleratedVideoDecodeLinuxGL"
+    "AcceleratedVideoDecodeLinuxZeroCopyGL"
+    "AcceleratedVideoEncoder"
+    "WebRTCPipeWireCapturer"
+  ];
+
+  vesktop-gpu = pkgs.vesktop.overrideAttrs (old: {
     postFixup = (old.postFixup or "") + ''
-      # Add NVIDIA-friendly Electron flags
       wrapProgram $out/bin/vesktop \
-        --add-flags "--enable-features=VaapiVideoDecodeLinuxGL,WebRTCPipeWireCapturer" \
-        --add-flags "--use-gl=egl"
+        --add-flags "--enable-features=${electronFeatures}" \
+        --add-flags "--ignore-gpu-blocklist"
     '';
   });
 in
 {
-  home.packages = [ vesktop-nvidia ];
+  home.packages = [ vesktop-gpu ];
 }

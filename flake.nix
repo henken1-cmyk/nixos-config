@@ -48,13 +48,21 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    ghostty = {
+      url = "git+file:///devel/ghostty";
+    };
+
     devel-agent = {
-      url = "path:/devel/devel-agent";
+      url = "git+file:///devel/devel-agent";
       inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    nix-cachyos-kernel = {
+      url = "github:xddxdd/nix-cachyos-kernel/release";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, devel-agent, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, ... }@inputs:
     let
       scale = import ./themes/scale.nix;
       lightspeedVars = import ./hosts/lightspeed/variables.nix;
@@ -70,7 +78,9 @@
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           nix-flatpak.nixosModules.nix-flatpak
-          { nixpkgs.config.allowUnfree = true; }
+          { nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [ ghostty.overlays.default nix-cachyos-kernel.overlays.pinned ];
+          }
           {
             home-manager = {
               useGlobalPkgs = true;

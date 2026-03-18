@@ -48,8 +48,10 @@ in
     file.".local/share/wallpapers/.keep".text = "";
 
     # Stylix Solarized theme for Vesktop (native nixpkgs, not Flatpak)
-    file.".config/vesktop/themes/stylix.theme.css".text =
-      config.stylix.targets.vesktop.themeBody;
+    file.".config/vesktop/themes/stylix.theme.css" = {
+      text = config.stylix.targets.vesktop.themeBody;
+      force = true;
+    };
   };
 
   # Let Home Manager manage itself

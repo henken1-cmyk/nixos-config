@@ -68,10 +68,12 @@ in
       "loglevel=6"
       "systemd.show_status=true"
       "rd.udev.log_level=3"
+      "amd_pstate=active"
+      "nowatchdog"
     ];
 
     # Kernel
-    kernelPackages = pkgs.linuxPackages_latest;
+    kernelPackages = pkgs.cachyosKernels.linuxPackages-cachyos-latest-lto-x86_64-v3;
 
     # initrd for LUKS + btrfs
     initrd = {
@@ -85,6 +87,11 @@ in
     # Informational console output
     consoleLogLevel = 6;
   };
+
+  # Disable USB wake from S4 (hibernate) — prevents immediate wake on hibernate
+  services.udev.extraRules = ''
+    ACTION=="add", SUBSYSTEM=="pci", DRIVER=="xhci_hcd", ATTR{power/wakeup}="disabled"
+  '';
 
   # Expose grub-reboot for "Reboot to Windows" power menu
   environment.systemPackages = [ pkgs.grub2 ];

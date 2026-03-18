@@ -181,7 +181,7 @@
         "$mod, Q, killactive"
         "$mod SHIFT, Q, exec, hyprctl kill" # Force kill (click to select)
         "$mod, D, exec, fuzzel"
-        "$mod, L, exec, hyprlock"
+        "$mod, L, exec, grim /tmp/hyprlock-screenshot.png && hyprlock"
         "$mod, Space, togglefloating"
 
         # ─ Apps ─
@@ -313,7 +313,7 @@
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "blueman-applet"
         "firefox --name \"messenger\" -P \"messenger\" --no-remote \"https://messenger.com\""
-        "flatpak run dev.vencord.Vesktop"
+        "vesktop"
       ];
     };
 

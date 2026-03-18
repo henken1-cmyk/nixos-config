@@ -6,7 +6,7 @@
     settings = {
       # Font (Stylix handles colors)
       font-family = "SauceCodePro Nerd Font";
-      font-size = scale.font.sm;
+      font-size = scale.font.md;
 
       # Window
       window-padding-x = scale.gap.md;

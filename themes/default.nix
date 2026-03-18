@@ -1,5 +1,25 @@
-{ config, pkgs, vars, scale, ... }:
+{ config, pkgs, lib, vars, scale, ... }:
 
+let
+  lightScheme = vars.base16SchemeLight or "solarized-light";
+
+  theme-switch = pkgs.writeShellScriptBin "theme-switch" ''
+    set -euo pipefail
+    PROFILE="/nix/var/nix/profiles/system"
+    case "''${1:-}" in
+      light)
+        [ -d "$PROFILE/specialisation/light" ] || { echo "No light specialisation" >&2; exit 1; }
+        "$PROFILE/specialisation/light/bin/switch-to-configuration" switch
+        ;;
+      dark)
+        "$PROFILE/bin/switch-to-configuration" switch
+        ;;
+      *)
+        echo "Usage: theme-switch <dark|light>" >&2; exit 1
+        ;;
+    esac
+  '';
+in
 {
   stylix = {
     enable = true;
@@ -59,9 +79,27 @@
 
     # Targets — Stylix auto-applies to most, but we can override
     targets = {
-      grub.enable = true; # Solarized Dark themed GRUB
+      grub.enable = true;
       console.enable = true;
       gtk.enable = true;
     };
   };
+
+  # Light theme specialisation — pre-built at switch time, instant activation
+  specialisation.light.configuration = {
+    stylix.base16Scheme = lib.mkForce
+      "${pkgs.base16-schemes}/share/themes/${lightScheme}.yaml";
+    stylix.polarity = lib.mkForce "light";
+  };
+
+  # Theme switcher (passwordless sudo for instant toggle)
+  environment.systemPackages = [ theme-switch ];
+
+  security.sudo.extraRules = [{
+    users = [ vars.username ];
+    commands = [{
+      command = "/run/current-system/sw/bin/theme-switch";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
 }

@@ -158,7 +158,7 @@ in
         fit = "Cover";
       };
       GTK = {
-        application_prefer_dark_theme = true;
+        application_prefer_dark_theme = lib.mkDefault true;
       };
       appearance.greeting_msg = "Welcome back!";
       widget.clock = {
