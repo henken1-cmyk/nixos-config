@@ -1,0 +1,375 @@
+/* AGS Bar — Catppuccin Mocha */
+
+/* ── Bar window ─────────────────────────────────────────────── */
+
+window {
+  background-color: transparent;
+}
+
+.bar {
+  background-color: rgba(30, 30, 46, 0.85);
+  border-bottom: 1px solid rgba(69, 71, 90, 0.5);
+  padding: 0 8px;
+  min-height: 36px;
+}
+
+/* ── Shared button style ────────────────────────────────────── */
+
+.bar-btn {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 2px 6px;
+  margin: 2px 1px;
+  transition: background-color 150ms ease;
+}
+
+.bar-btn:hover {
+  background-color: rgba(69, 71, 90, 0.5);
+}
+
+.bar-icon {
+  font-family: "SauceCodePro Nerd Font";
+  font-size: 16px;
+  color: #cdd6f4;
+}
+
+.bar-icon.dim {
+  color: rgba(108, 112, 134, 0.6);
+}
+
+.bar-icon.warning {
+  color: #f9e2af;
+}
+
+/* ── Left section ───────────────────────────────────────────── */
+
+.bar-left {
+  spacing: 4px;
+}
+
+/* Workspaces */
+
+.workspaces {
+  spacing: 2px;
+  margin: 0 4px;
+}
+
+.workspace-btn {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  min-width: 28px;
+  min-height: 28px;
+  padding: 0 4px;
+  transition: all 150ms ease;
+}
+
+.workspace-btn label {
+  font-size: 13px;
+  font-weight: bold;
+  color: rgba(108, 112, 134, 0.8);
+}
+
+.workspace-btn:hover {
+  background-color: rgba(69, 71, 90, 0.5);
+}
+
+.workspace-btn.active {
+  background-color: rgba(137, 180, 250, 0.2);
+}
+
+.workspace-btn.active label {
+  color: #89b4fa;
+}
+
+/* Window title */
+
+.window-title {
+  margin: 0 8px;
+}
+
+.window-title label {
+  font-size: 13px;
+  color: #a6adc8;
+}
+
+/* ── Center section ─────────────────────────────────────────── */
+
+.bar-center {
+  spacing: 4px;
+}
+
+/* Media */
+
+.media {
+  spacing: 4px;
+}
+
+.media-player {
+  spacing: 4px;
+}
+
+.media-btn {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 2px 4px;
+  transition: background-color 150ms ease;
+}
+
+.media-btn:hover {
+  background-color: rgba(69, 71, 90, 0.5);
+}
+
+.media-btn label {
+  font-family: "SauceCodePro Nerd Font";
+  font-size: 14px;
+  color: #a6e3a1;
+}
+
+.media-title {
+  font-size: 12px;
+  color: #cdd6f4;
+  margin: 0 4px;
+}
+
+/* ── Right section ──────────────────────────────────────────── */
+
+.bar-right {
+  spacing: 2px;
+}
+
+/* Volume */
+
+.volume {
+  margin: 0 1px;
+}
+
+/* Battery */
+
+.battery {
+  margin: 0 1px;
+}
+
+.battery-inner {
+  spacing: 2px;
+  padding: 2px 4px;
+}
+
+.battery-inner.warning .bar-icon,
+.battery-inner.warning .battery-label {
+  color: #f9e2af;
+}
+
+.battery-inner.critical .bar-icon,
+.battery-inner.critical .battery-label {
+  color: #f38ba8;
+}
+
+.battery-label {
+  font-size: 12px;
+  color: #cdd6f4;
+}
+
+/* Network */
+
+.network {
+  margin: 0 1px;
+}
+
+/* Bluetooth */
+
+.bluetooth {
+  margin: 0 1px;
+}
+
+/* SysTray */
+
+.systray {
+  spacing: 2px;
+  margin: 0 2px;
+}
+
+.tray-item {
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  padding: 2px 4px;
+}
+
+.tray-item:hover {
+  background-color: rgba(69, 71, 90, 0.5);
+}
+
+/* Notifications */
+
+.notifications {
+  margin: 0 1px;
+}
+
+.notif-count {
+  font-size: 10px;
+  font-weight: bold;
+  color: #1e1e2e;
+  background-color: #f38ba8;
+  border-radius: 8px;
+  padding: 0 4px;
+  min-width: 14px;
+  margin-left: 2px;
+}
+
+/* Clock */
+
+.clock {
+  margin: 0 4px 0 2px;
+}
+
+.clock-time {
+  font-size: 13px;
+  font-weight: bold;
+  color: #cdd6f4;
+}
+
+.clock-date {
+  font-size: 10px;
+  color: #a6adc8;
+}
+
+/* ── Prometheus bar button ──────────────────────────────────── */
+
+.prometheus-btn {
+  spacing: 4px;
+}
+
+.prometheus-label {
+  font-size: 12px;
+  color: #a6e3a1;
+  margin: 0 2px;
+}
+
+.prometheus-sep {
+  font-size: 12px;
+  color: rgba(108, 112, 134, 0.5);
+}
+
+/* ── Monitor Popup (from existing AGS panel) ────────────────── */
+
+.monitor-panel {
+  background-color: rgba(26, 10, 31, 0.75);
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(63, 30, 80, 0.5);
+}
+
+.monitor-row {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.monitor-card {
+  background-color: rgba(45, 20, 56, 0.6);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin: 4px;
+  min-width: 120px;
+}
+
+.card-icon {
+  font-family: "SauceCodePro Nerd Font";
+  font-size: 24px;
+  color: #9070d0;
+  margin-bottom: 4px;
+}
+
+.card-title {
+  font-size: 11px;
+  color: #80c8a0;
+  margin-bottom: 2px;
+}
+
+.card-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #a0e8c0;
+}
+
+.card-value.normal {
+  color: #50c878;
+}
+
+.card-value.warning {
+  color: #e8c040;
+}
+
+.card-value.critical {
+  color: #e03050;
+}
+
+.monitor-section {
+  margin: 0 6px;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: bold;
+  color: #9070d0;
+  margin-bottom: 6px;
+}
+
+.section-header {
+  margin-bottom: 6px;
+}
+
+.status-dot {
+  font-size: 10px;
+  margin-left: 6px;
+}
+
+.status-dot.online {
+  color: #50c878;
+}
+
+.status-dot.offline {
+  color: #e03050;
+}
+
+.panel-divider {
+  min-height: 1px;
+  background-color: rgba(63, 30, 80, 0.5);
+  margin: 8px 8px;
+}
+
+/* History Panel */
+
+.history-panel-box {
+  padding: 0 0 4px 0;
+}
+
+.history-section {
+  margin: 0 8px;
+}
+
+.history-row {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.sparkline-card {
+  background-color: rgba(45, 20, 56, 0.6);
+  border-radius: 12px;
+  padding: 8px 10px;
+  margin: 4px;
+  min-width: 230px;
+}
+
+.sparkline-label {
+  font-size: 11px;
+  color: #80c8a0;
+  margin-bottom: 4px;
+}
+
+.sparkline-canvas {
+  border-radius: 8px;
+  background-color: rgba(18, 8, 24, 0.4);
+}
