@@ -102,8 +102,9 @@ in
   stylix.targets.firefox.profileNames = [ "default" ];
   # stylix.targets.waybar.enable = false; # Waybar replaced by HyprPanel
 
-  # bat (theme set by Stylix)
+  # bat (theme set by Stylix, cache rebuild disabled for faster boot)
   programs.bat.enable = true;
+  stylix.targets.bat.enable = false;
 
   # bottom (btm)
   programs.bottom.enable = true;
