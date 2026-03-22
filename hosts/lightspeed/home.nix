@@ -108,7 +108,7 @@ in
   # bat (theme set by Stylix, cache rebuild skipped at boot for speed)
   programs.bat.enable = true;
   stylix.targets.bat.enable = false;
-  home.activation.batCache = lib.hm.dag.entryAnywhere ""; # skip ~3s bat cache --build
+  home.activation.batCache = lib.mkForce (lib.hm.dag.entryAnywhere ""); # skip ~3s bat cache --build
 
   # bottom (btm)
   programs.bottom.enable = true;
