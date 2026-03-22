@@ -31,6 +31,7 @@
   # Boot
   bootGenerations = 1;
   showFirmwareEntry = false;
+  windowsEfiDevice = "/dev/nvme0n1p1"; # Windows EFI partition for dual-boot
 
   # Theme
   theme = "catppuccin-mocha";

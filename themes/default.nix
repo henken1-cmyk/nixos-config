@@ -60,7 +60,7 @@
     # Targets — Stylix auto-applies to most, but we can override
     targets = {
       grub.enable = false; # We use systemd-boot
-      console.enable = true;
+      console.enable = false; # Disabled — boot.nix sets all-black palette to hide VT during transitions
       gtk.enable = true;
     };
   };

@@ -13,6 +13,9 @@
     };
   };
 
+  # Don't block boot waiting for network — desktop doesn't need it
+  systemd.services.NetworkManager-wait-online.enable = false;
+
   # DNS — NetworkManager handles this, but we can add fallbacks
   # networking.nameservers = [ "1.1.1.1" "9.9.9.9" ];
 

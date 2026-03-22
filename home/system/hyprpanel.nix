@@ -9,7 +9,7 @@
           "*" = {
             left = [ "dashboard" "workspaces" "windowtitle" ];
             middle = [ "media" ];
-            right = [ "prometheus" "volume" "network" "bluetooth" "systray" "notifications" "clock" ];
+            right = [ "prometheus" "volume" "battery" "network" "bluetooth" "systray" "notifications" "clock" ];
           };
         };
         customModules = {

@@ -1,5 +1,18 @@
 { config, pkgs, lib, vars, ... }:
 
+let
+  # Loading screen shown immediately when Hyprland starts, before the wallpaper.
+  # Matches theme background with subtle centered text.
+  loadingScreen = pkgs.runCommand "loading-screen.png" {
+    nativeBuildInputs = [ pkgs.imagemagick pkgs.dejavu_fonts ];
+  } ''
+    magick -size 1920x1080 xc:'#1c0e2e' \
+      -font '${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf' \
+      -fill '#8878a0' -gravity center -pointsize 32 \
+      -annotate 0 "Loading..." \
+      png:$out
+  '';
+in
 {
   wayland.windowManager.hyprland = {
     enable = true;
@@ -283,7 +296,7 @@
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
         "hyprpanel"
-        "swww-daemon && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
+        "swww-daemon && swww img ${loadingScreen} --transition-type none && sleep 2 && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"

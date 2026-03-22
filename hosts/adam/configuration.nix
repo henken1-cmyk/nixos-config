@@ -60,6 +60,7 @@ in
   boot.initrd.kernelModules = [ "i915" ];
 
   # ── Laptop power management ──────────────────────────────────────
+  services.upower.enable = true; # Battery reporting for desktop (AstalBattery)
   services.thermald.enable = true; # Intel thermal daemon
 
   services.tlp = {

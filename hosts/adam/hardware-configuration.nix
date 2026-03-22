@@ -25,12 +25,12 @@ in
     allowDiscards = true; # SSD TRIM through LUKS
   };
 
-  # CHANGEME: Replace UUID with value from `blkid /dev/nvme0n1p1`
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/6EA3-33AD";
+    device = "/dev/disk/by-uuid/A788-7A9D";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };
+
 
   # Btrfs subvolumes (no @devel on laptop)
   fileSystems."/" = {

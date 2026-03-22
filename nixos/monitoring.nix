@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 let
   prometheusConfig = pkgs.writeText "prometheus.yml" ''
@@ -64,8 +64,11 @@ in
       "--config.file=/etc/prometheus/prometheus.yml"
       "--storage.tsdb.path=/prometheus"
     ];
-    extraOptions = [ "--network=host" ];
+    extraOptions = [ "--network=host" "--stop-timeout=1" ];
   };
+
+  # Kill containers immediately on shutdown
+  systemd.services.docker-prometheus.serviceConfig.TimeoutStopSec = lib.mkForce "2s";
 
   # ── Grafana container ──────────────────────────────────────────
   virtualisation.oci-containers.containers.grafana = {
@@ -80,6 +83,8 @@ in
       "${grafanaDashboard}:/var/lib/grafana/dashboards/hw-monitor.json:ro"
     ];
     dependsOn = [ "prometheus" ];
-    extraOptions = [ "--network=host" ];
+    extraOptions = [ "--network=host" "--stop-timeout=1" ];
   };
+
+  systemd.services.docker-grafana.serviceConfig.TimeoutStopSec = lib.mkForce "2s";
 }

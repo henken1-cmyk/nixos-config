@@ -18,13 +18,13 @@ in
     ../../home/programs/zellij.nix
     # Desktop environment
     ../../home/system/hyprland.nix
-    ../../home/system/hyprpanel.nix
+    ../../home/system/hyprpanel.nix     # Wariant A: HyprPanel
+    # ../../home/system/ags-bar.nix    # Wariant B: AGS bar
     ../../home/system/fuzzel.nix
-    # ../../home/system/mako.nix  # HyprPanel handles notifications
+    # ../../home/system/mako.nix  # AGS bar handles notifications via notifd
     ../../home/system/hypridle.nix
     ../../home/system/hyprlock.nix
     ../../home/system/swww.nix
-    # waybar.nix and ags.nix kept as backup — replaced by hyprpanel
   ];
 
   # Adam-specific packages

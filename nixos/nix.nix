@@ -22,6 +22,7 @@
   programs.nh = {
     enable = true;
     clean.enable = true;
+    clean.dates = "daily"; # Run cleanup daily via timer, not at boot
     clean.extraArgs = "--keep 5 --keep-since 3d";
     flake = "/home/${vars.username}/.config/nixos";
   };
