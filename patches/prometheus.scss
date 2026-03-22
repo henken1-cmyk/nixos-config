@@ -1,0 +1,124 @@
+.menu-items.prometheus {
+    background: if($bar-menus-monochrome, $bar-menus-background, $bar-menus-background);
+    border-color: if($bar-menus-monochrome, $bar-menus-border-color, $bar-menus-border-color);
+    opacity: $bar-menus-opacity * 0.01;
+}
+
+.menu-items-container.prometheus {
+    min-width: 30em;
+    padding: 0.8em;
+}
+
+.prom-section-header {
+    margin-bottom: 0.4em;
+}
+
+.prom-section-title {
+    font-size: 0.9em;
+    font-weight: bold;
+    color: if($bar-menus-monochrome, $bar-menus-label, $bar-menus-label);
+    margin-bottom: 0.3em;
+}
+
+.prom-divider {
+    min-height: 1px;
+    background-color: if($bar-menus-monochrome, $bar-menus-border-color, $bar-menus-border-color);
+    margin: 0.5em 0.5em;
+}
+
+// Instant metrics
+
+.prom-instant-section {
+    margin-top: 0.4em;
+}
+
+.prom-metrics-section {
+    margin: 0 0.3em;
+}
+
+.prom-metric-row {
+    margin: 0.15em 0;
+}
+
+.prom-metric-card {
+    background-color: transparentize(if($bar-menus-monochrome, $bar-menus-background, $bar-menus-background), 0.4);
+    border-radius: 0.7em;
+    padding: 0.6em 0.8em;
+    margin: 0.2em;
+    min-width: 7em;
+}
+
+.prom-card-icon {
+    font-size: 1.4em;
+    color: if($bar-menus-monochrome, $bar-menus-label, $bar-menus-label);
+    margin-bottom: 0.2em;
+}
+
+.prom-card-title {
+    font-size: 0.75em;
+    color: if($bar-menus-monochrome, $bar-menus-label, $bar-menus-label);
+    margin-bottom: 0.1em;
+}
+
+.prom-card-value {
+    font-size: 1.1em;
+    font-weight: bold;
+
+    &.normal {
+        color: #80d8a0;
+    }
+
+    &.warning {
+        color: #f0c060;
+    }
+
+    &.critical {
+        color: #f06080;
+    }
+}
+
+.prom-status-dot {
+    font-size: 0.7em;
+    margin-left: 0.4em;
+
+    &.online {
+        color: #80d8a0;
+    }
+
+    &.offline {
+        color: #f06080;
+    }
+}
+
+// Sparkline charts
+
+.prom-history-section {
+    padding: 0 0 0.3em 0;
+}
+
+.prom-chart-section {
+    margin: 0 0.5em;
+}
+
+.prom-chart-row {
+    margin: 0.15em 0;
+}
+
+.prom-sparkline-card {
+    background-color: transparentize(if($bar-menus-monochrome, $bar-menus-background, $bar-menus-background), 0.4);
+    border-radius: 0.7em;
+    padding: 0.5em 0.6em;
+    margin: 0.2em;
+    min-width: 14em;
+}
+
+.prom-sparkline-label {
+    font-size: 0.75em;
+    color: if($bar-menus-monochrome, $bar-menus-label, $bar-menus-label);
+    margin-bottom: 0.2em;
+}
+
+.prom-sparkline-canvas {
+    border-radius: 0.5em;
+    background-color: transparentize(darken(if($bar-menus-monochrome, $bar-menus-background, $bar-menus-background), 15%), 0.6);
+}

@@ -88,7 +88,11 @@
             nixpkgs.config.allowUnfree = true;
             nixpkgs.overlays = [
               (final: prev: {
-                hyprpanel = hyprpanel.packages.${prev.system}.default;
+                hyprpanel = hyprpanel.packages.${prev.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+                  postPatch = (old.postPatch or "") + ''
+                    cp ${./patches/prometheus.scss} src/style/scss/menus/prometheus.scss
+                  '';
+                });
               })
             ];
           }

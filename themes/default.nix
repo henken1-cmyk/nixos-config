@@ -61,6 +61,7 @@
     targets = {
       grub.enable = false; # We use systemd-boot
       console.enable = false; # Disabled — boot.nix sets all-black palette to hide VT during transitions
+      plymouth.enable = false; # Custom Plymouth theme in boot.nix (custom LUKS prompt)
       gtk.enable = true;
     };
   };

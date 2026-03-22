@@ -27,6 +27,9 @@ in
     };
   };
 
+  # Stylix expects cage as regreet compositor, but we use Hyprland — disable its target
+  stylix.targets.regreet.enable = false;
+
   programs.regreet = {
     enable = true;
     settings = {
