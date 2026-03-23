@@ -42,22 +42,23 @@ in
       };
     };
     extraCss = ''
-      @define-color destructive_color #5C2D91;
-      @define-color destructive_bg_color #5C2D91;
-      @define-color destructive_fg_color #ffffff;
-
-      button.destructive-action,
-      button.destructive-action:link {
+      button.destructive-action {
+        background-image: image(#5C2D91) !important;
         background-color: #5C2D91 !important;
-        color: #ffffff !important;
         border-color: #4a2475 !important;
+        color: #ffffff !important;
+        box-shadow: none !important;
       }
       button.destructive-action:hover {
+        background-image: image(#6e36ad) !important;
         background-color: #6e36ad !important;
         border-color: #5C2D91 !important;
       }
-      button.destructive-action:active {
+      button.destructive-action:active,
+      button.destructive-action:checked {
+        background-image: image(#4a2475) !important;
         background-color: #4a2475 !important;
+        box-shadow: none !important;
       }
     '';
   };
