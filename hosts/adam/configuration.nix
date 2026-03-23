@@ -148,6 +148,9 @@ in
   # Tailscale VPN
   services.tailscale.enable = true;
 
+  # ModemManager disabled — T480s has no WWAN card, prevents unnecessary probing
+  systemd.services.ModemManager.enable = false;
+
   # SSH
   services.openssh.enable = true;
   programs.ssh.startAgent = false;
