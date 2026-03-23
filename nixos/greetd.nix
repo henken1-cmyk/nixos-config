@@ -41,6 +41,20 @@ in
         application_prefer_dark_theme = true;
       };
     };
+    extraCss = ''
+      button.destructive-action {
+        background-color: #5C2D91;
+        color: #ffffff;
+        border-color: #4a2475;
+      }
+      button.destructive-action:hover {
+        background-color: #6e36ad;
+        border-color: #5C2D91;
+      }
+      button.destructive-action:active {
+        background-color: #4a2475;
+      }
+    '';
   };
 
   # Ensure Hyprland is available as a session
