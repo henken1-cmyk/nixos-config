@@ -19,8 +19,9 @@
   # systemd-resolved: faster DNS, better Tailscale split-DNS via D-Bus
   services.resolved = {
     enable = true;
-    dnssec = "allow-downgrade";
+    dnssec = "false";                        # router doesn't support DNSSEC, skip validation
     fallbackDns = [ "1.1.1.1" "9.9.9.9" ];
+    extraConfig = "MulticastDNS=no";         # avahi handles mDNS, avoid conflict
   };
   networking.networkmanager.dns = "systemd-resolved";
 
