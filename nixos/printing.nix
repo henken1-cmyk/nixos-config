@@ -12,6 +12,9 @@
     ];
   };
 
+  # cups-browsed disabled — avahi handles printer discovery, this is redundant
+  systemd.services.cups-browsed.enable = false;
+
   # Network printer discovery
   services.avahi = {
     enable = true;
