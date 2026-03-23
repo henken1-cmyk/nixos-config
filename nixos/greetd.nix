@@ -43,21 +43,18 @@ in
     };
     extraCss = ''
       button.destructive-action {
-        background-image: image(#5C2D91) !important;
-        background-color: #5C2D91 !important;
-        border-color: #4a2475 !important;
+        background-image: linear-gradient(to top, #4a2475 2px, #5C2D91) !important;
+        border-color: #3d1e61 !important;
         color: #ffffff !important;
-        box-shadow: none !important;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.07) !important;
       }
       button.destructive-action:hover {
-        background-image: image(#6e36ad) !important;
-        background-color: #6e36ad !important;
+        background-image: linear-gradient(to top, #5C2D91 20%, #6e36ad 90%) !important;
         border-color: #5C2D91 !important;
       }
       button.destructive-action:active,
       button.destructive-action:checked {
-        background-image: image(#4a2475) !important;
-        background-color: #4a2475 !important;
+        background-image: linear-gradient(#4a2475, #4a2475) !important;
         box-shadow: none !important;
       }
     '';
