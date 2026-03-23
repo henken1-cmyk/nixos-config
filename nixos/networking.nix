@@ -21,7 +21,7 @@
     enable = true;
     dnssec = "false";                        # router doesn't support DNSSEC, skip validation
     fallbackDns = [ "1.1.1.1" "9.9.9.9" ];
-    extraConfig = "MulticastDNS=no";         # avahi handles mDNS, avoid conflict
+    settings.Resolve.MulticastDNS = "no";   # avahi handles mDNS, avoid conflict
   };
   networking.networkmanager.dns = "systemd-resolved";
 
