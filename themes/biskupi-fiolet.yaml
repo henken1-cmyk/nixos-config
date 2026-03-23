@@ -8,7 +8,7 @@ palette:
   base02: "#3a2558" # zaznaczenie
   base03: "#4e3670" # komentarze, ramki — ciemny fiolet
   base04: "#8878a0" # nieaktywny tekst — przygaszony lawendowy
-  base05: "#a0e8c0" # główny tekst — seledynowy
+  base05: "#521c87" # główny tekst — biskupi fiolet
   base06: "#c0f0d8" # jasny foreground
   base07: "#e0f8ec" # najjaśniejszy tekst
   base08: "#d04060" # czerwony — stonowany
