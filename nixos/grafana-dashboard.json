@@ -61,8 +61,8 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "node_hwmon_temp_celsius{chip=~\".*coretemp.*\", sensor=\"temp1\"}",
-          "legendFormat": "CPU Package",
+          "expr": "node_hwmon_temp_celsius{chip=~\".*coretemp.*|pci0000:00_0000:00:18_3\", sensor=\"temp1\"}",
+          "legendFormat": "CPU Package / Tctl",
           "refId": "A"
         }
       ]
@@ -145,7 +145,7 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "node_hwmon_temp_celsius{chip=~\".*thinkpad.*\", sensor=\"temp2\"}",
+          "expr": "nvidia_smi_temperature_gpu",
           "legendFormat": "GPU",
           "refId": "A"
         }
@@ -321,8 +321,8 @@
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "node_hwmon_temp_celsius{chip=~\".*coretemp.*\", sensor=\"temp1\"}",
-          "legendFormat": "Package",
+          "expr": "node_hwmon_temp_celsius{chip=~\".*coretemp.*|pci0000:00_0000:00:18_3\", sensor=\"temp1\"}",
+          "legendFormat": "Package / Tctl",
           "refId": "A"
         },
         {
@@ -348,6 +348,12 @@
           "expr": "node_hwmon_temp_celsius{chip=~\".*coretemp.*\", sensor=\"temp5\"}",
           "legendFormat": "Core 3",
           "refId": "E"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "node_hwmon_temp_celsius{chip=\"pci0000:00_0000:00:18_3\", sensor=\"temp3\"}",
+          "legendFormat": "Tccd1",
+          "refId": "F"
         }
       ]
     },
@@ -382,26 +388,44 @@
         "legend": { "displayMode": "list", "placement": "bottom" },
         "tooltip": { "mode": "multi" }
       },
-      "title": "Temperatury GPU / NVMe / PCH",
+      "title": "Temperatury NVMe / RAM / Inne",
       "type": "timeseries",
       "targets": [
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "node_hwmon_temp_celsius{chip=~\".*thinkpad.*\", sensor=\"temp2\"}",
-          "legendFormat": "GPU (MX150)",
+          "expr": "node_hwmon_temp_celsius{chip=~\".*nvme.*\", sensor=\"temp1\"}",
+          "legendFormat": "NVMe Composite",
           "refId": "A"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
-          "expr": "node_hwmon_temp_celsius{chip=~\".*nvme.*\", sensor=\"temp1\"}",
-          "legendFormat": "NVMe",
+          "expr": "node_hwmon_temp_celsius{chip=~\".*nvme.*\", sensor=\"temp3\"}",
+          "legendFormat": "NVMe Sensor 2",
           "refId": "B"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "node_hwmon_temp_celsius{chip=~\"i2c.*0051\", sensor=\"temp1\"}",
+          "legendFormat": "RAM DIMM 1",
+          "refId": "C"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "node_hwmon_temp_celsius{chip=~\"i2c.*0053\", sensor=\"temp1\"}",
+          "legendFormat": "RAM DIMM 2",
+          "refId": "D"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "nvidia_smi_temperature_gpu",
+          "legendFormat": "GPU",
+          "refId": "E"
         },
         {
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "expr": "node_hwmon_temp_celsius{chip=~\".*pch.*\", sensor=\"temp1\"}",
           "legendFormat": "PCH",
-          "refId": "C"
+          "refId": "F"
         }
       ]
     },
@@ -514,6 +538,125 @@
     {
       "collapsed": false,
       "gridPos": { "h": 1, "w": 24, "x": 0, "y": 23 },
+      "id": 107,
+      "panels": [],
+      "title": "GPU",
+      "type": "row"
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 20,
+            "gradientMode": "opacity",
+            "showPoints": "never"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 80 }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": { "id": "byName", "options": "GPU Temp" },
+            "properties": [
+              { "id": "unit", "value": "celsius" },
+              { "id": "custom.axisPlacement", "value": "left" }
+            ]
+          },
+          {
+            "matcher": { "id": "byName", "options": "Power" },
+            "properties": [
+              { "id": "unit", "value": "watt" },
+              { "id": "custom.axisPlacement", "value": "right" }
+            ]
+          }
+        ]
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "id": 20,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "title": "GPU Temp & Power",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "nvidia_smi_temperature_gpu",
+          "legendFormat": "GPU Temp",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "nvidia_smi_power_draw_watts",
+          "legendFormat": "Power",
+          "refId": "B"
+        }
+      ]
+    },
+    {
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line",
+            "lineInterpolation": "smooth",
+            "lineWidth": 2,
+            "fillOpacity": 10,
+            "gradientMode": "opacity",
+            "showPoints": "never"
+          },
+          "min": 0,
+          "max": 100,
+          "unit": "percent",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 90 }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "id": 21,
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "multi" }
+      },
+      "title": "GPU Load & VRAM",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "nvidia_smi_utilization_gpu_ratio * 100",
+          "legendFormat": "GPU Load",
+          "refId": "A"
+        },
+        {
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "expr": "nvidia_smi_utilization_memory_ratio * 100",
+          "legendFormat": "VRAM Usage",
+          "refId": "B"
+        }
+      ]
+    },
+
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
       "id": 103,
       "panels": [],
       "title": "Pamiec i dyski",
@@ -546,7 +689,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 24 },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 33 },
       "id": 11,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
@@ -588,7 +731,7 @@
         },
         "overrides": []
       },
-      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 24 },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 33 },
       "id": 12,
       "options": {
         "legend": { "displayMode": "list", "placement": "bottom" },
@@ -614,7 +757,7 @@
 
     {
       "collapsed": true,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 32 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 41 },
       "id": 104,
       "title": "Dyski - miejsce",
       "type": "row",
@@ -639,7 +782,7 @@
             },
             "overrides": []
           },
-          "gridPos": { "h": 6, "w": 12, "x": 0, "y": 33 },
+          "gridPos": { "h": 6, "w": 12, "x": 0, "y": 42 },
           "id": 13,
           "options": {
             "orientation": "auto",
@@ -679,7 +822,7 @@
             },
             "overrides": []
           },
-          "gridPos": { "h": 6, "w": 12, "x": 12, "y": 33 },
+          "gridPos": { "h": 6, "w": 12, "x": 12, "y": 42 },
           "id": 14,
           "options": {
             "orientation": "auto",
@@ -722,7 +865,7 @@
             },
             "overrides": []
           },
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 39 },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 48 },
           "id": 15,
           "options": {
             "legend": { "displayMode": "list", "placement": "bottom", "calcs": ["lastNotNull"] },
@@ -762,7 +905,7 @@
             },
             "overrides": []
           },
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 39 },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 48 },
           "id": 16,
           "options": {
             "legend": { "displayMode": "list", "placement": "bottom", "calcs": ["lastNotNull"] },
@@ -784,7 +927,7 @@
 
     {
       "collapsed": true,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 33 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 42 },
       "id": 105,
       "title": "Dyski - aktywnosc",
       "type": "row",
@@ -827,7 +970,7 @@
               }
             ]
           },
-          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 34 },
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 43 },
           "id": 17,
           "options": {
             "legend": { "displayMode": "list", "placement": "bottom" },
@@ -855,7 +998,7 @@
 
     {
       "collapsed": true,
-      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 34 },
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 43 },
       "id": 106,
       "title": "Siec - aktywnosc",
       "type": "row",
@@ -898,7 +1041,7 @@
               }
             ]
           },
-          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 35 },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 44 },
           "id": 18,
           "options": {
             "legend": { "displayMode": "list", "placement": "bottom" },
@@ -959,7 +1102,7 @@
               }
             ]
           },
-          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 35 },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 44 },
           "id": 19,
           "options": {
             "legend": { "displayMode": "list", "placement": "bottom" },

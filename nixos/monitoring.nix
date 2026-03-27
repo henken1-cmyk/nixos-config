@@ -9,6 +9,9 @@ let
       - job_name: 'node'
         static_configs:
           - targets: ['localhost:9100']
+      - job_name: 'nvidia-gpu'
+        static_configs:
+          - targets: ['localhost:9835']
   '';
 
   grafanaDatasource = pkgs.writeText "datasource.yml" ''
@@ -49,6 +52,12 @@ in
       "hwmon"
       "thermal_zone"
     ];
+  };
+
+  # ── NVIDIA GPU exporter — GPU metrics via nvidia-smi ───────────
+  services.prometheus.exporters.nvidia-gpu = {
+    enable = true;
+    port = 9835;
   };
 
   # ── Prometheus container ────────────────────────────────────────

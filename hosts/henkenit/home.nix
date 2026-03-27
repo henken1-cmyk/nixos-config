@@ -57,6 +57,7 @@ in
   # GTK
   gtk = {
     enable = true;
+    gtk4.theme = null; # Stylix handles GTK4 theming
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
