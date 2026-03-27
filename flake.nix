@@ -1,5 +1,5 @@
 {
-  description = "NixOS Bonkers Setup — lightspeed & adam";
+  description = "NixOS Bonkers Setup — lightspeed, adam & henkenit";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -54,6 +54,7 @@
     let
       lightspeedVars = import ./hosts/lightspeed/variables.nix;
       adamVars = import ./hosts/adam/variables.nix;
+      henkenitVars = import ./hosts/henkenit/variables.nix;
     in
     {
       nixosConfigurations.lightspeed = nixpkgs.lib.nixosSystem {
@@ -102,6 +103,37 @@
               useUserPackages = true;
               extraSpecialArgs = { inherit inputs; vars = adamVars; };
               users.${adamVars.username} = import ./hosts/adam/home.nix;
+            };
+          }
+        ];
+      };
+
+      nixosConfigurations.henkenit = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs; vars = henkenitVars; };
+        modules = [
+          ./hosts/henkenit/configuration.nix
+          stylix.nixosModules.stylix
+          home-manager.nixosModules.home-manager
+          sops-nix.nixosModules.sops
+          nix-flatpak.nixosModules.nix-flatpak
+          {
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [
+              (final: prev: {
+                hyprpanel = hyprpanel.packages.${prev.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+                  postPatch = (old.postPatch or "") + ''
+                    cp ${./patches/prometheus.scss} src/style/scss/menus/prometheus.scss
+                  '';
+                });
+              })
+            ];
+          }
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = { inherit inputs; vars = henkenitVars; };
+              users.${henkenitVars.username} = import ./hosts/henkenit/home.nix;
             };
           }
         ];
