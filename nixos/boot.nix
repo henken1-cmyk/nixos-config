@@ -182,7 +182,7 @@ in
       "rd.udev.log_level=3"
       "udev.log_priority=3"
       "vt.global_cursor_default=0" # Hide blinking text cursor
-    ];
+    ] ++ map (m: "video=${m}:D") (vars.monitors_drm or []);
 
     plymouth = {
       enable = true;

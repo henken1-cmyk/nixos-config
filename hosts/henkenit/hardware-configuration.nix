@@ -21,13 +21,13 @@ in
 
   # CHANGEME: Replace UUID with value from `blkid /dev/<luks-partition>` (the LUKS partition)
   boot.initrd.luks.devices."cryptbtrfs" = {
-    device = "/dev/disk/by-uuid/CHANGEME-LUKS-UUID";
+    device = "/dev/disk/by-uuid/4f9add7f-85eb-46dc-8384-14a544eac08d";
     allowDiscards = true; # SSD TRIM through LUKS
   };
 
   # CHANGEME: Replace UUID with value from `blkid /dev/<efi-partition>`
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/CHANGEME-EFI-UUID";
+    device = "/dev/disk/by-uuid/C405-61A3";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };

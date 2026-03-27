@@ -2,8 +2,8 @@
   # User
   username = "henken"; # CHANGEME: set your username
   fullName = "Henken"; # CHANGEME: set your full name
-  email = "henken1@gmail.com"; # CHANGEME: set your email
-  gitUsername = "henken1-cmyk"; # CHANGEME: set your git username
+  email = "henken1@gmail.com"; # Set your email
+  gitUsername = "henken1-cmyk"; # Set your git username
 
   # System
   hostname = "henkenit";
@@ -27,11 +27,14 @@
     "DP-1,preferred,auto,1" # CHANGEME: set resolution, refresh rate, position, scale
     "DP-2,preferred,auto,1" # CHANGEME: set resolution, refresh rate, position, scale
   ];
+  # DRM connector names for early boot framebuffer (from /sys/class/drm/)
+  monitors_drm = [ "DP-1" "DP-2" ];
 
   # Boot
-  bootGenerations = 10;
+  gpuInInitrd = false; # ESP too small (196MB) for NVIDIA modules in initrd
+  bootGenerations = 2;
   showFirmwareEntry = true;
-  windowsEfiDevice = "/dev/nvme0n1p1"; # CHANGEME: Windows EFI partition for dual-boot (verify with `lsblk`)
+  windowsEfiDevice = ""; # Shared ESP — Windows Boot Manager already on /boot
 
   # Theme (adam-style catppuccin)
   theme = "catppuccin-mocha";

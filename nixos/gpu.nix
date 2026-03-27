@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, vars, ... }:
 
 {
   # NVIDIA proprietary drivers
@@ -27,8 +27,9 @@
     __GL_VRR_ALLOWED = "1";
   };
 
-  # Kernel module early load
-  boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+  # NVIDIA early load: in initrd for Plymouth on NVIDIA fb, unless ESP too small
+  boot.initrd.kernelModules = lib.optionals (vars.gpuInInitrd or true)
+    [ "nvidia" "nvidia_modeset" "nvidia_drm" ];
   boot.kernelParams = [ "nvidia-drm.modeset=1" "nvidia-drm.fbdev=1" ];
 
   # NVENC for gpu-screen-recorder

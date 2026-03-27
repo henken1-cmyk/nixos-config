@@ -5,6 +5,9 @@ let
   greeterHyprlandConfig = pkgs.writeText "greetd-hyprland.conf" ''
     ${lib.concatMapStringsSep "\n" (m: "monitor = ${m}") vars.monitors}
 
+    # Place regreet login window on the right monitor
+    windowrulev2 = monitor ${vars.monitorRight}, class:^(regreet)$
+
     misc {
       disable_hyprland_logo = true
       disable_splash_rendering = true
