@@ -31,6 +31,7 @@
   # Boot
   bootGenerations = 10;
   showFirmwareEntry = true;
+  windowsEfiDevice = "/dev/nvme0n1p1"; # CHANGEME: Windows EFI partition for dual-boot (verify with `lsblk`)
 
   # Theme (adam-style catppuccin)
   theme = "catppuccin-mocha";

@@ -105,18 +105,23 @@ nixos-generate-config --root /mnt
 </details>
 
 <details>
-<summary><b>henkenit</b> (desktop) — 6 subvolumes, 64 GB swap, no @devel</summary>
+<summary><b>henkenit</b> (desktop, dual-boot Windows) — 6 subvolumes, 64 GB swap, no @devel</summary>
 
 ```bash
-# Partition
-gdisk /dev/nvme0n1
-# p1: 512M EFI (ef00), label: BOOT
-# p2: remaining, Linux filesystem (8300), label: CRYPTBTRFS
+# Dual-boot: Windows is already installed on p1 (EFI) + p3 (C:).
+# Shrink the Windows partition (C:) from Windows Disk Management first,
+# then create NixOS partitions in the free space.
 
-# Encrypt + format
+gdisk /dev/nvme0n1
+# p1: existing Windows EFI (keep!)
+# p3: existing Windows C: (shrunk)
+# NEW p5: 512M EFI (ef00), label: BOOT   — NixOS own ESP
+# NEW p6: remaining, Linux filesystem (8300), label: CRYPTBTRFS
+
+# Encrypt + format (do NOT touch p1/p3!)
 cryptsetup luksFormat --type luks2 /dev/disk/by-partlabel/CRYPTBTRFS
 cryptsetup open /dev/disk/by-partlabel/CRYPTBTRFS cryptbtrfs
-mkfs.fat -F32 -n BOOT /dev/nvme0n1p1
+mkfs.fat -F32 -n BOOT /dev/nvme0n1p5    # CHANGEME: your NixOS EFI partition
 mkfs.btrfs -L nixos /dev/mapper/cryptbtrfs
 
 # Create subvolumes (6: root, home, nix, log, snapshots, swap — no @devel)
@@ -133,7 +138,7 @@ umount /mnt
 mount -o subvol=@root,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt
 mkdir -p /mnt/{boot,home,nix,var/log,.snapshots,swap}
 
-mount /dev/nvme0n1p1 /mnt/boot
+mount /dev/nvme0n1p5 /mnt/boot          # CHANGEME: your NixOS EFI partition
 mount -o subvol=@home,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt/home
 mount -o subvol=@nix,noatime,ssd,discard=async,nodatacow /dev/mapper/cryptbtrfs /mnt/nix
 mount -o subvol=@log,compress=zstd:1,noatime,space_cache=v2,ssd,discard=async /dev/mapper/cryptbtrfs /mnt/var/log
@@ -145,6 +150,10 @@ btrfs filesystem mkswapfile --size 64g /mnt/swap/swapfile
 swapon /mnt/swap/swapfile
 
 nixos-generate-config --root /mnt
+
+# IMPORTANT: After install, update windowsEfiDevice in variables.nix
+# to point at the Windows EFI partition (p1), e.g. /dev/nvme0n1p1
+# boot.nix will copy Windows Boot Manager so systemd-boot sees it.
 ```
 </details>
 
@@ -244,6 +253,10 @@ findmnt -t btrfs                      # correct mount options
 swapon --show                         # swap active
 systemctl status btrbk-default.timer  # snapshots scheduled
 
+# (adam/henkenit) Verify dual-boot Windows
+ls /boot/EFI/Microsoft                  # Windows Boot Manager copied
+bootctl list                            # Windows entry visible in systemd-boot
+
 # (adam only) Verify laptop features
 nvidia-offload glxinfo | head         # PRIME offload works
 systemctl status tlp.service          # TLP active
@@ -271,7 +284,7 @@ Search for `CHANGEME` across the config — these are values you must update:
 | `hosts/adam/configuration.nix` | GPU bus IDs (intelBusId, nvidiaBusId) | **Before install** (`lspci \| grep -E 'VGA\|3D'`) |
 | `hosts/adam/hardware-configuration.nix` | resume_offset for hibernation | After first boot (`btrfs inspect-internal map-swapfile`) |
 | `hosts/henkenit/hardware-configuration.nix` | LUKS + EFI UUIDs | **Before install** (`blkid`) |
-| `hosts/henkenit/variables.nix` | username, email, gitUsername, monitors | **Before install** / after first boot |
+| `hosts/henkenit/variables.nix` | username, email, gitUsername, monitors, windowsEfiDevice | **Before install** / after first boot |
 | `home/system/waybar.nix` | temperature hwmon path | After first boot |
 
 ## Key Bindings (Cheat Sheet)
@@ -479,6 +492,7 @@ reboot
 - btrfs on LUKS — 6 subvolumes (@root, @home, @nix, @log, @snapshots, @swap — no @devel)
 - btrbk snapshots (hourly, 48h/14d/4w/3m retention) for @root, @home
 - 64 GB swap file (zram)
+- **Dual-boot Windows** — Windows Boot Manager copied from EFI partition (`windowsEfiDevice`)
 - `hardware-configuration.nix` is a **template** — merge UUIDs from `nixos-generate-config`
 
 ## Future Additions
