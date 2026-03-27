@@ -21,10 +21,11 @@
 
   # Monitors (from `hyprctl monitors`)
   # CHANGEME: verify with `hyprctl monitors` after first boot
-  monitorLeft = "DP-1"; # CHANGEME: set your monitor name
-  monitorRight = "";
+  monitorLeft = "DP-1"; # CHANGEME: set your left monitor name
+  monitorRight = "DP-2"; # CHANGEME: set your right monitor name
   monitors = [
     "DP-1,preferred,auto,1" # CHANGEME: set resolution, refresh rate, position, scale
+    "DP-2,preferred,auto,1" # CHANGEME: set resolution, refresh rate, position, scale
   ];
 
   # Boot

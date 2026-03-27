@@ -6,7 +6,7 @@
 |------|---------|-----|-----|---------|
 | `lightspeed` | Desktop | AMD Ryzen 9 7950X3D | NVIDIA RTX 3090 Ti | Dual 4K (60+240Hz) |
 | `adam` | Lenovo ThinkPad T480s | Intel i7-8550U | Intel UHD 620 + NVIDIA MX150 | 1366x768 |
-| `henkenit` | Desktop | AMD Ryzen 7 7800X3D | NVIDIA RTX 5070 Ti | Single monitor |
+| `henkenit` | Desktop | AMD Ryzen 7 7800X3D | NVIDIA RTX 5070 Ti | Dual monitor |
 
 ## Quick Start
 
@@ -472,7 +472,7 @@ reboot
 ### `henkenit` (Desktop)
 - NVIDIA RTX 5070 Ti with open kernel modules (`nixos/gpu.nix`)
 - AMD Ryzen 7 7800X3D (Zen 4)
-- Single monitor (configure via `hyprctl monitors` after first boot)
+- Dual monitor (configure via `hyprctl monitors` after first boot)
 - HyprPanel (like adam) with Prometheus/Grafana monitoring
 - Catppuccin Mocha theme
 - Tailscale VPN
