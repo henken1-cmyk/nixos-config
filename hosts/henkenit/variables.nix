@@ -24,7 +24,7 @@
   monitorLeft = "DP-1"; # CHANGEME: set your left monitor name
   monitorRight = "DP-2"; # CHANGEME: set your right monitor name
   monitors = [
-    "DP-1,preferred,auto,1" # CHANGEME: set resolution, refresh rate, position, scale
+    "DP-1,preferred,auto,1.5" # CHANGEME: set resolution, refresh rate, position, scale
     "DP-2,preferred,auto,1" # CHANGEME: set resolution, refresh rate, position, scale
   ];
   # DRM connector names for early boot framebuffer (from /sys/class/drm/)
