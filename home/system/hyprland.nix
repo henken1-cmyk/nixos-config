@@ -239,7 +239,7 @@ in
 
         # ─ Screenshots ─
         ", Print, exec, grim - | satty --filename -"
-        "$mod SHIFT, S, exec, grim -g \"$(slurp)\" - | satty --filename -"
+        "$mod SHIFT, S, exec, grim -g \"$(slurp)\" - | wl-copy"
 
         # ─ Clipboard ─
         "$mod, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"

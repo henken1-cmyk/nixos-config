@@ -53,6 +53,19 @@ in
   # Removable media filesystems
   boot.supportedFilesystems = [ "btrfs" "ntfs" "exfat" ];
 
+  # Windows as default boot entry
+  boot.loader.systemd-boot.extraEntries = {
+    "windows.conf" = ''
+      title Windows
+      efi /EFI/Microsoft/Boot/bootmgfw.efi
+      sort-key a-windows
+    '';
+  };
+  boot.loader.systemd-boot.extraInstallCommands = ''
+    sed -i '/^default /d' /boot/loader/loader.conf
+    echo "default windows.conf" >> /boot/loader/loader.conf
+  '';
+
   # ── btrfs (no @devel) ───────────────────────────────────────────
   services.btrfs.autoScrub = {
     enable = true;

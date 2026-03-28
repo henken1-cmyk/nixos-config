@@ -7,8 +7,8 @@ let
   } ''
     mkdir -p $out/share/plymouth/themes/custom
 
-    # NixOS snowflake logo (472x472 to match Stylix)
-    rsvg-convert -w 472 -h 472 \
+    # NixOS snowflake logo (smaller spinning icon)
+    rsvg-convert -w 50 -h 50 \
       ${pkgs.nixos-icons}/share/icons/hicolor/scalable/apps/nix-snowflake.svg \
       -o $out/share/plymouth/themes/custom/logo.png
 
