@@ -100,6 +100,15 @@ in
 
   # Tailscale VPN
   services.tailscale.enable = true;
+  networking.firewall.interfaces.tailscale0.allowedTCPPorts = [ 3000 3001 3389 5000 ];
+
+  # xRDP — remote desktop (XFCE as session, Wayland/Hyprland not supported)
+  services.xrdp = {
+    enable = true;
+    defaultWindowManager = "xfce4-session";
+    openFirewall = false; # only via Tailscale (port opened above)
+  };
+  services.xserver.desktopManager.xfce.enable = true;
 
   # SSH
   services.openssh.enable = true;

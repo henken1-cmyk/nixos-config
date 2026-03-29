@@ -84,6 +84,7 @@ in
     image = "grafana/grafana:latest";
     environment = {
       GF_SECURITY_ADMIN_PASSWORD = "qweqwe";
+      GF_SERVER_HTTP_PORT = "3001";
     };
     volumes = [
       "grafana-data:/var/lib/grafana"
@@ -96,4 +97,17 @@ in
   };
 
   systemd.services.docker-grafana.serviceConfig.TimeoutStopSec = lib.mkForce "2s";
+
+  # ── Restart monitoring after resume from sleep ────────────────
+  # Docker container clocks desync after suspend, causing Prometheus
+  # to reject all metrics as "too old or too far into the future".
+  systemd.services.monitoring-restart-after-resume = {
+    description = "Restart monitoring containers after resume";
+    after = [ "sleep.target" ];
+    wantedBy = [ "sleep.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.bash}/bin/bash -c '${pkgs.systemd}/bin/systemctl restart docker-prometheus.service docker-grafana.service'";
+    };
+  };
 }

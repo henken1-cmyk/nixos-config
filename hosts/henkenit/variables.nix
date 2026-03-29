@@ -21,14 +21,14 @@
 
   # Monitors (from `hyprctl monitors`)
   # CHANGEME: verify with `hyprctl monitors` after first boot
-  monitorLeft = "DP-1"; # CHANGEME: set your left monitor name
-  monitorRight = "DP-2"; # CHANGEME: set your right monitor name
+  monitorLeft = "DP-2"; # HP 727pk (left)
+  monitorRight = "DP-1"; # Samsung Odyssey G80SD (right)
   monitors = [
-    "DP-1,preferred,auto,1.5" # CHANGEME: set resolution, refresh rate, position, scale
-    "DP-2,preferred,auto,1" # CHANGEME: set resolution, refresh rate, position, scale
+    "DP-2,preferred,0x0,1" # HP 727pk — left
+    "DP-1,preferred,3840x0,1.5" # Samsung Odyssey G80SD — right
   ];
   # DRM connector names for early boot framebuffer (from /sys/class/drm/)
-  monitors_drm = [ "DP-1" "DP-2" ];
+  monitors_drm = [ "DP-1" ];
 
   # Boot
   gpuInInitrd = false; # ESP too small (196MB) for NVIDIA modules in initrd

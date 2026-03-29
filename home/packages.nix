@@ -46,6 +46,7 @@
     bemoji
 
     # Communication
+    caprine
     discord
     spotify
 
