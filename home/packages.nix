@@ -98,6 +98,9 @@
     libguestfs-with-appliance # guestmount for VHDX/VHD/qcow2
     qemu_kvm # provides qemu-img/qemu-nbd needed by libguestfs
 
+    # Office
+    libreoffice
+
     # Archive support
     p7zip
   ];
