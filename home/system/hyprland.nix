@@ -145,10 +145,25 @@ in
 
         # Float file dialogs
         "match:title ^(Open File)$, float on"
+        "match:title ^(Open File)$, size 1000 700"
+        "match:title ^(Open File)$, center 1"
         "match:title ^(Save File)$, float on"
+        "match:title ^(Save File)$, size 1000 700"
+        "match:title ^(Save File)$, center 1"
         "match:title ^(Open Folder)$, float on"
+        "match:title ^(Open Folder)$, size 1000 700"
+        "match:title ^(Open Folder)$, center 1"
         "match:title ^(Save As)$, float on"
+        "match:title ^(Save As)$, size 1000 700"
+        "match:title ^(Save As)$, center 1"
         "match:title ^(File Upload)$, float on"
+        "match:title ^(File Upload)$, size 1000 700"
+        "match:title ^(File Upload)$, center 1"
+
+        # xdg-desktop-portal file dialogs (catch-all for portal-based pickers)
+        "match:class ^(xdg-desktop-portal-gtk)$, float on"
+        "match:class ^(xdg-desktop-portal-gtk)$, size 1000 700"
+        "match:class ^(xdg-desktop-portal-gtk)$, center 1"
 
         # Float polkit
         "match:class ^(polkit-gnome-authentication-agent-1)$, float on"
