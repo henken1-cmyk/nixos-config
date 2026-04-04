@@ -77,8 +77,7 @@ in
     };
   };
 
-  # Backlight control
-  programs.light.enable = true;
+  # Backlight control (brightnessctl added to systemPackages below)
 
   # Lid switch — hibernate on battery (swap + LUKS resume), lock on AC
   services.logind.settings.Login = {
@@ -145,8 +144,9 @@ in
     memoryPercent = 50;
   };
 
-  # Tailscale VPN
+  # Tailscale VPN — manual start only (sudo systemctl start tailscaled && sudo tailscale up)
   services.tailscale.enable = true;
+  systemd.services.tailscaled.wantedBy = lib.mkForce [];
 
   # ModemManager disabled — T480s has no WWAN card, prevents unnecessary probing
   systemd.services.ModemManager.enable = false;
@@ -188,6 +188,7 @@ in
 
   # System packages (minimal — most go in home-manager)
   environment.systemPackages = with pkgs; [
+    brightnessctl
     vim
     wget
     curl
