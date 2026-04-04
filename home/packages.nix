@@ -49,6 +49,7 @@
     caprine
     discord
     spotify
+    youtube-music
 
     # Media
     mpv

@@ -92,6 +92,9 @@
                 hyprpanel = hyprpanel.packages.${prev.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
                   postPatch = (old.postPatch or "") + ''
                     cp ${./patches/prometheus.scss} src/style/scss/menus/prometheus.scss
+                    cp ${./patches/media-launch-buttons.tsx} src/components/menus/media/components/LaunchButtons.tsx
+                    cp ${./patches/media-index.tsx} src/components/menus/media/index.tsx
+                    cat ${./patches/media-launch-buttons.scss} >> src/style/scss/menus/media.scss
                   '';
                 });
               })
@@ -123,6 +126,9 @@
                 hyprpanel = hyprpanel.packages.${prev.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
                   postPatch = (old.postPatch or "") + ''
                     cp ${./patches/prometheus.scss} src/style/scss/menus/prometheus.scss
+                    cp ${./patches/media-launch-buttons.tsx} src/components/menus/media/components/LaunchButtons.tsx
+                    cp ${./patches/media-index.tsx} src/components/menus/media/index.tsx
+                    cat ${./patches/media-launch-buttons.scss} >> src/style/scss/menus/media.scss
                   '';
                 });
               })
