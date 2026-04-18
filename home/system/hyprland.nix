@@ -311,7 +311,7 @@ in
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
         "hyprpanel"
-        "swww-daemon && swww img ${loadingScreen} --transition-type none && sleep 2 && swww img ${config.stylix.image} --transition-type wipe --transition-duration 2"
+        "awww-daemon && awww img ${loadingScreen} --transition-type none && sleep 2 && awww img ${config.stylix.image} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"

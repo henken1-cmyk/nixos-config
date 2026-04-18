@@ -9,7 +9,7 @@
     base16Scheme = ./biskupi-fiolet.yaml;
     polarity = "dark";
 
-    # Wallpaper (required by Stylix even if swww manages it)
+    # Wallpaper (required by Stylix even if awww manages it)
     image = pkgs.fetchurl {
       url = "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=3840";
       sha256 = "0viv6dq66in3rw8yp8d5gjp34wcv4nc78rhc1za1dmi08vzh03i2";

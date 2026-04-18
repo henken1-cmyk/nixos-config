@@ -60,6 +60,7 @@ in
   # GTK
   gtk = {
     enable = true;
+    gtk4.theme = null;
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;
@@ -111,11 +112,11 @@ in
   stylix.targets.bat.enable = false;
   home.activation.batCache = lib.mkForce (lib.hm.dag.entryAnywhere ""); # skip ~3s bat cache --build
 
-  # hyprpaper disabled — swww handles wallpaper (hyprpaper 0.8.3 has crash bug)
+  # hyprpaper disabled — awww handles wallpaper (hyprpaper 0.8.3 has crash bug)
   stylix.targets.hyprpaper.enable = lib.mkForce false;
   services.hyprpaper.enable = lib.mkForce false;
 
-  # HyprPanel expects an image at ~/.config/background for its swww integration
+  # HyprPanel expects an image at ~/.config/background for its awww integration
   home.file.".config/background".source = config.stylix.image;
 
   # bottom (btm)
