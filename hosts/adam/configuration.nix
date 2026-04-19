@@ -144,9 +144,8 @@ in
     memoryPercent = 50;
   };
 
-  # Tailscale VPN — manual start only (sudo systemctl start tailscaled && sudo tailscale up)
+  # Tailscale VPN — daemon auto-starts, tunnel via: sudo tailscale up
   services.tailscale.enable = true;
-  systemd.services.tailscaled.wantedBy = lib.mkForce [];
 
   # ModemManager disabled — T480s has no WWAN card, prevents unnecessary probing
   systemd.services.ModemManager.enable = false;

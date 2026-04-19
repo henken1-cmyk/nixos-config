@@ -67,6 +67,7 @@
     libnotify # notify-send
 
     # Auth / security
+    age
     keepassxc
     polkit_gnome
 
