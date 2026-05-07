@@ -27,18 +27,12 @@ in
     ../../home/system/swww.nix
   ];
 
-  # Adam-specific packages
+  # HenkenIt-specific packages
   home.packages = with pkgs; [
     google-chrome
     parsec-bin
     remmina    # RDP/VNC client (GUI)
     freerdp    # RDP library used by Remmina
-    v4l-utils  # Camera/video device tools (laptop only)
-    # Communication apps (relocated from shared home/packages.nix)
-    caprine        # Facebook Messenger desktop
-    discord
-    spotify
-    pear-desktop   # YouTube Music desktop (rebrand of youtube-music)
   ];
 
   home = {
@@ -63,7 +57,7 @@ in
   # GTK
   gtk = {
     enable = true;
-    gtk4.theme = null;
+    gtk4.theme = null; # Stylix handles GTK4 theming
     iconTheme = {
       name = "Papirus-Dark";
       package = pkgs.papirus-icon-theme;

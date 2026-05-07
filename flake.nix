@@ -1,5 +1,5 @@
 {
-  description = "NixOS Bonkers Setup — lightspeed & adam";
+  description = "NixOS Bonkers Setup — lightspeed, adam & henkenit";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
@@ -60,13 +60,32 @@
     nix-cachyos-kernel = {
       url = "github:xddxdd/nix-cachyos-kernel/release";
     };
+
+    hyprpanel = {
+      url = "github:henken1-cmyk/HyprPanel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, hyprpanel, ... }@inputs:
     let
       scale = import ./themes/scale.nix;
       lightspeedVars = import ./hosts/lightspeed/variables.nix;
       adamVars = import ./hosts/adam/variables.nix;
+      henkenitVars = import ./hosts/henkenit/variables.nix;
+
+      # HyprPanel overlay applies our Spotify/YT-Music + Prometheus patches.
+      # Shared by all hosts that use HyprPanel.
+      hyprpanelOverlay = (final: prev: {
+        hyprpanel = hyprpanel.packages.${prev.stdenv.hostPlatform.system}.default.overrideAttrs (old: {
+          postPatch = (old.postPatch or "") + ''
+            cp ${./patches/prometheus.scss} src/style/scss/menus/prometheus.scss
+            cp ${./patches/media-launch-buttons.tsx} src/components/menus/media/components/LaunchButtons.tsx
+            cp ${./patches/media-index.tsx} src/components/menus/media/index.tsx
+            cat ${./patches/media-launch-buttons.scss} >> src/style/scss/menus/media.scss
+          '';
+        });
+      });
     in
     {
       nixosConfigurations.lightspeed = nixpkgs.lib.nixosSystem {
@@ -79,7 +98,7 @@
           sops-nix.nixosModules.sops
           nix-flatpak.nixosModules.nix-flatpak
           { nixpkgs.config.allowUnfree = true;
-            nixpkgs.overlays = [ ghostty.overlays.default nix-cachyos-kernel.overlays.pinned ];
+            nixpkgs.overlays = [ ghostty.overlays.default nix-cachyos-kernel.overlays.pinned hyprpanelOverlay ];
           }
           {
             home-manager = {
@@ -101,13 +120,40 @@
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           nix-flatpak.nixosModules.nix-flatpak
-          { nixpkgs.config.allowUnfree = true; }
+          {
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [ hyprpanelOverlay ];
+          }
           {
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
               extraSpecialArgs = { inherit inputs scale; vars = adamVars; };
               users.${adamVars.username} = import ./hosts/adam/home.nix;
+            };
+          }
+        ];
+      };
+
+      nixosConfigurations.henkenit = nixpkgs.lib.nixosSystem {
+        specialArgs = { inherit inputs scale; vars = henkenitVars; };
+        modules = [
+          ./hosts/henkenit/configuration.nix
+          hyprland.nixosModules.default
+          stylix.nixosModules.stylix
+          home-manager.nixosModules.home-manager
+          sops-nix.nixosModules.sops
+          nix-flatpak.nixosModules.nix-flatpak
+          {
+            nixpkgs.config.allowUnfree = true;
+            nixpkgs.overlays = [ hyprpanelOverlay ];
+          }
+          {
+            home-manager = {
+              useGlobalPkgs = true;
+              useUserPackages = true;
+              extraSpecialArgs = { inherit inputs scale; vars = henkenitVars; };
+              users.${henkenitVars.username} = import ./hosts/henkenit/home.nix;
             };
           }
         ];

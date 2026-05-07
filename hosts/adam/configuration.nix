@@ -11,6 +11,7 @@ in
     ../../nixos/boot.nix
     # No btrfs.nix — laptop has no @devel subvolume, btrfs config is below
     ../../nixos/docker.nix
+    ../../nixos/monitoring.nix
     ../../nixos/flatpak.nix
     ../../nixos/greetd.nix
     ../../nixos/locale.nix
@@ -59,6 +60,7 @@ in
   boot.initrd.kernelModules = [ "i915" ];
 
   # ── Laptop power management ──────────────────────────────────────
+  services.upower.enable = true; # Battery reporting for desktop (AstalBattery)
   services.thermald.enable = true; # Intel thermal daemon
 
   services.tlp = {
@@ -75,8 +77,7 @@ in
     };
   };
 
-  # Backlight control
-  programs.light.enable = true;
+  # Backlight control (brightnessctl added to systemPackages below)
 
   # Lid switch — hibernate on battery (swap + LUKS resume), lock on AC
   services.logind.settings.Login = {
@@ -142,8 +143,11 @@ in
     memoryPercent = 50;
   };
 
-  # Tailscale VPN
+  # Tailscale VPN — daemon auto-starts, tunnel via: sudo tailscale up
   services.tailscale.enable = true;
+
+  # ModemManager disabled — T480s has no WWAN card, prevents unnecessary probing
+  systemd.services.ModemManager.enable = false;
 
   # SSH
   services.openssh.enable = true;
@@ -182,6 +186,7 @@ in
 
   # System packages (minimal — most go in home-manager)
   environment.systemPackages = with pkgs; [
+    brightnessctl
     vim
     wget
     curl

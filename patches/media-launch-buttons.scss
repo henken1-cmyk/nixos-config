@@ -1,0 +1,23 @@
+
+.menu-items-container.media {
+    .media-launch-buttons {
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+
+        .media-launch-button {
+            background: if($bar-menus-monochrome, $bar-menus-buttons-default, $bar-menus-menu-media-buttons-background);
+            color: if($bar-menus-monochrome, $bar-menus-buttons-text, $bar-menus-menu-media-buttons-text);
+            min-height: 2em;
+            padding: 0.3rem 1rem;
+            border-radius: $bar-menus-buttons-radius * 0.75;
+
+            label {
+                font-size: 0.9em;
+            }
+
+            &:hover {
+                background: if($bar-menus-monochrome, $bar-menus-buttons-default, $bar-menus-menu-media-buttons-enabled);
+            }
+        }
+    }
+}

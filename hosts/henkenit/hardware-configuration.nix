@@ -1,4 +1,4 @@
-# TEMPLATE for Lenovo ThinkPad T480s (20L6S55L00)
+# TEMPLATE for HenkenIt desktop (AMD Ryzen 7 7800X3D + NVIDIA RTX 5070 Ti)
 # IMPORTANT: After running `nixos-generate-config --root /mnt`, merge ONLY the
 # kernel modules and UUIDs from the generated file into this one.
 # Do NOT replace this file — it contains btrfs subvolume mounts.
@@ -13,26 +13,26 @@ in
     [ (modulesPath + "/installer/scan/not-detected.nix")
     ];
 
-  # ThinkPad T480s — Intel i7-8550U (Kaby Lake Refresh)
-  boot.initrd.availableKernelModules = [ "xhci_pci" "nvme" "usb_storage" "sd_mod" ];
+  # AMD Ryzen 7 7800X3D (Zen 4)
+  boot.initrd.availableKernelModules = [ "nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-intel" ];
+  boot.kernelModules = [ "kvm-amd" ];
   boot.extraModulePackages = [ ];
 
-  # CHANGEME: Replace UUID with value from `blkid /dev/nvme0n1p2` (the LUKS partition)
+  # CHANGEME: Replace UUID with value from `blkid /dev/<luks-partition>` (the LUKS partition)
   boot.initrd.luks.devices."cryptbtrfs" = {
-    device = "/dev/disk/by-uuid/c08cbccf-615d-4a63-8977-21f887d94786";
+    device = "/dev/disk/by-uuid/4f9add7f-85eb-46dc-8384-14a544eac08d";
     allowDiscards = true; # SSD TRIM through LUKS
   };
 
+  # CHANGEME: Replace UUID with value from `blkid /dev/<efi-partition>`
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/A788-7A9D";
+    device = "/dev/disk/by-uuid/C405-61A3";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };
 
-
-  # Btrfs subvolumes (no @devel on laptop)
+  # Btrfs subvolumes (no @devel)
   fileSystems."/" = {
     device = "/dev/mapper/cryptbtrfs";
     fsType = "btrfs";
@@ -77,17 +77,13 @@ in
     options = [ "subvol=@swap" ] ++ btrfsNoCow;
   };
 
-  # 16 GB swap file for hibernation
+  # Swap file on @swap subvolume
   swapDevices = [
     { device = "/swap/swapfile"; }
   ];
 
-  # Hibernation: resume from LUKS mapper
-  boot.resumeDevice = "/dev/mapper/cryptbtrfs";
-  boot.kernelParams = [ "resume_offset=533760" ];
-
   networking.useDHCP = lib.mkDefault true;
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

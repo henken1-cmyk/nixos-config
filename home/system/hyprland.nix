@@ -1,5 +1,20 @@
 { config, pkgs, lib, vars, scale, ... }:
 
+let
+  colors = config.lib.stylix.colors;
+
+  # Loading screen shown immediately when Hyprland starts, before the wallpaper.
+  # Background and text are pulled from Stylix so the splash matches the host theme.
+  loadingScreen = pkgs.runCommand "loading-screen.png" {
+    nativeBuildInputs = [ pkgs.imagemagick pkgs.dejavu_fonts ];
+  } ''
+    magick -size 1920x1080 xc:'#${colors.base00}' \
+      -font '${pkgs.dejavu_fonts}/share/fonts/truetype/DejaVuSans.ttf' \
+      -fill '#${colors.base04}' -gravity center -pointsize 32 \
+      -annotate 0 "Loading..." \
+      png:$out
+  '';
+in
 {
   wayland.windowManager.hyprland = {
     enable = true;
@@ -133,6 +148,13 @@
         "9, monitor:${vars.monitorLeft}"
       ];
 
+      # ── Layer Rules ────────────────────────────────────────
+      layerrule = [
+        # HyprPanel blur rules
+        "match:namespace = bar-0, blur 1"
+        "match:namespace = bar-0, ignore_alpha 0.6"
+      ];
+
       # ── Window Rules (v3 syntax, Hyprland 0.53+) ─────────
       windowrule = [
         # Float utility windows
@@ -148,10 +170,25 @@
 
         # Float file dialogs
         "match:title ^(Open File)$, float on"
+        "match:title ^(Open File)$, size 1000 700"
+        "match:title ^(Open File)$, center 1"
         "match:title ^(Save File)$, float on"
+        "match:title ^(Save File)$, size 1000 700"
+        "match:title ^(Save File)$, center 1"
         "match:title ^(Open Folder)$, float on"
+        "match:title ^(Open Folder)$, size 1000 700"
+        "match:title ^(Open Folder)$, center 1"
         "match:title ^(Save As)$, float on"
+        "match:title ^(Save As)$, size 1000 700"
+        "match:title ^(Save As)$, center 1"
         "match:title ^(File Upload)$, float on"
+        "match:title ^(File Upload)$, size 1000 700"
+        "match:title ^(File Upload)$, center 1"
+
+        # xdg-desktop-portal file dialogs (catch-all for portal-based pickers)
+        "match:class ^(xdg-desktop-portal-gtk)$, float on"
+        "match:class ^(xdg-desktop-portal-gtk)$, size 1000 700"
+        "match:class ^(xdg-desktop-portal-gtk)$, center 1"
 
         # Float polkit
         "match:class ^(polkit-gnome-authentication-agent-1)$, float on"
@@ -243,7 +280,7 @@
 
         # ─ Screenshots ─
         ", Print, exec, grim - | satty --filename -"
-        "$mod SHIFT, S, exec, grim -g \"$(slurp)\" - | satty --filename -"
+        "$mod SHIFT, S, exec, grim -g \"$(slurp)\" - | wl-copy"
 
         # ─ Clipboard ─
         "$mod, V, exec, cliphist list | fuzzel --dmenu | cliphist decode | wl-copy"
@@ -258,7 +295,7 @@
         "$mod SHIFT, R, exec, $HOME/.config/nixos/home/scripts/screen-record.sh"
 
         # ─ Waybar restart ─
-        "$mod SHIFT, W, exec, systemctl --user restart waybar"
+        "$mod SHIFT, W, exec, systemctl --user restart hyprpanel"
 
         # ─ Monitor focus ─
         "$mod, comma, focusmonitor, l"
@@ -307,9 +344,10 @@
 
       # ── Exec Once ─────────────────────────────────────────
       exec-once = [
-        (lib.optionalString (vars.waybarAutohide or false)
-          "$HOME/.config/nixos/home/scripts/waybar-autohide.sh")
-        "swww-daemon && swww img ${vars.wallpaperPath} --transition-type wipe --transition-duration 2"
+        "hyprpanel"
+        "awww-daemon && awww img ${loadingScreen} --transition-type none && sleep 2 && awww img ${config.stylix.image} --transition-type wipe --transition-duration 2"
+        "wl-paste --type text --watch cliphist store"
+        "wl-paste --type image --watch cliphist store"
         "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "blueman-applet"
         "firefox --name \"messenger\" -P \"messenger\" --no-remote \"https://messenger.com\""

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Start waybar visible, hide when cursor moves away, show on top-edge hover
 
-BAR_HEIGHT=38     # must match waybar height= setting
+SHOW_THRESHOLD=3  # px from top — cursor must be near edge to show bar
 HIDE_THRESHOLD=80 # px from top — moving below this hides bar
 
 # Kill any other running instances to prevent double-toggling
@@ -22,7 +22,7 @@ while true; do
     [[ -z "$y" || "$y" == "null" ]] && sleep 0.05 && continue
     y=$(echo "$y" | cut -d. -f1)
 
-    if [[ "$y" -le "$BAR_HEIGHT" ]] && [[ "$visible" == "false" ]]; then
+    if [[ "$y" -le "$SHOW_THRESHOLD" ]] && [[ "$visible" == "false" ]]; then
         pkill -SIGUSR1 waybar
         visible=true
     elif [[ "$y" -gt "$HIDE_THRESHOLD" ]] && [[ "$visible" == "true" ]]; then

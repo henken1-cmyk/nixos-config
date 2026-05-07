@@ -1,12 +1,12 @@
 {
   # User
-  username = "adam";
-  fullName = "Adam";
+  username = "henken"; # CHANGEME: set your username
+  fullName = "Henken"; # CHANGEME: set your full name
   email = "henken1@gmail.com"; # Set your email
   gitUsername = "henken1-cmyk"; # Set your git username
 
   # System
-  hostname = "adam";
+  hostname = "henkenit";
   timezone = "Europe/Warsaw";
   locale = "en_US.UTF-8";
   keyboardLayout = "pl";
@@ -20,42 +20,35 @@
   develPath = "/devel";
 
   # Monitors (from `hyprctl monitors`)
-  # ThinkPad T480s built-in display 14" 1366x768
   # CHANGEME: verify with `hyprctl monitors` after first boot
-  monitorLeft = "eDP-1";
-  monitorRight = "";
+  monitorLeft = "DP-2"; # HP 727pk (left)
+  monitorRight = "DP-1"; # Samsung Odyssey G80SD (right)
   monitors = [
-    "eDP-1,1366x768@60,0x0,1"
+    "DP-2,preferred,0x0,1.5" # HP 727pk — left
+    "DP-1,preferred,2560x0,1.5" # Samsung Odyssey G80SD — right
   ];
+  # DRM connector names for early boot framebuffer (from /sys/class/drm/)
+  monitors_drm = [ "DP-1" ];
 
   # Boot
   bootloader = "systemd-boot";
-  bootGenerations = 1;
-  showFirmwareEntry = false;
-  windowsEfiDevice = "/dev/nvme0n1p1"; # Windows EFI partition for dual-boot
+  gpuInInitrd = false; # ESP too small (196MB) for NVIDIA modules in initrd
+  bootGenerations = 2;
+  showFirmwareEntry = true;
+  windowsEfiDevice = ""; # Shared ESP — Windows Boot Manager already on /boot
   usePlymouth = true;
 
   # Theme
   theme = "biskupi-fiolet";
   base16Scheme = "biskupi-fiolet";
-  base16SchemeLight = "solarized-light";
 
-  # Hardware monitoring (waybar)
-  hwmonPath = "/sys/devices/platform/coretemp.0/hwmon"; # Intel coretemp
-  nvidiaMonitoring = false;
-
-  # Boot fonts (768p display)
-  grubFontSize = 16;
-  consoleFontSize = 16;
-
-  # Waybar auto-hide (laptop only)
-  waybarAutohide = true;
+  # Waybar auto-hide (false for desktop)
+  waybarAutohide = false;
 
   # Zellij
   zellijAutostart = true;
 
-  # Location
-  city = "Warsaw";
+  # Hyprsunset (Warsaw coordinates for auto schedule)
   latitude = 52.23;
   longitude = 21.01;
 }

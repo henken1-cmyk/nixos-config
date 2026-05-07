@@ -33,3 +33,7 @@ hooks
 objects
 refs
 waybar.log
+
+# Adam's local artifacts
+remote-monitoring/
+opt/

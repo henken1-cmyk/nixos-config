@@ -54,13 +54,14 @@ let
   '';
 in
 {
-  # Stylix auto-applies Solarized Dark colors, fonts, cursor to ReGreet
-  stylix.targets.regreet.enable = true;
+  # Stylix expects cage as regreet compositor, but we run regreet inside Hyprland.
+  # Disable its built-in target so we can override greetd-side ourselves.
+  stylix.targets.regreet.enable = false;
 
   services.greetd = {
     enable = true;
     settings.default_session = {
-      command = "Hyprland --config ${greeterHyprlandConfig}";
+      command = lib.mkForce "Hyprland --config ${greeterHyprlandConfig}";
       user = "greeter";
     };
   };
@@ -125,14 +126,23 @@ in
         color: @accent_fg_color;
       }
 
-      /* Subtle power buttons */
+      /* Themed power buttons — gradient driven by base16 accent colors */
       button.destructive-action {
         border-radius: ${scale.px scale.radius.md};
+        background-image: linear-gradient(to top, #${colors.base0E} 2px, alpha(#${colors.base0E}, 0.85));
+        border-color: alpha(#${colors.base02}, 0.6);
+        color: #${colors.base07};
         opacity: 0.7;
         transition: opacity 150ms ease;
       }
       button.destructive-action:hover {
+        background-image: linear-gradient(to top, alpha(#${colors.base0E}, 0.85) 20%, #${colors.base0E} 90%);
         opacity: 1.0;
+      }
+      button.destructive-action:active,
+      button.destructive-action:checked {
+        background-image: linear-gradient(#${colors.base0E}, #${colors.base0E});
+        box-shadow: none;
       }
 
       /* Welcome text */

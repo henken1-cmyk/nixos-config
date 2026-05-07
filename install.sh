@@ -6,12 +6,13 @@
 #   3. Running: nixos-generate-config --root /mnt
 #
 # Usage: bash install.sh <host> <luks-partition>
-#   host:           lightspeed | adam
+#   host:           lightspeed | adam | henkenit
 #   luks-partition: block device of the LUKS partition, e.g. /dev/nvme0n1p2
 #
 # Examples:
 #   bash install.sh lightspeed /dev/nvme0n1p2
 #   bash install.sh adam       /dev/nvme0n1p2
+#   bash install.sh henkenit   /dev/nvme0n1p6
 
 set -euo pipefail
 

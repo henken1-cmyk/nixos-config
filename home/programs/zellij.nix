@@ -3,21 +3,26 @@
 {
   programs.zellij = {
     enable = true;
-
-    settings = {
-      theme = "default"; # Stylix handles colors
-      default_layout = "default";
-      pane_frames = true;
-      simplified_ui = false; # Show keybind hints
-
-      ui = {
-        pane_frames = {
-          rounded_corners = true;
-        };
-      };
-
-      # Don't auto-start from shell — Fish handles the attach
-      # This prevents nested zellij sessions
-    };
+    # Settings written as raw KDL below to support keybinds syntax
   };
+
+  xdg.configFile."zellij/config.kdl".text = ''
+    theme "default"
+    default_layout "default"
+    pane_frames true
+    simplified_ui false
+
+    ui {
+      pane_frames {
+        rounded_corners true
+      }
+    }
+
+    keybinds {
+      shared {
+        bind "Ctrl Tab" { GoToNextTab; }
+        bind "Ctrl Shift Tab" { GoToPreviousTab; }
+      }
+    }
+  '';
 }

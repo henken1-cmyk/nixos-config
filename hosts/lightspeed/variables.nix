@@ -29,9 +29,17 @@
   ];
 
   # Boot
+  bootloader = "grub";
   bootGenerations = 10;
   showFirmwareEntry = true;
   windowsBootEntry = "Windows Boot Manager (on /dev/nvme1n1p1)"; # from grub.cfg, null on NixOS-only hosts
+  use4kBootFont = true;
+  kernelPackages = "cachyos-lto-v3";
+  disableUsbWake = true; # prevent immediate wake on hibernate
+
+  # GPU
+  nvidiaOpen = true;             # RTX 3090 Ti (Ampere) supports open modules
+  nvidiaHibernatePatch = true;   # apply hibernate-resume patch (NVIDIA 5xx pre-575)
 
   # Theme
   theme = "solarized-dark";

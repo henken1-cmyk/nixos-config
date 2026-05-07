@@ -3,6 +3,12 @@
 let
   lightScheme = vars.base16SchemeLight or "solarized-light";
 
+  resolveScheme = name:
+    let local = ./. + "/${name}.yaml";
+    in if builtins.pathExists local
+       then local
+       else "${pkgs.base16-schemes}/share/themes/${name}.yaml";
+
   theme-switch = pkgs.writeShellScriptBin "theme-switch" ''
     set -euo pipefail
     PROFILE="/nix/var/nix/profiles/system"
@@ -25,11 +31,12 @@ in
     enable = true;
     autoEnable = true;
 
-    # Per-host theme (set in hosts/<name>/variables.nix)
-    base16Scheme = "${pkgs.base16-schemes}/share/themes/${vars.base16Scheme}.yaml";
+    # Per-host theme (set in hosts/<name>/variables.nix). Falls back from local
+    # ./<scheme>.yaml to pkgs.base16-schemes for upstream schemes.
+    base16Scheme = resolveScheme vars.base16Scheme;
     polarity = "dark";
 
-    # Wallpaper (required by Stylix even if swww manages it)
+    # Wallpaper (required by Stylix even if swww/awww manages it)
     image = pkgs.fetchurl {
       url = "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=3840";
       sha256 = "0viv6dq66in3rw8yp8d5gjp34wcv4nc78rhc1za1dmi08vzh03i2";
@@ -87,8 +94,7 @@ in
 
   # Light theme specialisation — pre-built at switch time, instant activation
   specialisation.light.configuration = {
-    stylix.base16Scheme = lib.mkForce
-      "${pkgs.base16-schemes}/share/themes/${lightScheme}.yaml";
+    stylix.base16Scheme = lib.mkForce (resolveScheme lightScheme);
     stylix.polarity = lib.mkForce "light";
   };
 
