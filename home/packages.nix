@@ -39,8 +39,8 @@
     wl-clipboard
     cliphist
 
-    # Wallpaper
-    awww
+    # Wallpaper (swww package, binaries renamed to awww/awww-daemon in 0.10+)
+    swww
 
     # Emoji picker
     bemoji
