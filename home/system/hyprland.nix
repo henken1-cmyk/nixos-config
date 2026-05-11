@@ -343,8 +343,9 @@ in
       ];
 
       # ── Exec Once ─────────────────────────────────────────
+      # hyprpanel is started by its Home Manager systemd user service
+      # (WantedBy=graphical-session.target), not exec-once.
       exec-once = [
-        "hyprpanel"
         "swww-daemon && swww img ${loadingScreen} --transition-type none && sleep 2 && swww img ${config.stylix.image} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
