@@ -22,6 +22,7 @@ in
     ../../nixos/printing.nix
     ../../nixos/samba.nix
     ../../nixos/monitoring.nix
+    ../../nixos/gaming.nix
 
     ../../nixos/sysctl.nix
     ../../nixos/users.nix
@@ -123,6 +124,13 @@ in
     lshw
     man-db
     man-pages
+
+    # Available system-wide (for elf user and others)
+    inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
+    gh
+    playwright-test # Playwright with bundled Chromium
+    nodejs_22       # Node.js for @playwright/cli
+    bun
   ];
 
   system.stateVersion = "24.11";

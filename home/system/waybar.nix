@@ -130,7 +130,7 @@ in
           "title<.*jira.*>" = " ";
           "class<jetbrains-idea>" = " ";
           "class<obs|com.obsproject.Studio>" = " ";
-          "class<polkit-gnome-authentication-agent-1>" = "󰒃 ";
+          "class<hyprpolkitagent>" = "󰒃 ";
           "class<nwg-look>" = " ";
           "class<nwg-displays>" = "  ";
           "class<[Pp]avucontrol|org.pulseaudio.pavucontrol>" = "󱡫 ";

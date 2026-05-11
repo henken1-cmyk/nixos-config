@@ -33,10 +33,25 @@ in
 
   # Lightspeed-specific packages
   home.packages = with pkgs; [
+    # Browser with Wayland decorations + Vulkan ANGLE (lightspeed-only — NVIDIA desktop)
+    (google-chrome.override {
+      commandLineArgs = [
+        "--enable-features=WaylandWindowDecorations,WebGPUService"
+        "--use-angle=vulkan"
+        "--ignore-gpu-blocklist"
+      ];
+    })
     headsetcontrol # Logitech headset sidetone/battery control
     easyeffects    # PipeWire EQ/compression for mic & output
     qbittorrent
     obs-studio
+    obsidian
+    # Gaming
+    wineWow64Packages.stagingFull  # Wine 32+64-bit with all features
+    winetricks                      # Windows dependency installer (vcredist, .NET, fonts)
+    lutris                          # Game manager / launcher for non-Steam games
+    mangohud                        # FPS/GPU/CPU performance overlay
+    protonup-qt                     # Manage Wine-GE/Proton-GE runners
   ];
 
   home = {

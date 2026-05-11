@@ -1,7 +1,23 @@
 { config, pkgs, inputs, ... }:
 
+let
+  usdb-import = pkgs.writeShellApplication {
+    name = "usdb-import";
+    runtimeInputs = with pkgs; [
+      yt-dlp
+      ffmpeg
+      curl
+      coreutils
+      findutils
+      gawk
+      gnugrep
+    ];
+    text = builtins.readFile ./scripts/usdb-import.sh;
+  };
+in
 {
   home.packages = with pkgs; [
+    usdb-import
     # AI
     inputs.claude-code.packages.${pkgs.stdenv.hostPlatform.system}.default
     # CLI essentials
@@ -67,7 +83,7 @@
     # Auth / security
     age
     keepassxc
-    polkit_gnome
+    hyprpolkitagent
 
     # Image format support
     webp-pixbuf-loader # WebP in GTK apps
@@ -108,5 +124,8 @@
 
     # Archive support
     p7zip
+
+    # 3D / creative
+    (blender.override { cudaSupport = true; })
   ];
 }

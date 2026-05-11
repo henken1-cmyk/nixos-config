@@ -103,6 +103,12 @@ in
     options = [ "subvol=@docker" ] ++ btrfsNoCow;
   };
 
+  fileSystems."/games" = {
+    device = "/dev/mapper/cryptbtrfs";
+    fsType = "btrfs";
+    options = [ "subvol=@games" ] ++ btrfsNoCow;
+  };
+
   # Archive drive (NTFS, sda2)
   fileSystems."/mnt/archive" = {
     device = "/dev/disk/by-uuid/1CA2587FA2585F78";

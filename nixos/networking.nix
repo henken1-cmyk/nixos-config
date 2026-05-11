@@ -29,6 +29,35 @@
   };
   networking.networkmanager.dns = "systemd-resolved";
 
+  # ── L2TP/IPSec VPN support ─────────────────────────────────────
+  # strongSwan on NixOS has two issues (nixpkgs#375352):
+  # 1. Integrity check fails (NixOS-patched binaries)
+  # 2. Missing /etc/strongswan.conf after PR#372967
+
+  # Fix 1: Override strongswan AND nm-l2tp to propagate the fix
+  nixpkgs.overlays = [(final: prev: {
+    strongswan = prev.strongswan.overrideAttrs (old: {
+      configureFlags = old.configureFlags ++ [ "--disable-integrity-test" ];
+    });
+    networkmanager-l2tp = prev.networkmanager-l2tp.override {
+      strongswan = final.strongswan;
+    };
+  })];
+
+  # Fix 2: Create /etc/strongswan.conf so charon doesn't abort
+  environment.etc."strongswan.conf".text = "";
+
+  # Runtime disable of integrity test (belt and suspenders)
+  environment.etc."strongswan.d/charon/integrity-test.conf".text = ''
+    charon {
+      integrity_test = no
+    }
+  '';
+
+  networking.networkmanager.plugins = with pkgs; [
+    networkmanager-l2tp
+  ];
+
   environment.systemPackages = with pkgs; [
     networkmanagerapplet # nm-applet for tray
   ];

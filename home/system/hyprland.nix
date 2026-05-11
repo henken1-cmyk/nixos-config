@@ -191,7 +191,7 @@ in
         "match:class ^(xdg-desktop-portal-gtk)$, center 1"
 
         # Float polkit
-        "match:class ^(polkit-gnome-authentication-agent-1)$, float on"
+        "match:class ^(hyprpolkitagent)$, float on"
 
         # Float KeePassXC
         "match:class ^(org.keepassxc.KeePassXC)$, float on"
@@ -206,7 +206,7 @@ in
         "match:class ^(satty)$, float on"
 
         # Immediate focus for dialogs
-        "match:class ^(polkit-gnome-authentication-agent-1)$, stay_focused on"
+        "match:class ^(hyprpolkitagent)$, stay_focused on"
       ];
 
       # ── Keybinds ──────────────────────────────────────────
@@ -349,7 +349,7 @@ in
         "swww-daemon && swww img ${loadingScreen} --transition-type none && sleep 2 && swww img ${config.stylix.image} --transition-type wipe --transition-duration 2"
         "wl-paste --type text --watch cliphist store"
         "wl-paste --type image --watch cliphist store"
-        "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
+        "hyprpolkitagent"
         "blueman-applet"
         "firefox --name \"messenger\" -P \"messenger\" --no-remote \"https://messenger.com\""
         "vesktop"

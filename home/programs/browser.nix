@@ -38,6 +38,14 @@ in
         "layers.acceleration.force-enabled" = true;
         "media.ffmpeg.vaapi.enabled" = true;
 
+        # Smooth scrolling
+        "general.smoothScroll" = true;
+        "general.smoothScroll.msdPhysics.enabled" = true;
+        "mousewheel.default.delta_multiplier_y" = 275;
+
+        # Autoscroll (middle-click scroll)
+        "general.autoScroll" = true;
+
         # UI
         "browser.tabs.inTitlebar" = 0;
         "browser.uidensity" = 1;

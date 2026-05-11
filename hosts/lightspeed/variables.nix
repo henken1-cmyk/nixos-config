@@ -19,13 +19,14 @@
   screenRecordDir = "~/Videos/Recordings";
   develPath = "/devel";
 
-  # Monitors (from `hyprctl monitors`)
+  # Monitors — identified by description so they survive DP port reshuffles
+  # (from `hyprctl monitors` → "description" field)
   # Left: HP 727pk 27" 4K 60Hz, Right: Samsung Odyssey G80SD 32" 4K 240Hz (primary)
-  monitorLeft = "DP-2";
-  monitorRight = "DP-1";
+  monitorLeft = "desc:HP Inc. HP 727pk CN44272390";
+  monitorRight = "desc:Samsung Electric Company Odyssey G80SD H1AK500000";
   monitors = [
-    "DP-2,3840x2160@60,0x0,1,bitdepth,10"
-    "DP-1,3840x2160@240,3840x0,1,bitdepth,10"
+    "desc:HP Inc. HP 727pk CN44272390,3840x2160@60,0x0,1,bitdepth,10"
+    "desc:Samsung Electric Company Odyssey G80SD H1AK500000,3840x2160@240,3840x0,1,bitdepth,10"
   ];
 
   # Boot
