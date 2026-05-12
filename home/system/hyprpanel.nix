@@ -12,6 +12,14 @@
             right = [ "prometheus" "volume" "battery" "network" "bluetooth" "systray" "notifications" "clock" ];
           };
         };
+        workspaces = {
+          show_numbered = true;
+          numbered_active_indicator = "underline";  # "underline" | "highlight" | "color"
+          show_icons = false;
+          workspaces = 9;
+          spacing = 1;
+          monitorSpecific = true;
+        };
         clock = {
           format = "%a %b %d  %H:%M:%S";
         };
@@ -48,20 +56,16 @@
         bar = {
           location = "top";
           label_spacing = "0.8em";
-          scaling = 80;
+          scaling = vars.hyprpanelBarScaling or 80;
           menus = {
             menu = {
-              dashboard = {
-                scaling = 65;
-              };
-              clock = {
-                scaling = 70;
-              };
+              dashboard.scaling = vars.hyprpanelDashScaling or 65;
+              clock.scaling     = vars.hyprpanelClockScaling or 70;
             };
           };
         };
         font = {
-          size = "1.0rem";
+          size = vars.hyprpanelFontSize or "1.0rem";
         };
       };
     };

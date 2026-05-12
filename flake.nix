@@ -65,9 +65,14 @@
       url = "github:henken1-cmyk/HyprPanel";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    hermes-agent = {
+      url = "github:NousResearch/hermes-agent";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, hyprpanel, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, hyprpanel, hermes-agent, ... }@inputs:
     let
       scale = import ./themes/scale.nix;
       lightspeedVars = import ./hosts/lightspeed/variables.nix;
@@ -86,6 +91,24 @@
           '';
         });
       });
+
+      # nixpkgs hyprlock is stuck at 0.9.2 (Oct 2025). Upstream is 0.9.5 with three
+      # fixes for crashes seen on this machine:
+      #   PR #884 (in 0.9.3) — destroy renderer before EGL teardown (NVIDIA exit crash)
+      #   PR #988 (in 0.9.4) — lock-surface egl window/surface creation race
+      #   PR #992/#994 (in 0.9.5) — dmabuf/egl thread handling
+      # Remove this overlay once nixpkgs bumps past 0.9.5.
+      hyprlockOverlay = (final: prev: {
+        hyprlock = prev.hyprlock.overrideAttrs (old: rec {
+          version = "0.9.5";
+          src = prev.fetchFromGitHub {
+            owner = "hyprwm";
+            repo = "hyprlock";
+            rev = "v${version}";
+            hash = "sha256-VFlM1cN4jmUAbfmZbeg7vL+AN9miXEUqqpk5EkHNq2c=";
+          };
+        });
+      });
     in
     {
       nixosConfigurations.lightspeed = nixpkgs.lib.nixosSystem {
@@ -97,8 +120,9 @@
           home-manager.nixosModules.home-manager
           sops-nix.nixosModules.sops
           nix-flatpak.nixosModules.nix-flatpak
+          hermes-agent.nixosModules.default
           { nixpkgs.config.allowUnfree = true;
-            nixpkgs.overlays = [ ghostty.overlays.default nix-cachyos-kernel.overlays.pinned hyprpanelOverlay ];
+            nixpkgs.overlays = [ ghostty.overlays.default nix-cachyos-kernel.overlays.pinned hyprpanelOverlay hyprlockOverlay ];
           }
           {
             home-manager = {
@@ -122,7 +146,7 @@
           nix-flatpak.nixosModules.nix-flatpak
           {
             nixpkgs.config.allowUnfree = true;
-            nixpkgs.overlays = [ hyprpanelOverlay ];
+            nixpkgs.overlays = [ hyprpanelOverlay hyprlockOverlay ];
           }
           {
             home-manager = {
@@ -146,7 +170,7 @@
           nix-flatpak.nixosModules.nix-flatpak
           {
             nixpkgs.config.allowUnfree = true;
-            nixpkgs.overlays = [ hyprpanelOverlay ];
+            nixpkgs.overlays = [ hyprpanelOverlay hyprlockOverlay ];
           }
           {
             home-manager = {

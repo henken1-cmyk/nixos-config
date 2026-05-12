@@ -58,6 +58,12 @@
   grubFontSize = 48;
   consoleFontSize = 48;
 
+  # HyprPanel scaling — tuned for dual 4K @ no fractional scale
+  hyprpanelBarScaling   = 140;
+  hyprpanelDashScaling  = 100;
+  hyprpanelClockScaling = 110;
+  hyprpanelFontSize     = "1.2rem";
+
   # Zellij
   zellijAutostart = false;
 

@@ -27,6 +27,7 @@ in
     ../../nixos/sysctl.nix
     ../../nixos/users.nix
     ../../nixos/devel-worker.nix
+    ../../nixos/hermes.nix
     ../../themes
   ];
 
