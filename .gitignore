@@ -37,3 +37,6 @@ waybar.log
 # Adam's local artifacts
 remote-monitoring/
 opt/
+
+# Git worktrees
+.worktrees/
