@@ -1,9 +1,12 @@
 { config, pkgs, lib, vars, ... }:
 
 let
-  # Minimal Hyprland config for the greeter — just monitors + regreet launch
+  # Minimal Hyprland config for the greeter — enable all known monitors so the
+  # greeter is visible no matter which display the user is looking at.
   greeterHyprlandConfig = pkgs.writeText "greetd-hyprland.conf" ''
     monitor = ${vars.monitorLeft},preferred,auto,1
+    ${lib.optionalString ((vars.monitorRight or "") != "")
+      "monitor = ${vars.monitorRight},preferred,auto,1"}
     monitor = ,disable
 
     misc {

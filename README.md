@@ -227,6 +227,8 @@ reboot
 
 ### 4. Post-Install
 
+**First login at the greeter:** click the **session dropdown** in regreet and pick `Hyprland` *before* entering your password. regreet caches the choice in `/var/lib/regreet/state.toml` per user — if you skip this, regreet falls back to the user's login shell (fish) and you'll be dropped to a TTY prompt instead of Hyprland.
+
 ```bash
 # Fix monitor names
 hyprctl monitors
@@ -433,6 +435,62 @@ greetd depends on `config.stylix.image` which depends on the wallpaper hash. If 
 ```bash
 journalctl -b -u greetd
 # Fix the wallpaper hash in themes/default.nix and rebuild
+```
+
+### Login drops to a shell instead of Hyprland
+**Symptom:** After typing your password in regreet you land at a fish prompt on a TTY instead of Hyprland. `journalctl -b _UID=1000` shows the user session opening but no Hyprland process. `/var/log/regreet/log` contains:
+```
+WARN ... No entry found; using default login shell of user: <user>
+INFO ... Starting greetd session with command: ["/run/current-system/sw/bin/fish"]
+```
+
+regreet falls back to the user's login shell when no wayland session was selected. On the very first login it has no cached choice.
+
+**Fix:** At regreet, click the **session dropdown** (top of the form) and pick `Hyprland` *before* entering the password. regreet writes the selection to `/var/lib/regreet/state.toml` and reuses it next time.
+
+### Home Manager activation fails: "file would be clobbered"
+**Symptom:** `journalctl -b -u home-manager-<user>` shows:
+```
+Existing file '/home/<user>/.config/hypr/hyprland.conf' would be clobbered
+Existing file '/home/<user>/.config/fish/config.fish' would be clobbered
+home-manager-<user>.service: Failed with result 'exit-code'
+```
+
+HM refuses to overwrite files it didn't create. The stub `hyprland.conf` gets written by Hyprland itself on its very first run (e.g. when you launch the greeter once before HM has activated), and `config.fish` is created by fish or the installer skeleton.
+
+**Fix:** Already handled in `flake.nix` — every host sets `home-manager.backupFileExtension = "hm-backup"`, so HM renames the conflicting file to `<name>.hm-backup` and continues. If you still see the error, verify the option is present in your `home-manager = { ... };` block in `flake.nix`. To unblock a stuck system manually:
+```bash
+mv ~/.config/hypr/hyprland.conf{,.hm-backup}
+mv ~/.config/fish/config.fish{,.hm-backup}
+sudo systemctl restart home-manager-$USER.service
+```
+
+### `henkenit`: new generation isn't active after `nh os switch` + reboot
+**Symptom:** Just ran `sudo nh os switch`, rebooted, but `readlink -f /run/current-system` still points to the previous generation's store path.
+
+`hosts/henkenit/configuration.nix` pins **Windows** as the systemd-boot default (`extraInstallCommands` rewrites `loader.conf`). After every rebuild the bootloader still defaults to Windows, and if you pick a stale NixOS entry you'll boot the old generation.
+
+**Fix:** At the bootloader, pick the **newest** NixOS entry (the latest date in the title — usually at the top of the NixOS group). To verify which generation you booted:
+```bash
+readlink -f /run/booted-system          # what actually booted
+readlink /nix/var/nix/profiles/system   # what nh switched to
+```
+If they differ, reboot and pick the right entry.
+
+### `henkenit`: Samsung Odyssey G80SD stuck at 1024x768 on DP-1
+**Symptom:** Desktop appears in a tiny ~1/8 region of the physical 4K panel. `hyprctl monitors` shows DP-1 at 1024x768 even though the monitor is 4K.
+```bash
+cat /sys/class/drm/card1-DP-1/edid | wc -c     # → 0 (EDID not read)
+head /sys/class/drm/card1-DP-1/modes           # → only 1024x768, 800x600, 640x480
+```
+
+EDID isn't reaching the GPU, so the NVIDIA driver falls back to a generic VESA mode. This is almost always a cable/connector issue, not a driver bug.
+
+**Fix (hardware first):** try a different DisplayPort cable (certified DP 1.4), swap DP-1 ↔ DP-2 cables to confirm the monitor is fine on the other port, or move Samsung to HDMI.
+
+**Workaround in config:** if EDID is permanently broken, force the mode in `home/system/hyprland.nix` and `nixos/greetd.nix` instead of `preferred`:
+```nix
+"DP-1,3840x2160@60,auto,1"
 ```
 
 ### btrbk snapshots not working

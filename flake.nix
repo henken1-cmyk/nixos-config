@@ -70,6 +70,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              backupFileExtension = "hm-backup";
               extraSpecialArgs = { inherit inputs; vars = lightspeedVars; };
               users.${lightspeedVars.username} = import ./hosts/lightspeed/home.nix;
             };
@@ -104,6 +105,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              backupFileExtension = "hm-backup";
               extraSpecialArgs = { inherit inputs; vars = adamVars; };
               users.${adamVars.username} = import ./hosts/adam/home.nix;
             };
@@ -138,6 +140,7 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              backupFileExtension = "hm-backup";
               extraSpecialArgs = { inherit inputs; vars = henkenitVars; };
               users.${henkenitVars.username} = import ./hosts/henkenit/home.nix;
             };
