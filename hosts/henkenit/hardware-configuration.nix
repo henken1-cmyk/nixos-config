@@ -25,9 +25,13 @@ in
     allowDiscards = true; # SSD TRIM through LUKS
   };
 
-  # CHANGEME: Replace UUID with value from `blkid /dev/<efi-partition>`
+  # NixOS-own ESP — GPT partition labeled BOOT (gdisk) on nvme0n1p5.
+  # by-partlabel matches install.sh convention and survives partition
+  # reordering. The system also has a Windows ESP on nvme0n1p1 that we
+  # leave alone — Windows Boot Manager files are copied into THIS ESP so
+  # systemd-boot can chain-load Windows from a single bootloader.
   fileSystems."/boot" = {
-    device = "/dev/disk/by-uuid/C405-61A3";
+    device = "/dev/disk/by-partlabel/BOOT";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };

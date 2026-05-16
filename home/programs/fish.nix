@@ -82,6 +82,9 @@
     };
 
     functions = {
+      # Run local Qwen3.6 MTP llama-server (build pinned via nix profile)
+      lama = "/home/henken/Projects/llama.cpp-mtp/run_qwen_mtp.sh $argv";
+
       # Quick directory creation and cd
       mkcd = "mkdir -p $argv[1] && cd $argv[1]";
 

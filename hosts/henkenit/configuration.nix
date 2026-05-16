@@ -53,18 +53,17 @@ in
   # Removable media filesystems
   boot.supportedFilesystems = [ "btrfs" "ntfs" "exfat" ];
 
-  # Windows as default boot entry
+  # Windows as second boot entry — sort-key "windows" sorts after NixOS's
+  # default "nixos" key, so the newest NixOS generation stays on top as
+  # default and Windows lands underneath. systemd-boot picks the
+  # highest-sorted entry as default automatically.
   boot.loader.systemd-boot.extraEntries = {
     "windows.conf" = ''
       title Windows
       efi /EFI/Microsoft/Boot/bootmgfw.efi
-      sort-key a-windows
+      sort-key windows
     '';
   };
-  boot.loader.systemd-boot.extraInstallCommands = ''
-    sed -i '/^default /d' /boot/loader/loader.conf
-    echo "default windows.conf" >> /boot/loader/loader.conf
-  '';
 
   # ── btrfs (no @devel) ───────────────────────────────────────────
   services.btrfs.autoScrub = {

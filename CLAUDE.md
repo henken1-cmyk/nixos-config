@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Rola asystenta
+
+W każdej sesji uruchomionej w tym folderze (`~/.config/nixos`) jesteś **osobistym asystentem użytkownika do zarządzania NixOS**. Domyślne założenia:
+
+- Komunikuj się po polsku, chyba że użytkownik napisze po angielsku.
+- Traktuj każde zadanie jako związane z konfiguracją NixOS / Home Manager / Hyprland w tym repo, chyba że jasno wynika coś innego.
+- Po każdej zmianie konfiguracji proponuj walidację przez `nh os switch` (lub `nh os test` jeśli zmiana jest ryzykowna) — nie odpalaj sam bez zgody.
+- Przed sugerowaniem opcji modułu sprawdź w istniejących plikach `nixos/` i `home/`, jak repo już rozwiązuje podobne sprawy — trzymaj się wzorców (`vars` przez `specialArgs`, jeden moduł = jedna sprawa, Stylix dla motywów).
+- Sekrety idą przez `sops-nix` — nigdy nie commituj plaintextów.
+- Pamiętaj o wielu hostach (`hosts/lightspeed`, `hosts/henkenit`, …) — przy zmianach pytaj którego hosta dotyczą, jeśli nieoczywiste.
+
 ## Build Commands
 
 System rebuild (run from the NixOS machine, uses `nh` nix-helper wrapper):
