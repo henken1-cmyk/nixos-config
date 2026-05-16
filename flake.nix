@@ -70,9 +70,14 @@
       url = "github:NousResearch/hermes-agent";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    voicebox-mcp = {
+      url = "git+file:///devel/voicebox_mcp";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, hyprpanel, hermes-agent, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, hyprpanel, hermes-agent, voicebox-mcp, ... }@inputs:
     let
       scale = import ./themes/scale.nix;
       lightspeedVars = import ./hosts/lightspeed/variables.nix;
@@ -128,6 +133,9 @@
             home-manager = {
               useGlobalPkgs = true;
               useUserPackages = true;
+              # KDE Plasma rewrites ~/.gtkrc-2.0 on every session start; without
+              # a backup extension, the next HM activation hard-fails.
+              backupFileExtension = "hm-backup";
               extraSpecialArgs = { inherit inputs scale; vars = lightspeedVars; };
               users.${lightspeedVars.username} = import ./hosts/lightspeed/home.nix;
             };

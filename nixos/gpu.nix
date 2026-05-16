@@ -26,13 +26,13 @@
       else base;
   };
 
-  # Wayland + NVIDIA env vars
+  # Wayland + NVIDIA env vars.
+  # __GL_VRR_ALLOWED / __GL_GSYNC_ALLOWED intentionally omitted — they trigger
+  # NVIDIA/open-gpu-kernel-modules#990 (atomic-modeset failures) in KWin on Plasma 6.
   environment.sessionVariables = {
     GBM_BACKEND = "nvidia-drm";
     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
     LIBVA_DRIVER_NAME = "nvidia";
-    __GL_GSYNC_ALLOWED = "1";
-    __GL_VRR_ALLOWED = "1";
   };
 
   # NVIDIA early load: in initrd for Plymouth on NVIDIA fb, unless ESP too small

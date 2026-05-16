@@ -67,19 +67,21 @@ in
       text = config.stylix.targets.vesktop.themeBody;
       force = true;
     };
+
+    # KDE rewrites ~/.gtkrc-2.0 on every session; the stale .hm-backup from a
+    # prior HM run would otherwise block the next activation. Drop it first.
+    activation.cleanGtkrcBackup = lib.hm.dag.entryBefore [ "checkLinkTargets" ] ''
+      rm -f $HOME/.gtkrc-2.0.hm-backup
+    '';
   };
 
   # Let Home Manager manage itself
   programs.home-manager.enable = true;
 
   # Cursor config handled by Stylix (themes/default.nix)
-
-  # Qt theming
-  qt = {
-    enable = true;
-    platformTheme.name = "qtct";
-    style.name = "kvantum";
-  };
+  # Qt theming intentionally NOT configured: stylix.targets.qt is disabled
+  # in nixos/plasma6.nix so QT_STYLE_OVERRIDE never gets exported (Plasma 6
+  # treats it as a QQC2 QML import and fails on any widget-style name).
 
   # GTK
   gtk = {
@@ -156,8 +158,19 @@ in
   systemd.user.services.hyprsunset = {
     Unit.Description = "Hyprsunset blue light filter";
     Service = { ExecStart = "${pkgs.hyprsunset}/bin/hyprsunset"; Restart = "on-failure"; };
-    Install.WantedBy = [ "graphical-session.target" ];
+    Install.WantedBy = [ "hyprland-session.target" ];
   };
+
+  # Gate Hyprland-only HM services to hyprland-session.target so they don't
+  # autostart under KDE (where they crash or duplicate KDE's own daemons).
+  # hyprland-session.target is provided by the Hyprland HM module.
+  systemd.user.services.hyprpanel.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+  systemd.user.services.hypridle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+  systemd.user.services.swayosd.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+  systemd.user.services.cliphist.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+  systemd.user.services.cliphist-images.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+  systemd.user.services.network-manager-applet.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+  systemd.user.services.udiskie.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
 
   # bat (theme set by Stylix)
   programs.bat.enable = true;

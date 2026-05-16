@@ -15,10 +15,11 @@ in
     ../../nixos/gpu.nix
     ../../nixos/jellyfin.nix
     ../../nixos/libvirt.nix
-    ../../nixos/greetd.nix
+    ../../nixos/sddm.nix
     ../../nixos/locale.nix
     ../../nixos/networking.nix
     ../../nixos/nix.nix
+    ../../nixos/plasma6.nix
     ../../nixos/printing.nix
     ../../nixos/samba.nix
     ../../nixos/monitoring.nix
@@ -72,7 +73,7 @@ in
   services.openssh.enable = true;
   programs.ssh.startAgent = false; # Using gnome-keyring instead
   services.gnome.gnome-keyring.enable = true;
-  security.pam.services.greetd.enableGnomeKeyring = true;
+  security.pam.services.sddm.enableGnomeKeyring = true;
   security.pam.services.hyprlock.enableGnomeKeyring = true;
 
   # Fonts
