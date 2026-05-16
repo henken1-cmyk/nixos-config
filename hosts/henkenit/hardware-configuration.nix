@@ -21,7 +21,7 @@ in
 
   # CHANGEME: Replace UUID with value from `blkid /dev/<luks-partition>` (the LUKS partition)
   boot.initrd.luks.devices."cryptbtrfs" = {
-    device = "/dev/disk/by-uuid/4f9add7f-85eb-46dc-8384-14a544eac08d";
+    device = "/dev/disk/by-uuid/e19f889a-5a79-4d28-89fc-04ffa56e7baa";
     allowDiscards = true; # SSD TRIM through LUKS
   };
 

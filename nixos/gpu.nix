@@ -15,7 +15,7 @@
     powerManagement.finegrained = false;
     open = true; # RTX 3090 Ti (Ampere) — open kernel modules
     nvidiaSettings = true;
-    package = config.boot.kernelPackages.nvidiaPackages.stable;
+    package = config.boot.kernelPackages.nvidiaPackages.beta;
   };
 
   # Wayland + NVIDIA env vars

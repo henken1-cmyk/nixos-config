@@ -21,14 +21,18 @@
 
   # Monitors (from `hyprctl monitors`)
   # CHANGEME: verify with `hyprctl monitors` after first boot
-  monitorLeft = "DP-2"; # HP 727pk (left)
-  monitorRight = "DP-1"; # Samsung Odyssey G80SD (right)
+  # Single-monitor setup: HP 727pk on DP-2 only. DP-1 (Samsung Odyssey G80SD)
+  # is currently unplugged and its EDID failed on this cable anyway — leave
+  # disabled until the cable issue is sorted, otherwise windows spawn on a
+  # bogus 1024x768 mode on the disconnected port.
+  monitorLeft = "DP-2"; # HP 727pk
+  monitorRight = ""; # disabled
   monitors = [
-    "DP-2,preferred,0x0,1.5" # HP 727pk — left
-    "DP-1,preferred,2560x0,1.5" # Samsung Odyssey G80SD — right
+    "DP-2,preferred,auto,1" # HP 727pk
+    ",disable" # disable any other connector (DP-1, HDMI-A-1 etc.)
   ];
   # DRM connector names for early boot framebuffer (from /sys/class/drm/)
-  monitors_drm = [ "DP-1" ];
+  monitors_drm = [ "DP-2" ];
 
   # Boot
   gpuInInitrd = false; # ESP too small (196MB) for NVIDIA modules in initrd
