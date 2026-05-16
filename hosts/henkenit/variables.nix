@@ -21,8 +21,8 @@
 
   # Monitors (from `hyprctl monitors`)
   # CHANGEME: verify with `hyprctl monitors` after first boot
-  monitorLeft = "DP-2"; # HP 727pk (left)
-  monitorRight = "DP-1"; # Samsung Odyssey G80SD (right)
+  #monitorLeft = "DP-1"; # HP 727pk (left)
+  #monitorRight = "DP-1"; # Samsung Odyssey G80SD (right)
   monitors = [
     "DP-2,preferred,0x0,1.5" # HP 727pk — left
     "DP-1,preferred,2560x0,1.5" # Samsung Odyssey G80SD — right

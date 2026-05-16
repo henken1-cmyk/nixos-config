@@ -105,6 +105,9 @@ in
     # Wayland utilities
     wtype # Keyboard input simulation (for emoji picker)
 
+    # Languages
+    python3
+
     # Nix tools
     nil # Nix LSP (for VSCode and other editors)
     nix-tree # Interactive nix store dependency browser

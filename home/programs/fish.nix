@@ -108,6 +108,11 @@
       # System
       ff = "fastfetch";
       cls = "clear";
+
+      # Hermes — interact with the gateway as the hermes service user so files
+      # in /var/lib/hermes stay owned by hermes:hermes (kiper is not in the
+      # hermes group; NOPASSWD rule lives in nixos/users.nix).
+      hs = "sudo -u hermes hermes";
     };
 
     functions = {

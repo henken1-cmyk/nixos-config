@@ -118,6 +118,10 @@ in
         mouse_move_enables_dpms = true;
         key_press_enables_dpms = true;
         vfr = true;
+        # Allow a fresh hyprlock to take over an orphaned session lock
+        # instead of leaving the desktop stuck on lockdead.png. Required for
+        # the documented resurrection sequence in memory:hyprlock_crash_recovery.
+        allow_session_lock_restore = true;
       };
 
       # ── NVIDIA / Multi-monitor ──────────────────────────────

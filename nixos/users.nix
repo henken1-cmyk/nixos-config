@@ -38,14 +38,28 @@ in
   # Enable Fish system-wide (needed for user shell)
   programs.fish.enable = true;
 
-  # Allow passwordless grub-reboot for "Reboot to Windows" power menu option
-  security.sudo.extraRules = lib.optionals (vars ? windowsBootEntry && vars.windowsBootEntry != null) [{
-    users = [ vars.username ];
-    commands = [{
-      command = "/run/current-system/sw/bin/grub-reboot";
-      options = [ "NOPASSWD" ];
+  security.sudo.extraRules =
+    # Run the hermes CLI as the hermes-agent service user without a password.
+    # Interactive use goes through the `hs` fish abbr (= `sudo -u hermes hermes`)
+    # so files in /var/lib/hermes stay owned by hermes:hermes — kiper is not in
+    # the hermes group, so direct writes would land as kiper:users and the
+    # gateway couldn't read them back.
+    [{
+      users = [ vars.username ];
+      runAs = "hermes";
+      commands = [{
+        command = "/run/current-system/sw/bin/hermes";
+        options = [ "NOPASSWD" ];
+      }];
+    }]
+    # Passwordless grub-reboot for the "Reboot to Windows" power menu option
+    ++ lib.optionals (vars ? windowsBootEntry && vars.windowsBootEntry != null) [{
+      users = [ vars.username ];
+      commands = [{
+        command = "/run/current-system/sw/bin/grub-reboot";
+        options = [ "NOPASSWD" ];
+      }];
     }];
-  }];
 
   # Sudo askpass via fuzzel (graphical password prompt for non-TTY contexts)
   environment.etc."sudo.conf" = {

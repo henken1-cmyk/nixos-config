@@ -1,21 +1,18 @@
-{ config, lib, ... }:
+{ config, pkgs, inputs, ... }:
 
+let
+  voicebox = inputs.voicebox-mcp.packages.${pkgs.system}.default;
+in
 {
-  # Upstream module exports HERMES_HOME=/var/lib/hermes/.hermes into
-  # /etc/set-environment, which breaks every non-hermes user's CLI
-  # (the service state dir is hermes:hermes 0640). Redirect interactive
-  # shells to per-user ~/.hermes. The systemd unit sets HERMES_HOME
-  # directly in its Environment= block, so the service is unaffected.
-  environment.variables.HERMES_HOME = lib.mkForce "$HOME/.hermes";
-
   services.hermes-agent = {
     enable = true;
     addToSystemPackages = true;
 
     settings = {
       model = {
-        provider = "anthropic";
-        default = "claude-sonnet-4-6";
+        provider = "custom";
+        base_url = "http://localhost:8081/v1";
+        default = "local-llama-mtp";
       };
 
       custom_providers = [
@@ -29,6 +26,41 @@
           };
         }
       ];
+
+      # Hub-hosted MCP servers (SSE transport via Traefik).
+      # The nixos module's `mcpServers` option lacks a `transport` field,
+      # so we set them under settings.mcp_servers directly — the merger
+      # treats this as freeform attrs and passes `transport: sse` through
+      # to hermes's MCP client, which dispatches the SSE handler.
+      # Backends live in /devel/hub/docker-compose.yml.
+      mcp_servers = {
+        forgejo = {
+          url = "https://mcp-forgejo.nazareth.dev/sse";
+          transport = "sse";
+        };
+        victoriametrics = {
+          url = "https://mcp-vm.nazareth.dev/sse";
+          transport = "sse";
+        };
+        loki = {
+          url = "https://mcp-loki.nazareth.dev/sse";
+          transport = "sse";
+        };
+      };
+    };
+
+    # stdio MCP servers — typed via the module's mcpServers option.
+    mcpServers = {
+      # Local TTS (Kokoro). Audio is per-user PipeWire (socket in
+      # /run/user/1000/), so the subprocess has to run as kiper to reach
+      # the speakers — hermes (the service user) has no audio session.
+      # We invoke via `sudo -u kiper` so PAM sets XDG_RUNTIME_DIR and
+      # voicebox's PortAudio→PipeWire chain Just Works. NOPASSWD rule
+      # for this exact binary is declared below.
+      voicebox = {
+        command = "/run/wrappers/bin/sudo";
+        args = [ "-n" "-H" "-u" "kiper" "${voicebox}/bin/voicebox-mcp" ];
+      };
     };
 
     # Root-readable env file. Keys live here (not in nix store / not in git):
@@ -45,4 +77,16 @@
   # Hermes drains in-flight tasks for up to 180s on stop; give systemd
   # enough headroom so it doesn't SIGKILL the gateway mid-drain.
   systemd.services.hermes-agent.serviceConfig.TimeoutStopSec = 210;
+
+  # Let the hermes service spawn voicebox-mcp as kiper without a password
+  # so the TTS subprocess inherits kiper's PipeWire session (via PAM's
+  # XDG_RUNTIME_DIR). Pinned to the exact store path; rebuild updates it.
+  security.sudo.extraRules = [{
+    users = [ "hermes" ];
+    runAs = "kiper";
+    commands = [{
+      command = "${voicebox}/bin/voicebox-mcp";
+      options = [ "NOPASSWD" ];
+    }];
+  }];
 }

@@ -59,7 +59,12 @@ in
   }];
 
   # ── UltraStar Deluxe (karaoke, songs pinned to nocow /games) ────
-  environment.systemPackages = [ ultrastardx ];
+  # ── umu-launcher (FHS-wrapped Proton runner Lutris invokes) ────
+  # Lutris auto-downloads a generic umu binary that lacks the FHS env
+  # pressure-vessel needs on NixOS — without it, ldconfig isn't found,
+  # NVIDIA Vulkan driver passthrough fails, and games crash with
+  # VK_ERROR_INCOMPATIBLE_DRIVER. The nixpkgs build wraps umu in bwrap.
+  environment.systemPackages = [ ultrastardx pkgs.umu-launcher ];
 
   # ── /games directory permissions ────────────────────────────────
   systemd.tmpfiles.rules = [
