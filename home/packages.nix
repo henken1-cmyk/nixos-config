@@ -95,6 +95,9 @@ in
     libsForQt5.qtstyleplugin-kvantum
     kdePackages.qtstyleplugin-kvantum
 
+    # KDE auto-tiler (KWin script — enable via System Settings → Window Management → KWin Scripts)
+    kdePackages.krohnkite
+
     # Waybar extras
     wttrbar # Rich weather tooltip for waybar
 

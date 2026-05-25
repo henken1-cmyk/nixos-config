@@ -29,6 +29,7 @@ in
     ../../home/system/hypridle.nix
     ../../home/system/hyprlock.nix
     ../../home/system/swww.nix
+    ../../home/system/plasma.nix
   ];
 
   # Lightspeed-specific packages
@@ -164,6 +165,10 @@ in
   # Gate Hyprland-only HM services to hyprland-session.target so they don't
   # autostart under KDE (where they crash or duplicate KDE's own daemons).
   # hyprland-session.target is provided by the Hyprland HM module.
+  #
+  # WantedBy alone is not enough: graphical-session.target can transitively pull
+  # these in under KDE. ConditionEnvironment is a runtime gate that makes the
+  # unit condition-skip whenever XDG_CURRENT_DESKTOP is not "Hyprland".
   systemd.user.services.hyprpanel.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
   systemd.user.services.hypridle.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
   systemd.user.services.swayosd.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
@@ -171,6 +176,16 @@ in
   systemd.user.services.cliphist-images.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
   systemd.user.services.network-manager-applet.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
   systemd.user.services.udiskie.Install.WantedBy = lib.mkForce [ "hyprland-session.target" ];
+
+  # XDG_CURRENT_DESKTOP=Hyprland is strictly stronger than the HM modules'
+  # default WAYLAND_DISPLAY check (only set in Hyprland; implies Wayland).
+  systemd.user.services.hyprpanel.Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+  systemd.user.services.hypridle.Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+  systemd.user.services.swayosd.Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+  systemd.user.services.cliphist.Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+  systemd.user.services.cliphist-images.Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+  systemd.user.services.network-manager-applet.Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
+  systemd.user.services.udiskie.Unit.ConditionEnvironment = lib.mkForce "XDG_CURRENT_DESKTOP=Hyprland";
 
   # bat (theme set by Stylix)
   programs.bat.enable = true;

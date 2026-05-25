@@ -1,18 +1,9 @@
 { config, pkgs, lib, vars, ... }:
 
 let
-  fuzzel-askpass = pkgs.writeShellScript "fuzzel-askpass" ''
-    # Read the command that invoked sudo from parent process
-    raw=$(${pkgs.coreutils}/bin/tr '\0' ' ' < /proc/$PPID/cmdline 2>/dev/null)
-    cmd=$(echo "$raw" | ${pkgs.gnused}/bin/sed 's|.*/sudo[^ ]* ||; s/ *-[AknSEHPBu][^ ]*//g; s/^ *//')
-    exec ${pkgs.fuzzel}/bin/fuzzel \
-      --dmenu \
-      --password \
-      --prompt-only="🔒 ''${cmd:-sudo} › " \
-      --placeholder="password" \
-      --width=80 \
-      --lines=0
-  '';
+  # KDE-native graphical password prompt — Qt-based, integrates with kwallet,
+  # works under Plasma and Hyprland (no compositor coupling).
+  askpass = "${pkgs.kdePackages.ksshaskpass}/bin/ksshaskpass";
 in
 {
   # Shared development group
@@ -61,20 +52,20 @@ in
       }];
     }];
 
-  # Sudo askpass via fuzzel (graphical password prompt for non-TTY contexts)
+  # Sudo askpass — KDE ksshaskpass for non-TTY contexts (`sudo -A`)
   environment.etc."sudo.conf" = {
     mode = "0400";
-    text = "Path askpass ${fuzzel-askpass}";
+    text = "Path askpass ${askpass}";
   };
 
-  # Preserve Wayland env vars so fuzzel-askpass can find the compositor
+  # Preserve Wayland env vars so the askpass dialog can find the compositor
   security.sudo.extraConfig = ''
     Defaults env_keep += "WAYLAND_DISPLAY XDG_RUNTIME_DIR DISPLAY"
   '';
 
-  # SSH askpass reuses the same fuzzel dialog
+  # SSH askpass reuses the same dialog
   programs.ssh.enableAskPassword = true;
-  programs.ssh.askPassword = toString fuzzel-askpass;
+  programs.ssh.askPassword = askpass;
 
   # ── elf user (Claude Code remote worker) ─────────────────────────
   users.users.elf = {

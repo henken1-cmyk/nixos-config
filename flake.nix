@@ -75,9 +75,15 @@
       url = "git+file:///devel/voicebox_mcp";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    plasma-manager = {
+      url = "github:nix-community/plasma-manager";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
   };
 
-  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, hyprpanel, hermes-agent, voicebox-mcp, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, stylix, nixvim, sops-nix, firefox-addons, claude-code, nix-flatpak, spicetify-nix, hyprland, claude-desktop, ghostty, devel-agent, nix-cachyos-kernel, hyprpanel, hermes-agent, voicebox-mcp, plasma-manager, ... }@inputs:
     let
       scale = import ./themes/scale.nix;
       lightspeedVars = import ./hosts/lightspeed/variables.nix;

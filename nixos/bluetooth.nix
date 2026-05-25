@@ -11,5 +11,7 @@
     };
   };
 
-  services.blueman.enable = true;
+  # KDE Plasma 6 bundles bluedevil (tray applet + Solid integration); no extra
+  # service needed. Blueman (GTK) would otherwise XDG-autostart on top of it.
+  services.blueman.enable = false;
 }
