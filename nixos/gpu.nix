@@ -5,7 +5,20 @@
   hardware.graphics = {
     enable = true;
     enable32Bit = true;
+    # VA-API driver goes here so it's linked into /run/opengl-driver/lib/dri/
+    # — every libva-aware app (Firefox, Chromium, mpv, OBS, ffmpeg…) finds it
+    # via LIBVA_DRIVER_NAME=nvidia. Listing in environment.systemPackages is
+    # NOT enough; libva only scans /run/opengl-driver.
+    extraPackages = with pkgs; [
+      nvidia-vaapi-driver
+    ];
   };
+
+  # CLI tools for VA-API verification (vainfo etc.) — only needed in PATH,
+  # not in the driver lookup path.
+  environment.systemPackages = with pkgs; [
+    libva-utils
+  ];
 
   services.xserver.videoDrivers = [ "nvidia" ];
 
@@ -38,12 +51,11 @@
   # NVIDIA early load: in initrd for Plymouth on NVIDIA fb, unless ESP too small
   boot.initrd.kernelModules = lib.optionals (vars.gpuInInitrd or true)
     [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
-  boot.kernelParams = [ "nvidia-drm.modeset=1" "nvidia-drm.fbdev=1" ];
+  # nvidia-drm.fbdev=1 (NVIDIA kernel framebuffer console) holds a DRM lease
+  # that races with KWin at SDDM→Plasma handoff and on every DPMS cycle, causing
+  # "drmModeListLessees() failed: Permission denied" and "Atomic modeset test
+  # failed!" — symptoms include stutter on resume + multi-monitor weirdness.
+  # Dropped here in exchange for a text-mode early console (no Plymouth used).
+  boot.kernelParams = [ "nvidia-drm.modeset=1" ];
 
-  # NVENC for gpu-screen-recorder
-  environment.systemPackages = with pkgs; [
-    nvidia-vaapi-driver
-    libva
-    libva-utils
-  ];
 }
