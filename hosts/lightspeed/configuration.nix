@@ -114,13 +114,50 @@ in
     zlib
   ];
 
-  # ── PROTOTYPE: NVIDIA Container Toolkit (de-risk Jellyfin→Docker NVENC) ──
-  # Generates a CDI spec at /run/cdi/nvidia.yaml so containers can request the
-  # GPU via `--device nvidia.com/gpu=all`. Host-scoped on purpose: the laptop
-  # `adam` shares nixos/docker.nix and must NOT get this. Does not change the
-  # Docker default runtime — GPU access stays opt-in per container.
-  # Revert: delete this block, then `sudo nixos-rebuild switch`.
+  # ── NVIDIA Container Toolkit — GPU passthrough for the Docker stack ──
+  # Generates a CDI spec at /run/cdi/ so containers can request the GPU via
+  # `devices: ["nvidia.com/gpu=all"]` (used by the Jellyfin container for
+  # NVENC/NVDEC). Host-scoped on purpose: the laptop `adam` shares
+  # nixos/docker.nix and must NOT get this. Does not change the Docker default
+  # runtime — GPU access stays opt-in per container.
   hardware.nvidia-container-toolkit.enable = true;
+
+  # ── Docker must start AFTER the NTFS archive mount ──
+  # /mnt/archive (ntfs3) can mount *after* dockerd has already captured the
+  # empty mountpoint, so containers bind an empty dir (qBittorrent/Jellyfin/*arr
+  # then see no media — and qBit could even write downloads onto the root fs).
+  # Ordering dockerd after mnt-archive.mount closes that race. `wants` (not
+  # `requires`) honours the mount's `nofail`: a missing archive disk just
+  # skips the mount without taking the entire Docker stack down with it.
+  systemd.services.docker = {
+    after = [ "mnt-archive.mount" ];
+    wants = [ "mnt-archive.mount" ];
+  };
+
+  # ── NTFS dirty-bit auto-repair for /mnt/archive (runs before the mount) ──
+  # This disk is shared with Windows, which — especially with Fast Startup —
+  # leaves the NTFS volume marked dirty on an unclean close; ntfs3 then mounts it
+  # read-only to protect it. `ntfsfix -d` repairs common errors, resets the NTFS
+  # $LogFile journal, and clears the dirty flag so the volume mounts read-write.
+  # It is a no-op on an already-clean volume, hence safe to run every boot, and
+  # it only operates while the device is UNMOUNTED (so it runs before the mount).
+  #
+  # NOTE: this does NOT remove a Windows hibernation file (hiberfil.sys from Fast
+  # Startup) — if the drive still comes up read-only, disable Fast Startup in
+  # Windows (or `powercfg /h off`). DefaultDependencies=false avoids an ordering
+  # cycle with local-fs; wantedBy (not requiredBy) honours the mount's `nofail`.
+  systemd.services.ntfsfix-archive = {
+    description = "Repair NTFS dirty flag on /mnt/archive before mounting";
+    before = [ "mnt-archive.mount" ];
+    wantedBy = [ "mnt-archive.mount" ];
+    requires = [ "dev-disk-by\\x2duuid-1CA2587FA2585F78.device" ];
+    after = [ "dev-disk-by\\x2duuid-1CA2587FA2585F78.device" ];
+    unitConfig.DefaultDependencies = false;
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStart = "${pkgs.ntfs3g}/bin/ntfsfix -d /dev/disk/by-uuid/1CA2587FA2585F78";
+    };
+  };
 
   # System packages (minimal — most go in home-manager)
   environment.systemPackages = with pkgs; [
