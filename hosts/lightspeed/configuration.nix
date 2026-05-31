@@ -114,6 +114,14 @@ in
     zlib
   ];
 
+  # ── PROTOTYPE: NVIDIA Container Toolkit (de-risk Jellyfin→Docker NVENC) ──
+  # Generates a CDI spec at /run/cdi/nvidia.yaml so containers can request the
+  # GPU via `--device nvidia.com/gpu=all`. Host-scoped on purpose: the laptop
+  # `adam` shares nixos/docker.nix and must NOT get this. Does not change the
+  # Docker default runtime — GPU access stays opt-in per container.
+  # Revert: delete this block, then `sudo nixos-rebuild switch`.
+  hardware.nvidia-container-toolkit.enable = true;
+
   # System packages (minimal — most go in home-manager)
   environment.systemPackages = with pkgs; [
     vim
