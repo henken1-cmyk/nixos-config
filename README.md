@@ -483,13 +483,27 @@ sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p2
 # then optionally drop crypttabExtraOpts from hardware-configuration.nix and `nh os switch`
 ```
 
-**Roll back the whole change:**
-```bash
-# revert the config commit and rebuild:
-git -C ~/.config/nixos revert <commit> && nh os switch
-# or restore the btrfs snapshot taken before enrollment:
-#   @snapshots/root.pre-tpm-20260531
-```
+**If something goes wrong — layered recovery (easiest first):**
+
+1. **The passphrase always works.** The TPM change never removes the passphrase keyslot. A failed or partial enrollment just means you type the passphrase as before — you cannot be locked out by this change.
+
+2. **A bad generation won't boot →** at the **GRUB menu pick the previous generation**. Its initrd predates the TPM change, so it boots straight to the passphrase prompt. Once in, undo the change:
+   ```bash
+   git -C ~/.config/nixos revert <commit> && nh os switch   # remove the config edit
+   sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p2 # remove the TPM keyslot
+   ```
+
+3. **Restore `@root` from the pre-change snapshot** (only if activation left the root subvolume broken). The snapshot taken before enrollment is `@snapshots/root.pre-tpm-20260531`. From a **live ISO**:
+   ```bash
+   cryptsetup open /dev/nvme0n1p2 cryptbtrfs
+   mount -o subvolid=5 /dev/mapper/cryptbtrfs /mnt   # btrfs TOP-LEVEL, not @root
+   cd /mnt
+   mv @root @root.broken                              # keep the broken one for inspection
+   btrfs subvolume snapshot @snapshots/root.pre-tpm-20260531 @root   # writable @root from the snapshot
+   cd / && umount /mnt && reboot
+   # once confirmed good (re-mount subvolid=5 first):  btrfs subvolume delete /mnt/@root.broken
+   ```
+   **Scope:** this rolls back only `@root` (`/`, `/etc`, `/var`). It does **not** touch `@nix` (your NixOS generations), `@home`, or the LUKS header (the TPM keyslot) — so use steps 1–2 for those, and step 3 only for a corrupted root filesystem.
 
 ## Host-specific notes
 

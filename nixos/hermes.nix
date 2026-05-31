@@ -1,7 +1,7 @@
 { config, pkgs, inputs, ... }:
 
 let
-  voicebox = inputs.voicebox-mcp.packages.${pkgs.system}.default;
+  voicebox = inputs.voicebox-mcp.packages.${pkgs.stdenv.hostPlatform.system}.default;
 in
 {
   services.hermes-agent = {
