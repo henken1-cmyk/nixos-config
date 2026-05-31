@@ -463,6 +463,34 @@ exit
 reboot
 ```
 
+### TPM2 auto-unlock (lightspeed)
+lightspeed unlocks `cryptbtrfs` automatically via the TPM2 chip — `crypttabExtraOpts = [ "tpm2-device=auto" ]` in `hosts/lightspeed/hardware-configuration.nix`, enrolled with `systemd-cryptenroll --tpm2-pcrs=0`. The **LUKS passphrase keyslot is kept** and always works as a fallback, so this cannot lock you out.
+
+**It prompts for the passphrase again (auto-unlock stopped):**
+Just type the passphrase to boot — nothing is lost. The TPM seal is bound to PCR 0 (core firmware), so it breaks on a **firmware/BIOS (AGESA) update**. Restore auto-unlock after booting:
+```bash
+sudo systemd-cryptenroll --wipe-slot=tpm2 --tpm2-device=auto --tpm2-pcrs=0 /dev/nvme0n1p2
+```
+
+**Verify the TPM token is enrolled:**
+```bash
+sudo cryptsetup luksDump /dev/nvme0n1p2 | grep -i systemd-tpm2
+```
+
+**Remove TPM2 auto-unlock entirely (back to passphrase-only):**
+```bash
+sudo systemd-cryptenroll --wipe-slot=tpm2 /dev/nvme0n1p2
+# then optionally drop crypttabExtraOpts from hardware-configuration.nix and `nh os switch`
+```
+
+**Roll back the whole change:**
+```bash
+# revert the config commit and rebuild:
+git -C ~/.config/nixos revert <commit> && nh os switch
+# or restore the btrfs snapshot taken before enrollment:
+#   @snapshots/root.pre-tpm-20260531
+```
+
 ## Host-specific notes
 
 ### `lightspeed` (Desktop)
