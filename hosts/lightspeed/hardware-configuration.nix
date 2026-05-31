@@ -19,6 +19,7 @@ in
   boot.initrd.luks.devices."cryptbtrfs" = {
     device = "/dev/disk/by-uuid/37ffd4ed-f19e-40eb-ac62-fba845a97a2b";
     allowDiscards = true; # SSD TRIM through LUKS
+    crypttabExtraOpts = [ "tpm2-device=auto" ]; # TPM2 auto-unlock; PCR policy set at enroll time
   };
 
   # EFI partition
